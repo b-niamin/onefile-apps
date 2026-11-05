@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.png binary
+.ai/skills/** linguist-vendored
+.ai/** -text
