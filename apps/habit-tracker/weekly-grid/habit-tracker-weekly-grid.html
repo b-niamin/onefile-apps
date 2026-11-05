@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Habit Tracker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one calm column; a week grid where each habit is a row of seven day cells, details unfold in place. */
+:root {
+  --bg: #F2F4F1;
+  --surface: #FFFFFF;
+  --ink: #17201C;
+  --muted: #56625C;
+  --faint: #86918B;
+  --line: #DCE2DD;
+  --cell: #E6EBE7;
+  --accent: #1E5C4C;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DDEBE5;
+  --danger: #A63A2E;
+  --focus: #2A63B8;
+
+  --h-moss: #4E7D36;
+  --h-sea: #2B6790;
+  --h-plum: #7B3F70;
+  --h-amber: #A86B12;
+  --h-brick: #B1453A;
+  --h-slate: #4C5868;
+
+  --font-display: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", "Segoe UI Variable Display", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Ubuntu, sans-serif;
+
+  --t-xs: 0.75rem; --t-sm: 0.875rem; --t-md: 1rem; --t-lg: 1.25rem; --t-xl: 1.75rem;
+  --r-sm: 8px; --r-md: 12px;
+  --cell-size: 40px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111614; --surface: #19201D; --ink: #E4EBE7; --muted: #9DA9A3; --faint: #6F7B75;
+    --line: #29332F; --cell: #232C28; --accent: #7CC7AE; --accent-ink: #0D1512; --accent-soft: #1F3530;
+    --danger: #F08A7E; --focus: #8AB4F8;
+    --h-moss: #8CC06B; --h-sea: #6BB0DD; --h-plum: #CC8DC0; --h-amber: #E0A84A; --h-brick: #EE8576; --h-slate: #A3B1C4;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111614; --surface: #19201D; --ink: #E4EBE7; --muted: #9DA9A3; --faint: #6F7B75;
+  --line: #29332F; --cell: #232C28; --accent: #7CC7AE; --accent-ink: #0D1512; --accent-soft: #1F3530;
+  --danger: #F08A7E; --focus: #8AB4F8;
+  --h-moss: #8CC06B; --h-sea: #6BB0DD; --h-plum: #CC8DC0; --h-amber: #E0A84A; --h-brick: #EE8576; --h-slate: #A3B1C4;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: var(--t-md); line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 520px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 4px 40px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Top bar */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-block: 8px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.nav, .tools { display: flex; align-items: center; gap: 2px; min-width: 0; }
+.tools { gap: 6px; }
+.range { font-weight: 650; font-size: var(--t-md); padding-inline: 4px; white-space: nowrap; }
+
+.seg { display: inline-flex; background: var(--cell); border-radius: 999px; padding: 3px; }
+.seg button {
+  border: 0; background: transparent; padding: 6px 14px; border-radius: 999px;
+  font-size: var(--t-sm); font-weight: 600; color: var(--muted);
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.12); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 40px; padding: 0 14px; border-radius: var(--r-sm);
+  border: 1px solid var(--line); background: var(--surface); font-size: var(--t-sm); font-weight: 600;
+}
+.btn:hover { border-color: var(--faint); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.quiet { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.quiet:hover { color: var(--ink); background: var(--cell); }
+.btn.quiet:disabled { opacity: .35; cursor: default; background: transparent; }
+.btn.small { min-height: 32px; padding: 0 10px; }
+.btn.danger { color: var(--danger); }
+.btn.danger.armed { background: var(--danger); border-color: var(--danger); color: var(--surface); }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.icon-btn { width: 40px; padding: 0; }
+.icon-btn.small { width: 32px; }
+.btn.primary.icon-btn { border-radius: 50%; }
+
+/* Example notice */
+.notice {
+  display: flex; gap: 8px; align-items: center;
+  background: var(--accent-soft); border-radius: var(--r-md); padding: 6px 6px 6px 12px; font-size: var(--t-sm);
+}
+.notice span { flex: 1; min-width: 0; }
+
+/* Today summary */
+.summary { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: var(--t-sm); }
+.bar { height: 4px; border-radius: 999px; background: var(--cell); overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--accent); border-radius: inherit; transition: width .3s ease; }
+
+/* Week board: phone-first, name above seven day cells */
+.board { display: flex; flex-direction: column; }
+.grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); column-gap: 6px; row-gap: 8px; align-items: center; }
+.days {
+  position: sticky; top: calc(env(safe-area-inset-top, 0px) + 56px); z-index: 4; background: var(--bg);
+  padding-block: 4px 8px; border-bottom: 1px solid var(--line);
+}
+.days .spacer { display: none; }
+.day-label { text-align: center; font-size: var(--t-xs); color: var(--muted); line-height: 1.25; }
+.day-label b { display: block; font-size: var(--t-sm); color: var(--ink); font-weight: 600; }
+.day-label.is-today, .day-label.is-today b { color: var(--accent); }
+
+.habit { border-bottom: 1px solid var(--line); }
+.habit .grid { padding-block: 12px; }
+.habit-name {
+  grid-column: 1 / -1; min-width: 0; text-align: left; border: 0; background: transparent; padding: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; border-radius: 6px;
+}
+.habit-name .title { font-weight: 600; overflow-wrap: anywhere; min-width: 0; }
+.habit-name .meta { display: flex; align-items: center; gap: 8px; font-size: var(--t-xs); color: var(--muted); flex: none; }
+.tally { display: inline-block; vertical-align: middle; }
+.streak { font-weight: 650; color: var(--ink); min-width: 3ch; text-align: right; }
+
+.cell {
+  width: 100%; max-width: 48px; aspect-ratio: 1; border-radius: 10px; border: 0;
+  background: var(--cell); display: grid; place-items: center; justify-self: center;
+  transition: background-color .15s ease, transform .12s ease;
+}
+.cell svg { width: 18px; height: 18px; opacity: 0; transition: opacity .15s ease; }
+@media (hover: hover) { .cell:hover:not(:disabled) { box-shadow: inset 0 0 0 2px var(--hc); } }
+.cell[aria-pressed="true"] { background: var(--hc); color: var(--surface); }
+.cell[aria-pressed="true"] svg { opacity: 1; }
+.cell:active:not(:disabled) { transform: scale(0.92); }
+.cell.today { box-shadow: inset 0 0 0 2px var(--accent); }
+.cell.today[aria-pressed="true"] { box-shadow: none; }
+.cell:disabled { background: transparent; border: 1.5px dashed var(--line); cursor: default; }
+
+
+.details { padding: 0 0 16px; display: flex; flex-direction: column; gap: 14px; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.stats div { display: flex; flex-direction: column-reverse; gap: 2px; }
+.stats dt { font-size: var(--t-xs); color: var(--muted); }
+.stats dd { margin: 0; font-family: var(--font-display); font-size: var(--t-lg); font-weight: 650; font-variant-numeric: tabular-nums; }
+.heat-wrap { display: flex; flex-direction: column; gap: 6px; }
+.heat-cap { font-size: var(--t-xs); color: var(--muted); }
+.heat { display: grid; grid-template-columns: repeat(var(--weeks), minmax(0, 1fr)); gap: 3px; }
+.heat .m { font-size: 10px; color: var(--faint); grid-row: 1; white-space: nowrap; overflow: visible; line-height: 1.4; }
+.heat .d { aspect-ratio: 1; max-width: 100%; border-radius: 3px; background: var(--cell); }
+.heat .d.on { background: var(--hc); }
+.heat .d.out { background: transparent; }
+.details .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Archived + empty */
+.archived summary { cursor: pointer; color: var(--muted); font-size: var(--t-sm); padding: 4px 0; width: fit-content; }
+.archived ul { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 6px; }
+.archived li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm); }
+.archived li span { min-width: 0; overflow-wrap: anywhere; }
+.empty { padding: 28px 0; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.empty h3 { margin: 0; font-family: var(--font-display); font-size: var(--t-lg); }
+.empty p { margin: 0; color: var(--muted); max-width: 48ch; }
+.empty .row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+
+/* Dialogs */
+dialog {
+  border: 0; padding: 0; border-radius: 14px; background: var(--surface); color: var(--ink);
+  width: min(460px, calc(100vw - 32px)); max-height: calc(100dvh - 48px);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 0.28);
+}
+dialog::backdrop { background: rgb(10 16 14 / 0.45); }
+dialog form, .dlg { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+dialog h2 { margin: 0; font-family: var(--font-display); font-size: var(--t-lg); }
+dialog h3 { margin: 0; font-size: var(--t-sm); }
+.field { display: flex; flex-direction: column; gap: 6px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.field > label, .field > legend { font-size: var(--t-sm); font-weight: 600; padding: 0; }
+.field .hint { font-size: var(--t-xs); color: var(--muted); }
+input[type="text"], textarea {
+  width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: var(--r-sm);
+  padding: 9px 11px;
+}
+textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: var(--t-xs); min-height: 72px; resize: vertical; }
+.section .hint { font-size: var(--t-xs); color: var(--muted); overflow-wrap: anywhere; min-width: 0; }
+label.btn { cursor: pointer; }
+#importFile:focus-visible + * , .row:has(+ #importFile:focus-visible) label.btn { outline: 2px solid var(--focus); outline-offset: 2px; }
+input[type="text"]:focus, textarea:focus { outline: 2px solid var(--focus); outline-offset: 0; border-color: transparent; }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; }
+.swatches label { position: relative; }
+.swatches input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.swatches span { display: block; width: 32px; height: 32px; border-radius: 50%; background: var(--hc); box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.06); }
+.swatches input:checked + span { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--hc); }
+.swatches input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 5px; }
+.targets { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.targets label { position: relative; }
+.targets input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.targets span { display: grid; place-items: center; height: 38px; border-radius: var(--r-sm); background: var(--cell); font-weight: 600; font-size: var(--t-sm); }
+.targets input:checked + span { background: var(--accent); color: var(--accent-ink); }
+.targets input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+.dlg-actions { display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; }
+.dlg-actions .right { display: flex; gap: 8px; margin-left: auto; }
+.section { display: flex; flex-direction: column; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line); }
+.section p { margin: 0; font-size: var(--t-sm); color: var(--muted); }
+.section .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.err { color: var(--danger); font-size: var(--t-sm); margin: 0; }
+input[type="file"] { font-size: var(--t-sm); max-width: 100%; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: var(--t-sm); font-weight: 600;
+  max-width: calc(100vw - 32px); z-index: 20;
+}
+
+dialog { overflow-y: auto; }
+@media (max-width: 560px) {
+  dialog {
+    width: 100%; max-width: 100%; margin: auto 0 0; border-radius: 16px 16px 0 0;
+    max-height: calc(100dvh - 40px - env(safe-area-inset-top, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
+  }
+  .targets span { height: 40px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <header class="topbar">
+    <div class="nav">
+      <button type="button" class="btn quiet icon-btn" id="prevWeek"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg></button>
+      <span class="range num" id="rangeLabel"></span>
+      <button type="button" class="btn quiet icon-btn" id="nextWeek"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+      <button type="button" class="btn quiet small" id="thisWeek" hidden></button>
+    </div>
+    <div class="tools">
+      <button type="button" class="btn quiet icon-btn" id="dataBtn"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/></svg></button>
+      <button type="button" class="btn primary icon-btn" id="addBtn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg></button>
+    </div>
+  </header>
+
+  <div class="notice" id="sampleNotice" hidden>
+    <span id="sampleText"></span>
+    <button type="button" class="btn small" id="clearSample"></button>
+  </div>
+
+  <section class="summary" id="summary" aria-live="polite">
+    <span id="summaryTitle"></span>
+    <div class="bar" aria-hidden="true"><span id="summaryBar" style="width:0"></span></div>
+  </section>
+
+  <section class="board" id="board" aria-labelledby="rangeLabel">
+    <div class="grid days" id="dayRow" aria-hidden="true"></div>
+    <div id="habitList"></div>
+  </section>
+
+  <details class="archived" id="archived" hidden>
+    <summary id="archivedSummary"></summary>
+    <ul id="archivedList"></ul>
+  </details>
+
+</div>
+
+<dialog id="habitDialog" aria-labelledby="habitDlgTitle">
+  <form method="dialog" id="habitForm" novalidate>
+    <h2 id="habitDlgTitle"></h2>
+    <div class="field">
+      <label for="habitName" id="nameLabel"></label>
+      <input type="text" id="habitName" maxlength="60" autocomplete="off" required>
+      <p class="err" id="nameErr" hidden></p>
+    </div>
+    <fieldset class="field">
+      <legend id="targetLegend"></legend>
+      <div class="targets" id="targetPicker"></div>
+      <span class="hint" id="targetHint"></span>
+    </fieldset>
+    <fieldset class="field">
+      <legend id="colorLegend"></legend>
+      <div class="swatches" id="colorPicker"></div>
+    </fieldset>
+    <div class="dlg-actions">
+      <div class="row" id="editOnly" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="btn" id="archiveBtn"></button>
+        <button type="button" class="btn danger" id="deleteBtn"></button>
+      </div>
+      <div class="right">
+        <button type="button" class="btn quiet" id="cancelHabit"></button>
+        <button type="submit" class="btn primary" id="saveHabit"></button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dataDialog" aria-labelledby="dataDlgTitle">
+  <div class="dlg">
+    <h2 id="dataDlgTitle"></h2>
+    <div class="section" style="border-top:0;padding-top:0">
+      <div class="row">
+        <div class="seg" role="group" id="langGroup" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="true">English</button>
+          <button type="button" data-lang="pl" aria-pressed="false">Polski</button>
+        </div>
+      </div>
+      <p id="privacyNote"></p>
+    </div>
+    <div class="section">
+      <h3 id="exportTitle"></h3>
+      <p id="exportText"></p>
+      <label for="exportBox" class="visually-hidden" id="exportBoxLabel"></label>
+      <textarea id="exportBox" readonly spellcheck="false" hidden></textarea>
+      <div class="row">
+        <button type="button" class="btn" id="copyBtn"></button>
+        <button type="button" class="btn" id="downloadBtn"></button>
+      </div>
+    </div>
+    <div class="section">
+      <h3 id="importTitle"></h3>
+      <p id="importText"></p>
+      <div class="row"><label class="btn" for="importFile" id="importFileLabel"></label><span class="hint" id="importFileName"></span></div>
+      <input type="file" id="importFile" class="visually-hidden" accept="application/json,.json">
+      <label for="importBox" class="visually-hidden" id="importBoxLabel"></label>
+      <textarea id="importBox" spellcheck="false"></textarea>
+      <p class="err" id="importErr" hidden></p>
+      <div class="row"><button type="button" class="btn primary" id="importBtn"></button></div>
+    </div>
+    <div class="section">
+      <h3 id="resetTitle"></h3>
+      <div class="row">
+        <button type="button" class="btn" id="loadSampleBtn"></button>
+        <button type="button" class="btn danger" id="clearAllBtn"></button>
+      </div>
+    </div>
+    <div class="dlg-actions"><div class="right"><button type="button" class="btn" id="closeData"></button></div></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const STORE_KEY = "tally-habits-v1";
+  const COLORS = ["moss", "sea", "plum", "amber", "brick", "slate"];
+  const MAX_HABITS = 200;
+  const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+  const SVG_NS = "http://www.w3.org/2000/svg";
+
+  /* ---------- i18n ---------- */
+  const pluralPl = (n, one, few, many) => {
+    if (n === 1) return one;
+    const m10 = n % 10, m100 = n % 100;
+    return (m10 >= 2 && m10 <= 4 && !(m100 >= 12 && m100 <= 14)) ? few : many;
+  };
+  const T = {
+    en: {
+      data: "Settings",
+      sampleText: "Example habits",
+      clearSample: "Clear",
+      todayDone: (d, t) => t === 0 ? "" : (d === t ? "All done today" : `Today ${d} / ${t}`),
+      todaySub: (n) => `${n} check-ins this week`,
+      prevWeek: "Previous week", nextWeek: "Next week", thisWeek: "Today",
+      newHabit: "New habit", editHabit: "Edit habit",
+      name: "Name", namePh: "Read 20 pages", nameErr: "Give the habit a name.",
+      target: "Days per week", targetHint: (t) => t === 7 ? "Every day" : `${t} ${t === 1 ? "day" : "days"} a week`,
+      color: "Color", colorNames: { moss: "Moss", sea: "Sea", plum: "Plum", amber: "Amber", brick: "Brick", slate: "Slate" },
+      save: "Save", add: "Add habit", cancel: "Cancel", archive: "Archive", restore: "Restore",
+      del: "Delete", delConfirm: "Delete for good?",
+      everyDay: "Every day", perWeek: (t) => `${t}× a week`,
+      streakDays: (n) => n === 0 ? "" : `${n}d`,
+      streakWeeks: (n) => n === 0 ? "" : `${n}w`,
+      tallyLabel: (d, t) => `${d} of ${t} this week`,
+      stCurrent: "Current streak", stBest: "Best streak", stTotal: "Check-ins",
+      stLast30: "Last 30 days", stLast4: "Weeks on target",
+      daysUnit: (n) => n === 1 ? "day" : "days", weeksUnit: (n) => n === 1 ? "week" : "weeks",
+      last26: "Last 26 weeks",
+      edit: "Edit", hide: "Close",
+      cellLabel: (name, date, on) => `${name}, ${date}: ${on ? "done" : "not done"}`,
+      archived: (n) => `Archived (${n})`,
+      emptyTitle: "Start with one habit",
+      emptyText: "Pick something small. Tap a day to mark it done.",
+      loadSample: "Load example habits",
+      exportTitle: "Backup", exportText: "Copy or download to move your habits to another device.",
+      copy: "Copy", copied: "Copied to clipboard", copyFail: "Copy failed. Text is selected, press Ctrl+C.",
+      download: "Download .json", downloadFail: "Downloads are blocked here. Use Copy.",
+      importTitle: "Import", importText: "Choose a backup file or paste its text. Replaces current habits.",
+      chooseFile: "Choose file", pastePh: "…or paste backup text here",
+      importBtn: "Replace with this data", importArmed: "Replace everything?",
+      importEmpty: "Choose a file or paste exported text first.",
+      importBad: "This isn’t a backup from this app, or the text is incomplete.",
+      imported: (n) => `Imported ${n} ${n === 1 ? "habit" : "habits"}`,
+      resetTitle: "Start over",
+      clearAll: "Delete all data", clearAllConfirm: "Delete everything?",
+      cleared: "All data deleted", sampleLoaded: "Example habits loaded",
+      close: "Close", saved: "Saved", archivedToast: "Habit archived", deleted: "Habit deleted",
+      privacy: "Saved only in this browser. Nothing is sent anywhere.",
+      storageOff: "This browser blocks saving. Copy a backup before you close the page.",
+      language: "Language",
+    },
+    pl: {
+      data: "Ustawienia",
+      sampleText: "Przykładowe nawyki",
+      clearSample: "Wyczyść",
+      todayDone: (d, t) => t === 0 ? "" : (d === t ? "Dziś wszystko zrobione" : `Dziś ${d} / ${t}`),
+      todaySub: (n) => `W tym tygodniu: ${n} ${pluralPl(n, "odhaczenie", "odhaczenia", "odhaczeń")}`,
+      prevWeek: "Poprzedni tydzień", nextWeek: "Następny tydzień", thisWeek: "Dziś",
+      newHabit: "Nowy nawyk", editHabit: "Edytuj nawyk",
+      name: "Nazwa", namePh: "Przeczytać 20 stron", nameErr: "Nadaj nawykowi nazwę.",
+      target: "Dni w tygodniu", targetHint: (t) => t === 7 ? "Codziennie" : `${t} ${pluralPl(t, "dzień", "dni", "dni")} w tygodniu`,
+      color: "Kolor", colorNames: { moss: "Mech", sea: "Morze", plum: "Śliwka", amber: "Bursztyn", brick: "Cegła", slate: "Łupek" },
+      save: "Zapisz", add: "Dodaj nawyk", cancel: "Anuluj", archive: "Archiwizuj", restore: "Przywróć",
+      del: "Usuń", delConfirm: "Usunąć na zawsze?",
+      everyDay: "Codziennie", perWeek: (t) => `${t}× w tygodniu`,
+      streakDays: (n) => n === 0 ? "" : `${n} d.`,
+      streakWeeks: (n) => n === 0 ? "" : `${n} tyg.`,
+      tallyLabel: (d, t) => `${d} z ${t} w tym tygodniu`,
+      stCurrent: "Obecna seria", stBest: "Najdłuższa seria", stTotal: "Odhaczenia",
+      stLast30: "Ostatnie 30 dni", stLast4: "Tygodnie z celem",
+      daysUnit: (n) => pluralPl(n, "dzień", "dni", "dni"), weeksUnit: (n) => pluralPl(n, "tydzień", "tygodnie", "tygodni"),
+      last26: "Ostatnie 26 tygodni",
+      edit: "Edytuj", hide: "Zamknij",
+      cellLabel: (name, date, on) => `${name}, ${date}: ${on ? "zrobione" : "niezrobione"}`,
+      archived: (n) => `Archiwum (${n})`,
+      emptyTitle: "Zacznij od jednego nawyku",
+      emptyText: "Wybierz coś małego. Stuknij dzień, żeby go odhaczyć.",
+      loadSample: "Wczytaj przykładowe nawyki",
+      exportTitle: "Kopia zapasowa", exportText: "Skopiuj lub pobierz, żeby przenieść nawyki na inne urządzenie.",
+      copy: "Kopiuj", copied: "Skopiowano do schowka", copyFail: "Kopiowanie nie zadziałało. Tekst jest zaznaczony, naciśnij Ctrl+C.",
+      download: "Pobierz .json", downloadFail: "Pobieranie jest tu zablokowane. Użyj Kopiuj.",
+      importTitle: "Import", importText: "Wybierz plik kopii albo wklej jej treść. Zastąpi obecne nawyki.",
+      chooseFile: "Wybierz plik", pastePh: "…albo wklej tu tekst kopii",
+      importBtn: "Zastąp tymi danymi", importArmed: "Zastąpić wszystko?",
+      importEmpty: "Najpierw wybierz plik albo wklej wyeksportowany tekst.",
+      importBad: "To nie jest kopia z tej aplikacji albo tekst jest niepełny.",
+      imported: (n) => `Zaimportowano ${n} ${pluralPl(n, "nawyk", "nawyki", "nawyków")}`,
+      resetTitle: "Zacznij od nowa",
+      clearAll: "Usuń wszystkie dane", clearAllConfirm: "Usunąć wszystko?",
+      cleared: "Wszystkie dane usunięte", sampleLoaded: "Wczytano przykładowe nawyki",
+      close: "Zamknij", saved: "Zapisano", archivedToast: "Nawyk zarchiwizowany", deleted: "Nawyk usunięty",
+      privacy: "Zapisane tylko w tej przeglądarce. Nic nie jest nigdzie wysyłane.",
+      storageOff: "Ta przeglądarka blokuje zapis. Skopiuj kopię przed zamknięciem strony.",
+      language: "Język",
+    },
+  };
+
+  /* ---------- dates (local time, YYYY-MM-DD keys) ---------- */
+  const pad = (n) => String(n).padStart(2, "0");
+  const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parseKey = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+  const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const weekStart = (d) => addDays(startOfDay(d), -((d.getDay() + 6) % 7)); // Monday
+  const validKey = (k) => typeof k === "string" && DATE_RE.test(k) && keyOf(parseKey(k)) === k;
+
+  /* ---------- state ---------- */
+  let state = { version: 1, lang: "en", sample: false, habits: [] };
+  let storageOk = true;
+  let weekOffset = 0;
+  let openId = null;
+  let editingId = null;
+  let today = startOfDay(new Date());
+
+  const lang = () => T[state.lang] || T.en;
+  const locale = () => state.lang === "pl" ? "pl-PL" : "en-GB";
+
+  function load() {
+    let raw = null;
+    try { raw = localStorage.getItem(STORE_KEY); } catch (e) { storageOk = false; }
+    if (raw) {
+      try {
+        const parsed = sanitize(JSON.parse(raw));
+        if (parsed) { state = { ...state, ...parsed }; return; }
+      } catch (e) { /* fall through to fresh start */ }
+    }
+    const nav = (navigator.language || "en").toLowerCase();
+    state.lang = nav.startsWith("pl") ? "pl" : "en";
+    state.habits = sampleHabits(state.lang);
+    state.sample = true;
+    save();
+  }
+  function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(serialize())); storageOk = true; }
+    catch (e) { storageOk = false; }
+  }
+  function serialize() {
+    return {
+      app: "habit-tracker-weekly-grid", version: 1, exportedAt: new Date().toISOString(),
+      lang: state.lang, sample: state.sample,
+      habits: state.habits.map((h) => ({
+        id: h.id, name: h.name, color: h.color, target: h.target, created: h.created,
+        archived: h.archived, done: [...h.done].sort(),
+      })),
+    };
+  }
+  // Validate anything that comes from storage or import. Returns null if unusable.
+  function sanitize(obj) {
+    if (!obj || typeof obj !== "object" || !Array.isArray(obj.habits)) return null;
+    const ids = new Set();
+    const habits = [];
+    for (const h of obj.habits.slice(0, MAX_HABITS)) {
+      if (!h || typeof h !== "object") continue;
+      const name = typeof h.name === "string" ? h.name.replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 60) : "";
+      if (!name) continue;
+      let id = typeof h.id === "string" && /^[A-Za-z0-9_-]{1,40}$/.test(h.id) ? h.id : uid();
+      if (ids.has(id)) id = uid();
+      ids.add(id);
+      const target = Number.isInteger(h.target) && h.target >= 1 && h.target <= 7 ? h.target : 7;
+      const done = new Set(Array.isArray(h.done) ? h.done.slice(0, 40000).filter(validKey) : []);
+      const sorted = [...done].sort();
+      let created = validKey(h.created) ? h.created : (sorted[0] || keyOf(today));
+      if (sorted[0] && sorted[0] < created) created = sorted[0];
+      habits.push({
+        id, name, target, created, done,
+        color: COLORS.includes(h.color) ? h.color : COLORS[habits.length % COLORS.length],
+        archived: h.archived === true,
+      });
+    }
+    return {
+      lang: obj.lang === "pl" ? "pl" : (obj.lang === "en" ? "en" : state.lang),
+      sample: obj.sample === true,
+      habits,
+    };
+  }
+  function uid() {
+    try { return crypto.getRandomValues(new Uint32Array(2)).reduce((s, n) => s + n.toString(36), "h"); }
+    catch (e) { return "h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  }
+
+  /* ---------- example data (made up, deterministic) ---------- */
+  function sampleHabits(lg) {
+    let seed = 20261105;
+    const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    const defs = lg === "pl" ? [
+      ["Spacer 30 minut", "moss", 7, 0.86, 140],
+      ["Przeczytać 20 stron", "sea", 7, 0.72, 120],
+      ["Rozciąganie 10 minut", "amber", 4, 0.55, 90],
+      ["Bez telefonu po 22:00", "plum", 5, 0.62, 70],
+      ["2 litry wody", "slate", 7, 0.9, 45],
+    ] : [
+      ["Walk for 30 minutes", "moss", 7, 0.86, 140],
+      ["Read 20 pages", "sea", 7, 0.72, 120],
+      ["Stretch for 10 minutes", "amber", 4, 0.55, 90],
+      ["No phone after 10 pm", "plum", 5, 0.62, 70],
+      ["Drink 2 litres of water", "slate", 7, 0.9, 45],
+    ];
+    return defs.map(([name, color, target, p, age], i) => {
+      const done = new Set();
+      // Recent days are kept denser so streaks look alive; today is left open for the visitor to tap.
+      for (let a = age; a >= 1; a--) {
+        const prob = a <= 9 ? Math.min(0.97, p + 0.25) : p;
+        if (rnd() < prob) done.add(keyOf(addDays(today, -a)));
+      }
+      if (i < 2) done.add(keyOf(today));
+      return { id: "sample-" + (i + 1), name, color, target, created: keyOf(addDays(today, -age)), archived: false, done };
+    });
+  }
+
+  /* ---------- stats ---------- */
+  const isDone = (h, d) => h.done.has(keyOf(d));
+  function weekCount(h, ws) { let c = 0; for (let i = 0; i < 7; i++) if (isDone(h, addDays(ws, i))) c++; return c; }
+  function currentStreak(h) {
+    if (h.target === 7) {
+      let d = isDone(h, today) ? today : addDays(today, -1), n = 0;
+      while (isDone(h, d) && n < 5000) { n++; d = addDays(d, -1); }
+      return n;
+    }
+    let ws = weekStart(today), n = 0;
+    if (weekCount(h, ws) < h.target) ws = addDays(ws, -7); // this week still in progress
+    while (weekCount(h, ws) >= h.target && n < 1000) { n++; ws = addDays(ws, -7); }
+    return n;
+  }
+  function bestStreak(h) {
+    const created = parseKey(h.created);
+    let best = 0, run = 0;
+    if (h.target === 7) {
+      for (const k of [...h.done].sort()) {
+        const prev = keyOf(addDays(parseKey(k), -1));
+        run = h.done.has(prev) ? run + 1 : 1;
+        if (run > best) best = run;
+      }
+      return best;
+    }
+    for (let ws = weekStart(created); ws <= today; ws = addDays(ws, 7)) {
+      run = weekCount(h, ws) >= h.target ? run + 1 : 0;
+      if (run > best) best = run;
+    }
+    return best;
+  }
+  function last30(h) { let c = 0; for (let i = 0; i < 30; i++) if (isDone(h, addDays(today, -i))) c++; return c; }
+  function last4Weeks(h) { let c = 0; const ws = weekStart(today); for (let i = 1; i <= 4; i++) if (weekCount(h, addDays(ws, -7 * i)) >= h.target) c++; return c; }
+
+  /* ---------- DOM helpers (text only, never innerHTML with data) ---------- */
+  const $ = (id) => document.getElementById(id);
+  function el(tag, attrs, ...kids) {
+    const n = document.createElement(tag);
+    if (attrs) for (const [k, v] of Object.entries(attrs)) {
+      if (v === false || v == null) continue;
+      if (k === "class") n.className = v;
+      else if (k === "text") n.textContent = v;
+      else if (k === "style") for (const [p, val] of Object.entries(v)) n.style.setProperty(p, val);
+      else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? "" : v);
+    }
+    for (const c of kids) if (c != null) n.append(c);
+    return n;
+  }
+  function svg(tag, attrs, ...kids) {
+    const n = document.createElementNS(SVG_NS, tag);
+    for (const [k, v] of Object.entries(attrs || {})) n.setAttribute(k, v);
+    for (const c of kids) n.append(c);
+    return n;
+  }
+  const checkIcon = () => svg("svg", { viewBox: "0 0 16 16", fill: "none", stroke: "currentColor", "stroke-width": "2.2", "stroke-linecap": "round", "stroke-linejoin": "round", "aria-hidden": "true" }, svg("path", { d: "m3.5 8.5 3 3 6-7" }));
+
+  // Tally marks: four uprights struck through by the fifth, then extra uprights for 6 and 7.
+  function tally(done, target, color) {
+    const marks = target, filled = Math.min(done, target);
+    const w = marks <= 4 ? marks * 5 + 2 : 26 + (marks - 5) * 5 + (marks > 5 ? 4 : 0);
+    const s = svg("svg", { class: "tally", width: String(w), height: "14", viewBox: `0 0 ${w} 14`, "aria-hidden": "true" });
+    const lines = [];
+    for (let i = 0; i < marks; i++) {
+      const x = i < 4 ? 3 + i * 5 : 28 + (i - 5) * 5;
+      lines.push(i === 4 ? { i, x1: 1, y1: 11, x2: 21, y2: 3 } : { i, x1: x, y1: 2, x2: x, y2: 12 });
+    }
+    // faint marks first so a pending strike never covers done marks
+    lines.sort((a, b) => (a.i < filled) - (b.i < filled));
+    for (const l of lines) {
+      s.append(svg("line", { x1: l.x1, y1: l.y1, x2: l.x2, y2: l.y2, stroke: l.i < filled ? color : "var(--line)", "stroke-width": "2", "stroke-linecap": "round" }));
+    }
+    return s;
+  }
+
+  /* ---------- render ---------- */
+  function fmt(d, opts) { return new Intl.DateTimeFormat(locale(), opts).format(d); }
+
+  function renderStatic() {
+    const t = lang();
+    document.documentElement.lang = state.lang;
+    $("langGroup").setAttribute("aria-label", t.language);
+    for (const b of $("langGroup").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.lang === state.lang));
+    for (const [id, label] of [["dataBtn", t.data], ["addBtn", t.newHabit], ["prevWeek", t.prevWeek], ["nextWeek", t.nextWeek]]) {
+      $(id).setAttribute("aria-label", label); $(id).title = label;
+    }
+    $("sampleText").textContent = t.sampleText;
+    $("clearSample").textContent = t.clearSample;
+    $("thisWeek").textContent = t.thisWeek;
+    $("privacyNote").textContent = storageOk ? t.privacy : t.storageOff;
+  }
+
+  function render() {
+
+    renderStatic();
+    const t = lang();
+    const active = state.habits.filter((h) => !h.archived);
+    const archived = state.habits.filter((h) => h.archived);
+
+    $("sampleNotice").hidden = !state.sample;
+
+    // summary
+    const doneToday = active.filter((h) => isDone(h, today)).length;
+    $("summary").hidden = active.length === 0;
+    $("summaryTitle").textContent = t.todayDone(doneToday, active.length);
+    $("summaryBar").style.width = active.length ? `${Math.round((doneToday / active.length) * 100)}%` : "0";
+
+    // week range
+    const ws = addDays(weekStart(today), weekOffset * 7);
+    const we = addDays(ws, 6);
+    const sameMonth = ws.getMonth() === we.getMonth();
+    $("rangeLabel").textContent = `${fmt(ws, sameMonth ? { day: "numeric" } : { day: "numeric", month: "short" })}–${fmt(we, { day: "numeric", month: "short" })}`.replace(/\./g, "");
+    $("nextWeek").disabled = weekOffset >= 0;
+    $("thisWeek").hidden = weekOffset === 0;
+
+    // day labels
+    const dayRow = $("dayRow");
+    dayRow.replaceChildren(el("span", { class: "spacer" }));
+    const days = [...Array(7)].map((_, i) => addDays(ws, i));
+    for (const d of days) {
+      const isT = keyOf(d) === keyOf(today);
+      dayRow.append(el("span", { class: "day-label" + (isT ? " is-today" : "") },
+        fmt(d, { weekday: "short" }).replace(".", ""), el("b", { class: "num", text: String(d.getDate()) })));
+    }
+
+    // habits
+    const list = $("habitList");
+    list.replaceChildren();
+    $("dayRow").hidden = active.length === 0;
+    if (!active.length) {
+      list.append(el("div", { class: "empty" },
+        el("h3", { text: t.emptyTitle }),
+        el("p", { text: t.emptyText }),
+        el("div", { class: "row" },
+          el("button", { type: "button", class: "btn primary", text: t.add, onclick: () => openHabitDialog(null) }),
+          el("button", { type: "button", class: "btn", text: t.loadSample, onclick: loadSample }))));
+    }
+    for (const h of active) list.append(renderHabit(h, days));
+
+    // archived
+    $("archived").hidden = archived.length === 0;
+    $("archivedSummary").textContent = t.archived(archived.length);
+    $("archivedList").replaceChildren(...archived.map((h) =>
+      el("li", null, el("span", { text: h.name }),
+        el("button", { type: "button", class: "btn", text: t.restore, onclick: () => { h.archived = false; save(); render(); } }))));
+  }
+
+  function renderHabit(h, days) {
+    const t = lang();
+    const hc = `var(--h-${h.color})`;
+    const ws0 = weekStart(today);
+    const thisWeek = weekCount(h, ws0);
+    const streak = currentStreak(h);
+    const open = openId === h.id;
+    const detailsId = "details-" + h.id;
+
+    const nameBtn = el("button", {
+      type: "button", class: "habit-name", "aria-expanded": String(open), "aria-controls": detailsId,
+      onclick: () => { openId = open ? null : h.id; render(); const b = document.querySelector(`[aria-controls="${CSS.escape(detailsId)}"]`); if (b) b.focus(); },
+    },
+      el("span", { class: "title", text: h.name }),
+      el("span", { class: "meta" },
+        el("span", { title: t.tallyLabel(thisWeek, h.target) }, tally(thisWeek, h.target, hc)),
+        el("span", { class: "visually-hidden", text: t.tallyLabel(thisWeek, h.target) + ". " }),
+        streak ? el("span", { class: "num streak", title: t.stCurrent, "aria-label": `${t.stCurrent}: ${streak} ${(h.target === 7 ? t.daysUnit : t.weeksUnit)(streak)}`, text: h.target === 7 ? t.streakDays(streak) : t.streakWeeks(streak) }) : null));
+
+    const grid = el("div", { class: "grid" }, nameBtn);
+    for (const d of days) {
+      const k = keyOf(d);
+      const future = d > today;
+      const on = h.done.has(k);
+      grid.append(el("button", {
+        type: "button", class: "cell" + (k === keyOf(today) ? " today" : ""),
+        "aria-pressed": String(on), disabled: future, "data-habit": h.id, "data-day": k,
+        "aria-label": t.cellLabel(h.name, fmt(d, { weekday: "long", day: "numeric", month: "long" }), on),
+        onclick: (e) => toggle(h, k, e.currentTarget),
+      }, checkIcon()));
+    }
+    const row = el("div", { class: "habit", style: { "--hc": hc } }, grid);
+    if (open) row.append(renderDetails(h, detailsId));
+    return row;
+  }
+
+  function renderDetails(h, id) {
+    const t = lang();
+    const cur = currentStreak(h), best = bestStreak(h);
+    const unit = h.target === 7 ? t.daysUnit : t.weeksUnit;
+    const stats = el("dl", { class: "stats" },
+      el("div", null, el("dt", { text: t.stCurrent }), el("dd", { text: `${cur} ${unit(cur)}` })),
+      el("div", null, el("dt", { text: t.stBest }), el("dd", { text: `${best} ${unit(best)}` })),
+      h.target === 7
+        ? el("div", null, el("dt", { text: t.stLast30 }), el("dd", { text: `${last30(h)} / 30` }))
+        : el("div", null, el("dt", { text: t.stLast4 }), el("dd", { text: `${last4Weeks(h)} / 4` })),
+      el("div", null, el("dt", { text: t.stTotal }), el("dd", { text: String(h.done.size) })));
+
+    // heatmap: 26 week columns (oldest left), Monday at top
+    const WEEKS = 26;
+    const first = addDays(weekStart(today), -7 * (WEEKS - 1));
+    const created = parseKey(h.created);
+    const heat = el("div", { class: "heat", style: { "--weeks": String(WEEKS) }, role: "img",
+      "aria-label": `${t.last26}: ${[...h.done].filter((k) => parseKey(k) >= first).length}` });
+    let lastMonth = -1;
+    for (let w = 0; w < WEEKS; w++) {
+      const ws = addDays(first, 7 * w);
+      const mDay = [...Array(7)].map((_, i) => addDays(ws, i)).find((d) => d.getDate() === 1);
+      const label = w === 0 ? ws : mDay;
+      if (label && label.getMonth() !== lastMonth && w <= WEEKS - 3) {
+        lastMonth = label.getMonth();
+        heat.append(el("span", { class: "m", style: { "grid-column": String(w + 1) }, text: fmt(label, { month: "short" }).replace(".", "") }));
+      }
+    }
+    for (let w = 0; w < WEEKS; w++) {
+      for (let i = 0; i < 7; i++) {
+        const d = addDays(first, 7 * w + i);
+        const cls = d > today || d < created ? "d out" : (isDone(h, d) ? "d on" : "d");
+        heat.append(el("span", { class: cls, style: { "grid-column": String(w + 1), "grid-row": String(i + 2) } }));
+      }
+    }
+
+    return el("div", { class: "details", id },
+      stats,
+      el("div", { class: "heat-wrap" },
+        el("div", { class: "heat-cap", text: `${t.last26} · ${h.target === 7 ? t.everyDay : t.perWeek(h.target)}` }),
+        heat),
+      el("div", { class: "actions" },
+        el("button", { type: "button", class: "btn", text: t.edit, onclick: () => openHabitDialog(h.id) })));
+  }
+
+  /* ---------- actions ---------- */
+  function toggle(h, k, btn) {
+    if (h.done.has(k)) h.done.delete(k); else h.done.add(k);
+    if (k < h.created) h.created = k;
+    save();
+    render();
+    // keep keyboard focus on the same cell after re-render
+    const same = document.querySelector(`.cell[data-habit="${CSS.escape(h.id)}"][data-day="${k}"]`);
+    if (same) same.focus({ preventScroll: true });
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const n = $("toast");
+    n.textContent = msg; n.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { n.hidden = true; }, 2600);
+  }
+
+  function armed(btn, label, onConfirm) {
+    // two-step confirmation built into the button itself
+    if (btn.dataset.armed === "1") { disarm(btn); onConfirm(); return; }
+    btn.dataset.armed = "1"; btn.dataset.orig = btn.textContent; btn.textContent = label; btn.classList.add("armed");
+    clearTimeout(btn._t); btn._t = setTimeout(() => disarm(btn), 4000);
+  }
+  function disarm(btn) {
+    if (btn.dataset.armed !== "1") return;
+    btn.dataset.armed = ""; btn.textContent = btn.dataset.orig; btn.classList.remove("armed");
+  }
+
+  function loadSample() {
+    state.habits = sampleHabits(state.lang); state.sample = true; openId = null; weekOffset = 0;
+    save(); render(); toast(lang().sampleLoaded);
+  }
+
+  /* ---------- habit dialog ---------- */
+  function openHabitDialog(id) {
+    const t = lang();
+    editingId = id;
+    const h = id ? state.habits.find((x) => x.id === id) : null;
+    $("habitDlgTitle").textContent = h ? t.editHabit : t.newHabit;
+    $("nameLabel").textContent = t.name;
+    $("habitName").value = h ? h.name : "";
+    $("habitName").placeholder = t.namePh;
+    $("nameErr").hidden = true; $("nameErr").textContent = t.nameErr;
+    $("targetLegend").textContent = t.target;
+    $("colorLegend").textContent = t.color;
+    $("saveHabit").textContent = h ? t.save : t.add;
+    $("cancelHabit").textContent = t.cancel;
+    $("archiveBtn").textContent = t.archive;
+    $("deleteBtn").textContent = t.del; disarm($("deleteBtn"));
+    $("editOnly").style.display = h ? "flex" : "none";
+
+    const tp = $("targetPicker"); tp.replaceChildren();
+    const curT = h ? h.target : 7;
+    for (let n = 1; n <= 7; n++) {
+      tp.append(el("label", null,
+        el("input", { type: "radio", name: "target", value: String(n), id: "target-" + n, checked: n === curT,
+          "aria-label": n === 7 ? t.everyDay : t.perWeek(n), onchange: () => { $("targetHint").textContent = t.targetHint(n); } }),
+        el("span", { "aria-hidden": "true", class: "num", text: String(n) })));
+    }
+    $("targetHint").textContent = t.targetHint(curT);
+
+    const cp = $("colorPicker"); cp.replaceChildren();
+    const used = new Set(state.habits.filter((x) => !x.archived).map((x) => x.color));
+    const curC = h ? h.color : (COLORS.find((c) => !used.has(c)) || COLORS[0]);
+    for (const c of COLORS) {
+      cp.append(el("label", { style: { "--hc": `var(--h-${c})` }, title: t.colorNames[c] },
+        el("input", { type: "radio", name: "color", value: c, id: "color-" + c, checked: c === curC, "aria-label": t.colorNames[c] }),
+        el("span", { "aria-hidden": "true" })));
+    }
+    $("habitDialog").showModal();
+    $("habitName").focus();
+  }
+
+  $("habitForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const name = $("habitName").value.replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 60);
+    if (!name) { $("nameErr").hidden = false; $("habitName").focus(); return; }
+    const fd = new FormData($("habitForm"));
+    const target = Math.min(7, Math.max(1, parseInt(fd.get("target"), 10) || 7));
+    const color = COLORS.includes(fd.get("color")) ? fd.get("color") : "moss";
+    const t = lang();
+    if (editingId) {
+      const h = state.habits.find((x) => x.id === editingId);
+      if (h) Object.assign(h, { name, target, color });
+      toast(t.saved);
+    } else {
+      const h = { id: uid(), name, target, color, created: keyOf(today), archived: false, done: new Set() };
+      state.habits.push(h);
+      openId = null;
+    }
+    save(); $("habitDialog").close(); render();
+  });
+  $("cancelHabit").addEventListener("click", () => $("habitDialog").close());
+  $("archiveBtn").addEventListener("click", () => {
+    const h = state.habits.find((x) => x.id === editingId);
+    if (h) { h.archived = true; openId = null; save(); }
+    $("habitDialog").close(); render(); toast(lang().archivedToast);
+  });
+  $("deleteBtn").addEventListener("click", (e) => armed(e.currentTarget, lang().delConfirm, () => {
+    state.habits = state.habits.filter((x) => x.id !== editingId);
+    openId = null; save(); $("habitDialog").close(); render(); toast(lang().deleted);
+  }));
+  $("habitName").addEventListener("input", () => { $("nameErr").hidden = true; });
+
+  /* ---------- data dialog ---------- */
+  function openDataDialog() { fillDataDialog(); $("dataDialog").showModal(); }
+  function fillDataDialog() {
+    const t = lang();
+    $("dataDlgTitle").textContent = t.data;
+    $("exportTitle").textContent = t.exportTitle; $("exportText").textContent = t.exportText;
+    $("exportBoxLabel").textContent = t.exportTitle; $("importBoxLabel").textContent = t.importTitle;
+    $("exportBox").value = JSON.stringify(serialize(), null, 2);
+    $("copyBtn").textContent = t.copy; $("downloadBtn").textContent = t.download;
+    $("importTitle").textContent = t.importTitle; $("importText").textContent = t.importText;
+    $("importBox").value = ""; $("importFile").value = ""; $("importErr").hidden = true;
+    $("exportBox").hidden = true; $("importFileName").textContent = ""; $("importFileLabel").textContent = t.chooseFile;
+    $("importBox").placeholder = t.pastePh;
+    $("importBtn").textContent = t.importBtn; disarm($("importBtn"));
+    $("resetTitle").textContent = t.resetTitle;
+    $("loadSampleBtn").textContent = t.loadSample;
+    $("clearAllBtn").textContent = t.clearAll; disarm($("clearAllBtn"));
+    $("closeData").textContent = t.close;
+  }
+  $("dataBtn").addEventListener("click", openDataDialog);
+  $("closeData").addEventListener("click", () => $("dataDialog").close());
+  $("copyBtn").addEventListener("click", () => {
+    const box = $("exportBox");
+    const fallback = () => { box.hidden = false; box.focus(); box.select(); toast(lang().copyFail); };
+    try {
+      navigator.clipboard.writeText(box.value).then(() => toast(lang().copied), fallback);
+    } catch (e) { fallback(); }
+  });
+  $("downloadBtn").addEventListener("click", () => {
+    try {
+      const blob = new Blob([$("exportBox").value], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = el("a", { href: url, download: `habit-tracker-${keyOf(today)}.json` });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (e) { toast(lang().downloadFail); }
+  });
+  $("importFile").addEventListener("change", (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (f.size > 5_000_000) { showImportErr(lang().importBad); return; }
+    const r = new FileReader();
+    $("importFileName").textContent = f.name;
+    r.onload = () => { $("importBox").value = String(r.result || ""); $("importErr").hidden = true; };
+    r.readAsText(f);
+  });
+  function showImportErr(msg) { $("importErr").textContent = msg; $("importErr").hidden = false; }
+  $("importBtn").addEventListener("click", (e) => {
+    const t = lang();
+    const txt = $("importBox").value.trim();
+    if (!txt) { showImportErr(t.importEmpty); return; }
+    let parsed = null;
+    try { parsed = sanitize(JSON.parse(txt)); } catch (err) { parsed = null; }
+    if (!parsed) { showImportErr(t.importBad); return; }
+    $("importErr").hidden = true;
+    armed(e.currentTarget, t.importArmed, () => {
+      state.habits = parsed.habits; state.sample = parsed.sample; openId = null; weekOffset = 0;
+      save(); $("dataDialog").close(); render(); toast(lang().imported(parsed.habits.length));
+    });
+  });
+  $("loadSampleBtn").addEventListener("click", () => { $("dataDialog").close(); loadSample(); });
+  $("clearAllBtn").addEventListener("click", (e) => armed(e.currentTarget, lang().clearAllConfirm, () => {
+    state.habits = []; state.sample = false; openId = null; weekOffset = 0;
+    save(); $("dataDialog").close(); render(); toast(lang().cleared);
+  }));
+
+  /* ---------- top-level controls ---------- */
+  $("langGroup").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-lang]");
+    if (!b || b.dataset.lang === state.lang) return;
+    // swap example habits to the new language so the demo reads naturally
+    const swapSample = state.sample && state.habits.every((h) => h.id.startsWith("sample-"));
+    state.lang = b.dataset.lang;
+    if (swapSample) {
+      const fresh = sampleHabits(state.lang);
+      for (const h of state.habits) { const f = fresh.find((x) => x.id === h.id); if (f) h.name = f.name; }
+    }
+    save(); render();
+    if ($("dataDialog").open) fillDataDialog();
+  });
+  $("prevWeek").addEventListener("click", () => { weekOffset--; render(); });
+  $("nextWeek").addEventListener("click", () => { if (weekOffset < 0) { weekOffset++; render(); } });
+  $("thisWeek").addEventListener("click", () => { weekOffset = 0; render(); });
+  $("addBtn").addEventListener("click", () => openHabitDialog(null));
+  $("clearSample").addEventListener("click", () => {
+    state.habits = state.habits.filter((h) => !h.id.startsWith("sample-")); state.sample = false; openId = null;
+    save(); render();
+  });
+  // refresh "today" when the page comes back after midnight
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState !== "visible") return;
+    const now = startOfDay(new Date());
+    if (keyOf(now) !== keyOf(today)) { today = now; render(); }
+  });
+
+  load();
+  render();
+})();
+</script>
+
+</body>
+</html>
