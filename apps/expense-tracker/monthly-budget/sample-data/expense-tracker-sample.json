@@ -1,0 +1,1460 @@
+{
+  "app": "expense-tracker-monthly-budget",
+  "format": 1,
+  "exported": "2026-11-05T00:00:00.000Z",
+  "currency": "EUR",
+  "budget": 170000,
+  "catBudgets": {
+    "groceries": 32500,
+    "dining": 13800,
+    "fun": 6300
+  },
+  "custom": [],
+  "expenses": [
+    {
+      "id": "19hxcgs128lxmo",
+      "date": "2026-06-01",
+      "amount": 60000,
+      "cat": "housing",
+      "note": "Rent",
+      "fixed": 1
+    },
+    {
+      "id": "17ys8dy1hr1vqp",
+      "date": "2026-06-01",
+      "amount": 2800,
+      "cat": "transport",
+      "note": "Monthly transit pass",
+      "fixed": 1
+    },
+    {
+      "id": "7vpgvf5u41yd",
+      "date": "2026-06-01",
+      "amount": 1601,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1kius4krru3ea",
+      "date": "2026-06-02",
+      "amount": 856,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "8ytgyqkjuj7v",
+      "date": "2026-06-02",
+      "amount": 325,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "pa0k2q1di4zbx",
+      "date": "2026-06-03",
+      "amount": 1156,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "vzszoi1vtipex",
+      "date": "2026-06-03",
+      "amount": 1162,
+      "cat": "health",
+      "note": "Pharmacy"
+    },
+    {
+      "id": "oozri41wd064w",
+      "date": "2026-06-04",
+      "amount": 1064,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1kc6jpvf8cbh",
+      "date": "2026-06-05",
+      "amount": 1225,
+      "cat": "subs",
+      "note": "Video streaming",
+      "fixed": 1
+    },
+    {
+      "id": "15nxn5tgzedem",
+      "date": "2026-06-05",
+      "amount": 1788,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1ex2wi710ofdgx",
+      "date": "2026-06-06",
+      "amount": 7095,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "5kvn6m1j7iakf",
+      "date": "2026-06-08",
+      "amount": 1564,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "bnni9aofqz9i",
+      "date": "2026-06-08",
+      "amount": 5553,
+      "cat": "transport",
+      "note": "Taxi"
+    },
+    {
+      "id": "22frf1rlfpm4",
+      "date": "2026-06-08",
+      "amount": 5088,
+      "cat": "shopping",
+      "note": "Clothes"
+    },
+    {
+      "id": "61h1qfhhu9qr",
+      "date": "2026-06-10",
+      "amount": 4646,
+      "cat": "utilities",
+      "note": "Electricity",
+      "fixed": 1
+    },
+    {
+      "id": "ym6q5p1r2wwix",
+      "date": "2026-06-10",
+      "amount": 2187,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "lubzg71g65brl",
+      "date": "2026-06-11",
+      "amount": 658,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "d8tzwip88q0v",
+      "date": "2026-06-12",
+      "amount": 600,
+      "cat": "subs",
+      "note": "Music streaming",
+      "fixed": 1
+    },
+    {
+      "id": "g4hipxh525jj",
+      "date": "2026-06-12",
+      "amount": 1600,
+      "cat": "health",
+      "note": "Pharmacy"
+    },
+    {
+      "id": "1uujd5b1o4c64z",
+      "date": "2026-06-13",
+      "amount": 6824,
+      "cat": "groceries",
+      "note": "Farmers market"
+    },
+    {
+      "id": "ngq1etn0h4mc",
+      "date": "2026-06-14",
+      "amount": 1264,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "mn68ef1sm34sd",
+      "date": "2026-06-14",
+      "amount": 983,
+      "cat": "health",
+      "note": "Pharmacy"
+    },
+    {
+      "id": "b1k3jk3vfdl0",
+      "date": "2026-06-16",
+      "amount": 1883,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "36g89d5w6j4x",
+      "date": "2026-06-17",
+      "amount": 2060,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "155b3e71fsi2sd",
+      "date": "2026-06-18",
+      "amount": 2225,
+      "cat": "utilities",
+      "note": "Internet and phone",
+      "fixed": 1
+    },
+    {
+      "id": "1sn7chd1tv90qx",
+      "date": "2026-06-18",
+      "amount": 705,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "15lza3s1hlatgc",
+      "date": "2026-06-18",
+      "amount": 7630,
+      "cat": "shopping",
+      "note": "Clothes"
+    },
+    {
+      "id": "1axmnlccoud23",
+      "date": "2026-06-19",
+      "amount": 6546,
+      "cat": "shopping",
+      "note": "Books"
+    },
+    {
+      "id": "17a22p6bfugu",
+      "date": "2026-06-20",
+      "amount": 250,
+      "cat": "subs",
+      "note": "Cloud storage",
+      "fixed": 1
+    },
+    {
+      "id": "1m1rn3b1x6w4gl",
+      "date": "2026-06-20",
+      "amount": 5318,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "vj7zje17mf4pn",
+      "date": "2026-06-21",
+      "amount": 6704,
+      "cat": "transport",
+      "note": "Taxi"
+    },
+    {
+      "id": "hr1gz01lskqqy",
+      "date": "2026-06-23",
+      "amount": 1743,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1ybn1q0x718v3",
+      "date": "2026-06-23",
+      "amount": 1303,
+      "cat": "dining",
+      "note": "Pizza night"
+    },
+    {
+      "id": "13r42cygkumdl",
+      "date": "2026-06-24",
+      "amount": 523,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "100ku1i1rpk5kx",
+      "date": "2026-06-24",
+      "amount": 6189,
+      "cat": "transport",
+      "note": "Taxi"
+    },
+    {
+      "id": "15xwi5rw3p3j1",
+      "date": "2026-06-26",
+      "amount": 761,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "ir6af71urjqjj",
+      "date": "2026-06-27",
+      "amount": 8189,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "1iikzcauaya1k",
+      "date": "2026-06-30",
+      "amount": 783,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "atjiaz1g8gxy0",
+      "date": "2026-07-01",
+      "amount": 60000,
+      "cat": "housing",
+      "note": "Rent",
+      "fixed": 1
+    },
+    {
+      "id": "n69r10od54th",
+      "date": "2026-07-01",
+      "amount": 2800,
+      "cat": "transport",
+      "note": "Monthly transit pass",
+      "fixed": 1
+    },
+    {
+      "id": "ttbgiq1dwe1cy",
+      "date": "2026-07-02",
+      "amount": 533,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "ou7fr2d8c9z7",
+      "date": "2026-07-04",
+      "amount": 8125,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "19qmgu1fujvj1",
+      "date": "2026-07-05",
+      "amount": 1225,
+      "cat": "subs",
+      "note": "Video streaming",
+      "fixed": 1
+    },
+    {
+      "id": "1qd8rmr1czstku",
+      "date": "2026-07-07",
+      "amount": 1915,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "1kpxf4fx4mg33",
+      "date": "2026-07-07",
+      "amount": 5155,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "1aftl691wsl4h5",
+      "date": "2026-07-08",
+      "amount": 973,
+      "cat": "dining",
+      "note": "Lunch"
+    },
+    {
+      "id": "1c4x0b11d2w9ej",
+      "date": "2026-07-10",
+      "amount": 4656,
+      "cat": "utilities",
+      "note": "Electricity",
+      "fixed": 1
+    },
+    {
+      "id": "1wfcp9wbyuygy",
+      "date": "2026-07-10",
+      "amount": 311,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1psdkhb13pt3yu",
+      "date": "2026-07-11",
+      "amount": 7395,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "xnxi1gcegczc",
+      "date": "2026-07-11",
+      "amount": 6471,
+      "cat": "transport",
+      "note": "Fuel"
+    },
+    {
+      "id": "tt3cbdja8k6m",
+      "date": "2026-07-12",
+      "amount": 600,
+      "cat": "subs",
+      "note": "Music streaming",
+      "fixed": 1
+    },
+    {
+      "id": "wjfan310jdcfl",
+      "date": "2026-07-12",
+      "amount": 403,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "1cyoc7v1e6mebc",
+      "date": "2026-07-12",
+      "amount": 3510,
+      "cat": "fun",
+      "note": "Board game"
+    },
+    {
+      "id": "6026b4y3jgww",
+      "date": "2026-07-14",
+      "amount": 2164,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "ksxksose52fy",
+      "date": "2026-07-15",
+      "amount": 2356,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "1y4nb2j2oexti",
+      "date": "2026-07-16",
+      "amount": 1506,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "afpy5u1c7efqn",
+      "date": "2026-07-17",
+      "amount": 4420,
+      "cat": "shopping",
+      "note": "Household items"
+    },
+    {
+      "id": "6ixkcl70r8il",
+      "date": "2026-07-18",
+      "amount": 2225,
+      "cat": "utilities",
+      "note": "Internet and phone",
+      "fixed": 1
+    },
+    {
+      "id": "ofu25lbs5k1q",
+      "date": "2026-07-18",
+      "amount": 4705,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "orvck71t8jk2i",
+      "date": "2026-07-18",
+      "amount": 1796,
+      "cat": "dining",
+      "note": "Lunch"
+    },
+    {
+      "id": "13joxq91bxtylk",
+      "date": "2026-07-19",
+      "amount": 1748,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "5xrxq2fsf889",
+      "date": "2026-07-19",
+      "amount": 1595,
+      "cat": "fun",
+      "note": "Board game"
+    },
+    {
+      "id": "3k6i8lpkghej",
+      "date": "2026-07-20",
+      "amount": 250,
+      "cat": "subs",
+      "note": "Cloud storage",
+      "fixed": 1
+    },
+    {
+      "id": "q18fw61g61235",
+      "date": "2026-07-20",
+      "amount": 1753,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "4ddhqiry7m8m",
+      "date": "2026-07-21",
+      "amount": 1594,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "x3p9q81wbb7gv",
+      "date": "2026-07-24",
+      "amount": 1326,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1yn2x0y1lg5zo",
+      "date": "2026-07-25",
+      "amount": 6583,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "1ufbde01lolgv",
+      "date": "2026-07-26",
+      "amount": 533,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "o4yc6vtsua84",
+      "date": "2026-07-27",
+      "amount": 1928,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "1sexu081wu4do1",
+      "date": "2026-07-28",
+      "amount": 383,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1je9sv01uskw1z",
+      "date": "2026-07-28",
+      "amount": 5539,
+      "cat": "transport",
+      "note": "Fuel"
+    },
+    {
+      "id": "146kgiztf9tt1",
+      "date": "2026-07-30",
+      "amount": 489,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "95qfv42uhjb9",
+      "date": "2026-08-01",
+      "amount": 60000,
+      "cat": "housing",
+      "note": "Rent",
+      "fixed": 1
+    },
+    {
+      "id": "1bvmtte1jd6elx",
+      "date": "2026-08-01",
+      "amount": 2800,
+      "cat": "transport",
+      "note": "Monthly transit pass",
+      "fixed": 1
+    },
+    {
+      "id": "13nd8c74znku6",
+      "date": "2026-08-01",
+      "amount": 5381,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "em55os1dlp9q3",
+      "date": "2026-08-01",
+      "amount": 4980,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "18myh96wzvgm6",
+      "date": "2026-08-03",
+      "amount": 346,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1tygjth1jhquu6",
+      "date": "2026-08-03",
+      "amount": 519,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "fynqsv16vya1x",
+      "date": "2026-08-05",
+      "amount": 1225,
+      "cat": "subs",
+      "note": "Video streaming",
+      "fixed": 1
+    },
+    {
+      "id": "1gmlajo16ezrjo",
+      "date": "2026-08-07",
+      "amount": 1132,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1k7zb1xugn6wq",
+      "date": "2026-08-07",
+      "amount": 230,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "14kzmcm1qepa6l",
+      "date": "2026-08-08",
+      "amount": 7457,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "1u6wkn8fkbbcb",
+      "date": "2026-08-08",
+      "amount": 1075,
+      "cat": "dining",
+      "note": "Pizza night"
+    },
+    {
+      "id": "149x8g51sjfj74",
+      "date": "2026-08-10",
+      "amount": 5665,
+      "cat": "utilities",
+      "note": "Electricity",
+      "fixed": 1
+    },
+    {
+      "id": "p746wlj2tp8s",
+      "date": "2026-08-10",
+      "amount": 2051,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "y4a47d1ji5yg0",
+      "date": "2026-08-10",
+      "amount": 1603,
+      "cat": "dining",
+      "note": "Pizza night"
+    },
+    {
+      "id": "1mc1x8z193tsbx",
+      "date": "2026-08-11",
+      "amount": 1265,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1bcmg60n6h1gk",
+      "date": "2026-08-11",
+      "amount": 319,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "fznoe411wxauy",
+      "date": "2026-08-12",
+      "amount": 600,
+      "cat": "subs",
+      "note": "Music streaming",
+      "fixed": 1
+    },
+    {
+      "id": "41cteexiizia",
+      "date": "2026-08-12",
+      "amount": 547,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1jrzue1bnphqd",
+      "date": "2026-08-13",
+      "amount": 1302,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "14uv1qhdg3uvh",
+      "date": "2026-08-14",
+      "amount": 5275,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "ei349x6vkxr2",
+      "date": "2026-08-15",
+      "amount": 7004,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "1djuix21l8w7tv",
+      "date": "2026-08-15",
+      "amount": 4112,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "7agn62po6rq",
+      "date": "2026-08-15",
+      "amount": 1877,
+      "cat": "health",
+      "note": "Pharmacy"
+    },
+    {
+      "id": "msiq4ru8sa6z",
+      "date": "2026-08-17",
+      "amount": 800,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "9n2akz1il6pfa",
+      "date": "2026-08-18",
+      "amount": 2225,
+      "cat": "utilities",
+      "note": "Internet and phone",
+      "fixed": 1
+    },
+    {
+      "id": "lvaell1pkkrox",
+      "date": "2026-08-18",
+      "amount": 391,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "10hxl4y1nwmsgs",
+      "date": "2026-08-19",
+      "amount": 1620,
+      "cat": "shopping",
+      "note": "Books"
+    },
+    {
+      "id": "ncwfpn1gy6nj",
+      "date": "2026-08-20",
+      "amount": 250,
+      "cat": "subs",
+      "note": "Cloud storage",
+      "fixed": 1
+    },
+    {
+      "id": "bhko511vz1v4t",
+      "date": "2026-08-20",
+      "amount": 1560,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "1rwbc0drw3lbi",
+      "date": "2026-08-20",
+      "amount": 5180,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "92khs17qvwqc",
+      "date": "2026-08-21",
+      "amount": 381,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "1a3eja71cfsmki",
+      "date": "2026-08-22",
+      "amount": 6091,
+      "cat": "groceries",
+      "note": "Farmers market"
+    },
+    {
+      "id": "13hjy5p10gm6ou",
+      "date": "2026-08-22",
+      "amount": 2818,
+      "cat": "shopping",
+      "note": "Books"
+    },
+    {
+      "id": "1tgl9xa1nhqjet",
+      "date": "2026-08-23",
+      "amount": 6377,
+      "cat": "transport",
+      "note": "Taxi"
+    },
+    {
+      "id": "1g3keppabcq3d",
+      "date": "2026-08-24",
+      "amount": 1760,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "n6m3qvihsycf",
+      "date": "2026-08-24",
+      "amount": 499,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "108qplxfmk3jc",
+      "date": "2026-08-24",
+      "amount": 6198,
+      "cat": "transport",
+      "note": "Fuel"
+    },
+    {
+      "id": "2z2dxr1gciebj",
+      "date": "2026-08-25",
+      "amount": 478,
+      "cat": "health",
+      "note": "Pharmacy"
+    },
+    {
+      "id": "68x3c41uhf5al",
+      "date": "2026-08-28",
+      "amount": 6215,
+      "cat": "shopping",
+      "note": "Books"
+    },
+    {
+      "id": "1s949yz171hodw",
+      "date": "2026-08-29",
+      "amount": 8233,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "1vdco411fut59u",
+      "date": "2026-08-30",
+      "amount": 1194,
+      "cat": "transport",
+      "note": "Fuel"
+    },
+    {
+      "id": "1nsv37q16mxmr3",
+      "date": "2026-09-01",
+      "amount": 60000,
+      "cat": "housing",
+      "note": "Rent",
+      "fixed": 1
+    },
+    {
+      "id": "23ik9y1gknwea",
+      "date": "2026-09-01",
+      "amount": 2800,
+      "cat": "transport",
+      "note": "Monthly transit pass",
+      "fixed": 1
+    },
+    {
+      "id": "g8nielr50kez",
+      "date": "2026-09-01",
+      "amount": 1344,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "nq3nz1t2lqz4",
+      "date": "2026-09-02",
+      "amount": 1610,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1nm2xn81fp3q1s",
+      "date": "2026-09-03",
+      "amount": 919,
+      "cat": "fun",
+      "note": "Cinema"
+    },
+    {
+      "id": "elabf5l50ay",
+      "date": "2026-09-05",
+      "amount": 1225,
+      "cat": "subs",
+      "note": "Video streaming",
+      "fixed": 1
+    },
+    {
+      "id": "113u8i01ip4rum",
+      "date": "2026-09-05",
+      "amount": 7904,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "1398azi1wbud04",
+      "date": "2026-09-05",
+      "amount": 1749,
+      "cat": "dining",
+      "note": "Pizza night"
+    },
+    {
+      "id": "10atuy739151g",
+      "date": "2026-09-06",
+      "amount": 745,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1y7k251lr19b9",
+      "date": "2026-09-07",
+      "amount": 3143,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "lnau3u63l1ow",
+      "date": "2026-09-08",
+      "amount": 3845,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "fa3j7gzb3krd",
+      "date": "2026-09-09",
+      "amount": 2107,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "3jz2t51ci54r9",
+      "date": "2026-09-10",
+      "amount": 5555,
+      "cat": "utilities",
+      "note": "Electricity",
+      "fixed": 1
+    },
+    {
+      "id": "1hij80g1t6yv3i",
+      "date": "2026-09-12",
+      "amount": 600,
+      "cat": "subs",
+      "note": "Music streaming",
+      "fixed": 1
+    },
+    {
+      "id": "ft11r8ze4scp",
+      "date": "2026-09-12",
+      "amount": 6033,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "1trtnlwza2wv3",
+      "date": "2026-09-12",
+      "amount": 5147,
+      "cat": "shopping",
+      "note": "Birthday gift"
+    },
+    {
+      "id": "1atw615q7p6cw",
+      "date": "2026-09-13",
+      "amount": 808,
+      "cat": "dining",
+      "note": "Pizza night"
+    },
+    {
+      "id": "1qq0mbn14llxrr",
+      "date": "2026-09-14",
+      "amount": 1481,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1wftq9p155wkt",
+      "date": "2026-09-14",
+      "amount": 4837,
+      "cat": "transport",
+      "note": "Taxi"
+    },
+    {
+      "id": "13ylin11p7900",
+      "date": "2026-09-14",
+      "amount": 5731,
+      "cat": "travel",
+      "note": "Train tickets"
+    },
+    {
+      "id": "15je2g01ryp41a",
+      "date": "2026-09-14",
+      "amount": 16288,
+      "cat": "travel",
+      "note": "Hotel, two nights"
+    },
+    {
+      "id": "1ys7j71w7zzzz",
+      "date": "2026-09-14",
+      "amount": 7200,
+      "cat": "health",
+      "note": "Dentist"
+    },
+    {
+      "id": "1qwe9ul1t4keuz",
+      "date": "2026-09-15",
+      "amount": 949,
+      "cat": "dining",
+      "note": "Lunch"
+    },
+    {
+      "id": "1elq5e01vfv5nv",
+      "date": "2026-09-16",
+      "amount": 1777,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "2erehn1naagj6",
+      "date": "2026-09-17",
+      "amount": 852,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "q287b2nww3aw",
+      "date": "2026-09-17",
+      "amount": 1274,
+      "cat": "health",
+      "note": "Pharmacy"
+    },
+    {
+      "id": "lynin1syjwin",
+      "date": "2026-09-18",
+      "amount": 2225,
+      "cat": "utilities",
+      "note": "Internet and phone",
+      "fixed": 1
+    },
+    {
+      "id": "1b6k2fbeu83ow",
+      "date": "2026-09-18",
+      "amount": 2312,
+      "cat": "fun",
+      "note": "Board game"
+    },
+    {
+      "id": "1pfh8gemiiiqz",
+      "date": "2026-09-19",
+      "amount": 7947,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "18ygzo81nm9ifi",
+      "date": "2026-09-19",
+      "amount": 482,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "139apot1alj7pb",
+      "date": "2026-09-20",
+      "amount": 250,
+      "cat": "subs",
+      "note": "Cloud storage",
+      "fixed": 1
+    },
+    {
+      "id": "1daredd1smizsk",
+      "date": "2026-09-20",
+      "amount": 1684,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "eakzl4z0wyuh",
+      "date": "2026-09-20",
+      "amount": 5546,
+      "cat": "shopping",
+      "note": "Household items"
+    },
+    {
+      "id": "gwt1a98a049d",
+      "date": "2026-09-21",
+      "amount": 939,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "oxdyzj10oscd",
+      "date": "2026-09-22",
+      "amount": 2025,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "104e30nap1k3c",
+      "date": "2026-09-23",
+      "amount": 1044,
+      "cat": "transport",
+      "note": "Fuel"
+    },
+    {
+      "id": "1kwibnw1fggn3b",
+      "date": "2026-09-24",
+      "amount": 1737,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "rmk3h11tfrzx9",
+      "date": "2026-09-26",
+      "amount": 6272,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "1no3d0axkqtz8",
+      "date": "2026-09-26",
+      "amount": 4771,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "vrgqd51h2i1dk",
+      "date": "2026-09-27",
+      "amount": 4870,
+      "cat": "shopping",
+      "note": "Birthday gift"
+    },
+    {
+      "id": "15mhnfl120jl7o",
+      "date": "2026-09-28",
+      "amount": 7617,
+      "cat": "shopping",
+      "note": "Birthday gift"
+    },
+    {
+      "id": "10gockc1m53mtf",
+      "date": "2026-09-29",
+      "amount": 1130,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "t1t5uv14bllj3",
+      "date": "2026-09-30",
+      "amount": 724,
+      "cat": "health",
+      "note": "Pharmacy"
+    },
+    {
+      "id": "1m0j309j1oafe",
+      "date": "2026-10-01",
+      "amount": 60000,
+      "cat": "housing",
+      "note": "Rent",
+      "fixed": 1
+    },
+    {
+      "id": "6t8tlx1x1yrx0",
+      "date": "2026-10-01",
+      "amount": 2800,
+      "cat": "transport",
+      "note": "Monthly transit pass",
+      "fixed": 1
+    },
+    {
+      "id": "1oswvodjo3xd8",
+      "date": "2026-10-03",
+      "amount": 7750,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "1yrup4y10e8bx6",
+      "date": "2026-10-05",
+      "amount": 1225,
+      "cat": "subs",
+      "note": "Video streaming",
+      "fixed": 1
+    },
+    {
+      "id": "kzjhcen1oafu",
+      "date": "2026-10-06",
+      "amount": 1072,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "1hiv1gwlof50t",
+      "date": "2026-10-06",
+      "amount": 7577,
+      "cat": "shopping",
+      "note": "Household items"
+    },
+    {
+      "id": "zpjomwp8qrwy",
+      "date": "2026-10-06",
+      "amount": 5273,
+      "cat": "fun",
+      "note": "Concert tickets"
+    },
+    {
+      "id": "m99pq15n9fjk",
+      "date": "2026-10-09",
+      "amount": 1550,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "wz94gqgu6g9r",
+      "date": "2026-10-09",
+      "amount": 450,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "11ihwm1wparmg",
+      "date": "2026-10-10",
+      "amount": 5004,
+      "cat": "utilities",
+      "note": "Electricity",
+      "fixed": 1
+    },
+    {
+      "id": "11oaxzdr2hd13",
+      "date": "2026-10-10",
+      "amount": 6669,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "99tpvs1xekvsj",
+      "date": "2026-10-11",
+      "amount": 1010,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "1l223t11rjgy2n",
+      "date": "2026-10-12",
+      "amount": 600,
+      "cat": "subs",
+      "note": "Music streaming",
+      "fixed": 1
+    },
+    {
+      "id": "1di0et61c5ol6a",
+      "date": "2026-10-16",
+      "amount": 531,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "14d0xu9neqmot",
+      "date": "2026-10-17",
+      "amount": 5912,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "13l5krwo0du1",
+      "date": "2026-10-17",
+      "amount": 1486,
+      "cat": "dining",
+      "note": "Lunch"
+    },
+    {
+      "id": "wg016ocvumhl",
+      "date": "2026-10-18",
+      "amount": 2225,
+      "cat": "utilities",
+      "note": "Internet and phone",
+      "fixed": 1
+    },
+    {
+      "id": "1khzor682wqdr",
+      "date": "2026-10-18",
+      "amount": 2361,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "78fggn41tfwn",
+      "date": "2026-10-20",
+      "amount": 250,
+      "cat": "subs",
+      "note": "Cloud storage",
+      "fixed": 1
+    },
+    {
+      "id": "17a3j321yvtc0q",
+      "date": "2026-10-20",
+      "amount": 3437,
+      "cat": "fun",
+      "note": "Board game"
+    },
+    {
+      "id": "9kf4wp19d75bu",
+      "date": "2026-10-21",
+      "amount": 2861,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "1ius73j1ttg1uh",
+      "date": "2026-10-22",
+      "amount": 391,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "1wqjcuextoaw1",
+      "date": "2026-10-22",
+      "amount": 1621,
+      "cat": "health",
+      "note": "Pharmacy"
+    },
+    {
+      "id": "15e0dnxfh9m0q",
+      "date": "2026-10-23",
+      "amount": 533,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "14fveiw1wh2zgk",
+      "date": "2026-10-24",
+      "amount": 7468,
+      "cat": "groceries",
+      "note": "Farmers market"
+    },
+    {
+      "id": "k635x215grxdg",
+      "date": "2026-10-24",
+      "amount": 956,
+      "cat": "dining",
+      "note": "Pizza night"
+    },
+    {
+      "id": "mnsv20jczkob",
+      "date": "2026-10-24",
+      "amount": 575,
+      "cat": "health",
+      "note": "Pharmacy"
+    },
+    {
+      "id": "2d6t37mjyr58",
+      "date": "2026-10-25",
+      "amount": 4534,
+      "cat": "shopping",
+      "note": "Household items"
+    },
+    {
+      "id": "di26zh1eyawyf",
+      "date": "2026-10-26",
+      "amount": 1437,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "n8picgljoycc",
+      "date": "2026-10-27",
+      "amount": 1824,
+      "cat": "groceries",
+      "note": "Corner shop"
+    },
+    {
+      "id": "119j3tz18f2rz2",
+      "date": "2026-10-29",
+      "amount": 1228,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "1lw57qy1j1gu8",
+      "date": "2026-10-29",
+      "amount": 4035,
+      "cat": "dining",
+      "note": "Dinner with friends"
+    },
+    {
+      "id": "1pthxn4pm88f9",
+      "date": "2026-10-29",
+      "amount": 5632,
+      "cat": "transport",
+      "note": "Fuel"
+    },
+    {
+      "id": "ev0c1zofnt9h",
+      "date": "2026-10-30",
+      "amount": 325,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "1c8v09v17w0t8i",
+      "date": "2026-10-30",
+      "amount": 4319,
+      "cat": "shopping",
+      "note": "Household items"
+    },
+    {
+      "id": "a9t8vggait26",
+      "date": "2026-10-31",
+      "amount": 5829,
+      "cat": "groceries",
+      "note": "Weekly shop"
+    },
+    {
+      "id": "5t61pbe7oair",
+      "date": "2026-10-31",
+      "amount": 376,
+      "cat": "dining",
+      "note": "Coffee"
+    },
+    {
+      "id": "1n9ti9k13khm2u",
+      "date": "2026-11-01",
+      "amount": 60000,
+      "cat": "housing",
+      "note": "Rent",
+      "fixed": 1
+    },
+    {
+      "id": "1kkl7mf1g9ojza",
+      "date": "2026-11-01",
+      "amount": 2800,
+      "cat": "transport",
+      "note": "Monthly transit pass",
+      "fixed": 1
+    },
+    {
+      "id": "clfrolc3jto8",
+      "date": "2026-11-01",
+      "amount": 1119,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "1kwb8r012874h8",
+      "date": "2026-11-01",
+      "amount": 1759,
+      "cat": "dining",
+      "note": "Pizza night"
+    },
+    {
+      "id": "1nnccr91t1og28",
+      "date": "2026-11-01",
+      "amount": 7424,
+      "cat": "shopping",
+      "note": "Books"
+    },
+    {
+      "id": "n2tt92z78yi5",
+      "date": "2026-11-02",
+      "amount": 337,
+      "cat": "groceries",
+      "note": "Bakery"
+    },
+    {
+      "id": "1fpljrlwuwcwv",
+      "date": "2026-11-05",
+      "amount": 1225,
+      "cat": "subs",
+      "note": "Video streaming",
+      "fixed": 1
+    },
+    {
+      "id": "c8b5rncd8hg4",
+      "date": "2026-11-05",
+      "amount": 790,
+      "cat": "dining",
+      "note": "Lunch"
+    }
+  ]
+}

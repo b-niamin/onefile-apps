@@ -1,0 +1,110 @@
+{
+  "$schema": "../../../schemas/manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "expense-tracker/monthly-budget",
+  "appType": "expense-tracker",
+  "variant": "monthly-budget",
+  "name": {
+    "en": "Expense Tracker",
+    "pl": "Wydatki"
+  },
+  "variantName": {
+    "en": "Monthly budget",
+    "pl": "Budżet miesięczny"
+  },
+  "description": {
+    "en": "Log personal expenses, set a monthly budget per category and see where the money went. JSON and CSV export.",
+    "pl": "Zapisuj wydatki, ustaw miesięczny budżet na kategorie i zobacz, gdzie poszły pieniądze. Eksport JSON i CSV."
+  },
+  "version": "1.0.0",
+  "dataVersion": 1,
+  "status": "review",
+  "category": "money",
+  "tags": [
+    "expenses",
+    "budget",
+    "categories",
+    "csv",
+    "charts"
+  ],
+  "languages": [
+    "en",
+    "pl"
+  ],
+  "entry": "expense-tracker-monthly-budget.html",
+  "license": "MIT",
+  "authors": [
+    {
+      "github": "piotr-liszka"
+    }
+  ],
+  "madeWith": [
+    "Claude"
+  ],
+  "created": "2026-11-05",
+  "updated": "2026-11-05",
+  "storage": {
+    "localStorage": [
+      "pocket-ledger:v1"
+    ]
+  },
+  "dataFormats": {
+    "export": [
+      "json",
+      "csv"
+    ],
+    "import": [
+      "json",
+      "csv"
+    ]
+  },
+  "browserApis": [
+    "clipboard",
+    "file-input",
+    "download",
+    "crypto-random"
+  ],
+  "sampleData": [
+    {
+      "file": "sample-data/expense-tracker-sample.json",
+      "description": {
+        "en": "About 200 made-up expenses over six months, in EUR.",
+        "pl": "Około 200 przykładowych wydatków z sześciu miesięcy, w EUR."
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "screenshots/phone-light.png",
+      "theme": "light",
+      "device": "phone",
+      "caption": {
+        "en": "Main screen",
+        "pl": "Ekran główny"
+      }
+    },
+    {
+      "file": "screenshots/phone-dark.png",
+      "theme": "dark",
+      "device": "phone",
+      "caption": {
+        "en": "Dark mode",
+        "pl": "Tryb ciemny"
+      }
+    },
+    {
+      "file": "screenshots/phone-expenses.png",
+      "theme": "light",
+      "device": "phone",
+      "caption": {
+        "en": "Expense list",
+        "pl": "Lista wydatków"
+      },
+      "actions": [
+        {
+          "scroll": "#ledger"
+        }
+      ]
+    }
+  ]
+}
