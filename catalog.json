@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "apps": [
+    {
+      "id": "expense-tracker/monthly-budget",
+      "appType": "expense-tracker",
+      "variant": "monthly-budget",
+      "name": {
+        "en": "Expense Tracker",
+        "pl": "Wydatki"
+      },
+      "variantName": {
+        "en": "Monthly budget",
+        "pl": "Budżet miesięczny"
+      },
+      "description": {
+        "en": "Log personal expenses, set a monthly budget per category and see where the money went. JSON and CSV export.",
+        "pl": "Zapisuj wydatki, ustaw miesięczny budżet na kategorie i zobacz, gdzie poszły pieniądze. Eksport JSON i CSV."
+      },
+      "version": "1.0.0",
+      "status": "review",
+      "category": "money",
+      "tags": [
+        "expenses",
+        "budget",
+        "categories",
+        "csv",
+        "charts"
+      ],
+      "languages": [
+        "en",
+        "pl"
+      ],
+      "path": "apps/expense-tracker/monthly-budget",
+      "file": "apps/expense-tracker/monthly-budget/expense-tracker-monthly-budget.html",
+      "screenshot": "apps/expense-tracker/monthly-budget/screenshots/phone-light.png"
+    },
+    {
+      "id": "gym-tracker/muscle-map",
+      "appType": "gym-tracker",
+      "variant": "muscle-map",
+      "name": {
+        "en": "Gym Tracker",
+        "pl": "Dziennik treningowy"
+      },
+      "variantName": {
+        "en": "Muscle map",
+        "pl": "Mapa mięśni"
+      },
+      "description": {
+        "en": "Plan workouts, log sets and weights, track progress and see which muscles you trained on a body map.",
+        "pl": "Planuj treningi, zapisuj serie i ciężary, śledź postępy i zobacz na mapie ciała, które mięśnie pracowały."
+      },
+      "version": "1.0.0",
+      "status": "review",
+      "category": "health-fitness",
+      "tags": [
+        "gym",
+        "workout",
+        "strength",
+        "sets",
+        "progress",
+        "rest-timer"
+      ],
+      "languages": [
+        "en",
+        "pl"
+      ],
+      "path": "apps/gym-tracker/muscle-map",
+      "file": "apps/gym-tracker/muscle-map/gym-tracker-muscle-map.html",
+      "screenshot": "apps/gym-tracker/muscle-map/screenshots/phone-light.png"
+    },
+    {
+      "id": "habit-tracker/weekly-grid",
+      "appType": "habit-tracker",
+      "variant": "weekly-grid",
+      "name": {
+        "en": "Habit Tracker",
+        "pl": "Tracker nawyków"
+      },
+      "variantName": {
+        "en": "Weekly grid",
+        "pl": "Siatka tygodniowa"
+      },
+      "description": {
+        "en": "Track daily or N-times-a-week habits on a week grid with tally marks, streaks and a 26-week heatmap.",
+        "pl": "Śledź nawyki codzienne lub N razy w tygodniu: siatka tygodnia, kreski, serie i mapa 26 tygodni."
+      },
+      "version": "1.0.0",
+      "status": "review",
+      "category": "health-fitness",
+      "tags": [
+        "habits",
+        "streaks",
+        "heatmap",
+        "daily",
+        "weekly"
+      ],
+      "languages": [
+        "en",
+        "pl"
+      ],
+      "path": "apps/habit-tracker/weekly-grid",
+      "file": "apps/habit-tracker/weekly-grid/habit-tracker-weekly-grid.html",
+      "screenshot": "apps/habit-tracker/weekly-grid/screenshots/phone-light.png"
+    },
+    {
+      "id": "trip-expense-splitter/multi-currency",
+      "appType": "trip-expense-splitter",
+      "variant": "multi-currency",
+      "name": {
+        "en": "Trip Expense Splitter",
+        "pl": "Podział kosztów wyjazdu"
+      },
+      "variantName": {
+        "en": "Multi-currency",
+        "pl": "Wiele walut"
+      },
+      "description": {
+        "en": "Split shared trip costs between friends in several currencies and settle up with the fewest payments.",
+        "pl": "Dziel wspólne koszty wyjazdu w kilku walutach i rozlicz się najmniejszą liczbą przelewów."
+      },
+      "version": "1.0.0",
+      "status": "review",
+      "category": "travel",
+      "tags": [
+        "split-bills",
+        "group",
+        "trip",
+        "currency",
+        "settle-up"
+      ],
+      "languages": [
+        "en",
+        "pl"
+      ],
+      "path": "apps/trip-expense-splitter/multi-currency",
+      "file": "apps/trip-expense-splitter/multi-currency/trip-expense-splitter-multi-currency.html",
+      "screenshot": "apps/trip-expense-splitter/multi-currency/screenshots/phone-light.png"
+    }
+  ]
+}
