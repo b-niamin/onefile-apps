@@ -1,0 +1,29 @@
+name: App idea
+description: Suggest a new app or a new variant of an existing one
+labels: [idea]
+body:
+  - type: input
+    id: app-type
+    attributes:
+      label: App type
+      description: Plain, self-explanatory name, e.g. water-intake-tracker. Check catalog.json first.
+    validations:
+      required: true
+  - type: textarea
+    id: job
+    attributes:
+      label: What should it do?
+      description: The job it does for the person, and the 3-5 things it must have.
+    validations:
+      required: true
+  - type: textarea
+    id: different
+    attributes:
+      label: If it is a new variant, how is it different from the existing ones?
+  - type: checkboxes
+    id: fits
+    attributes:
+      label: Fits the rules
+      options:
+        - label: Works with no server, account or external API; data can stay on the device
+          required: true
