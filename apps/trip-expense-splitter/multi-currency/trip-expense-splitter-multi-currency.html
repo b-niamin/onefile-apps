@@ -1,0 +1,1308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Trip Expense Splitter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Split shared trip costs with friends. Works offline, stores data only in your browser.">
+<style>
+/* Layout: one working sheet. Expenses ledger on the left, balances and settle-up rail on the right; stacks on phones with a floating Add button. */
+:root {
+  --bg: #eef0f4;
+  --surface: #ffffff;
+  --surface-2: #f6f7fa;
+  --ink: #18202c;
+  --muted: #5c6577;
+  --line: #dde1e8;
+  --accent: #f2c230;          /* ticket yellow: primary actions only */
+  --accent-ink: #1d1a10;
+  --accent-soft: #fbefc4;
+  --pos: #18794e;
+  --pos-soft: #dcefe4;
+  --neg: #b93a26;
+  --neg-soft: #f6e0db;
+  --focus: #2b59c3;
+  --avatar-l: 78%;
+  --avatar-ink: #1d2430;
+  --shadow: 0 1px 2px rgba(20, 28, 40, .06), 0 8px 24px rgba(20, 28, 40, .06);
+  --font-display: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-data: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11141a; --surface: #191d25; --surface-2: #20252f; --ink: #e7eaf0; --muted: #9aa3b4;
+    --line: #2c323e; --accent: #f2c230; --accent-ink: #1d1a10; --accent-soft: #3a3320;
+    --pos: #5cc48f; --pos-soft: #183326; --neg: #f08a73; --neg-soft: #3a2220; --focus: #8fb0ff;
+    --avatar-l: 36%; --avatar-ink: #f1f3f7; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11141a; --surface: #191d25; --surface-2: #20252f; --ink: #e7eaf0; --muted: #9aa3b4;
+  --line: #2c323e; --accent: #f2c230; --accent-ink: #1d1a10; --accent-soft: #3a3320;
+  --pos: #5cc48f; --pos-soft: #183326; --neg: #f08a73; --neg-soft: #3a2220; --focus: #8fb0ff;
+  --avatar-l: 36%; --avatar-ink: #f1f3f7; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.5 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 88px;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+.num { font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1120px; margin: 0 auto; }
+
+/* Top bar */
+.top { display: flex; align-items: center; gap: 6px; padding-block: 12px 10px; }
+.trip-pick { flex: 1 1 auto; min-width: 0; display: grid; gap: 1px; }
+.trip-select-wrap { position: relative; min-width: 0; max-width: 100%; justify-self: start; }
+#tripSelect {
+  appearance: none; border: 0; background: transparent; padding: 0 22px 0 0; cursor: pointer; max-width: 100%;
+  font: 700 20px/1.2 var(--font-display); letter-spacing: -.015em; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
+}
+.trip-select-wrap::after {
+  content: ""; position: absolute; right: 5px; top: 50%; width: 7px; height: 7px; pointer-events: none;
+  border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateY(-75%) rotate(45deg);
+}
+.trip-meta { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trip-meta strong { color: var(--ink); font-weight: 650; }
+.icon-btn {
+  width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface);
+  display: grid; place-items: center; cursor: pointer; flex: none; color: var(--ink); padding: 0;
+  font: 700 12px/1 var(--font-body); letter-spacing: .03em;
+}
+.icon-btn:hover { border-color: var(--muted); }
+.icon-btn svg { width: 18px; height: 18px; }
+.btn {
+  appearance: none; border: 1px solid var(--line); background: var(--surface);
+  border-radius: 999px; padding: 7px 14px; cursor: pointer; line-height: 1.3;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: transparent; color: var(--accent-ink); font-weight: 650; }
+.btn.primary:hover { filter: brightness(.96); }
+.btn.ghost { background: transparent; border-color: transparent; }
+.btn.ghost:hover { background: var(--surface-2); }
+.btn.danger { color: var(--neg); }
+.btn.small { padding: 4px 11px; font-size: 13px; }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.av {
+  --h: 200; width: 24px; height: 24px; border-radius: 50%; flex: none;
+  background: hsl(var(--h) 55% var(--avatar-l)); color: var(--avatar-ink);
+  display: inline-grid; place-items: center; font: 700 11px/1 var(--font-body);
+}
+.av.lg { width: 30px; height: 30px; font-size: 12px; }
+
+/* Tabs (phone) */
+.tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px; margin-bottom: 12px; }
+.tabs button { border: 0; background: transparent; border-radius: 999px; padding: 7px 10px; font-weight: 650; font-size: 14px; color: var(--muted); cursor: pointer; display: inline-flex; justify-content: center; align-items: center; gap: 6px; }
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.tabs .count { font-size: 11px; min-width: 18px; padding: 1px 5px; border-radius: 999px; background: var(--neg-soft); color: var(--neg); }
+@media (min-width: 900px) { .tabs { display: none; } }
+@media (max-width: 899px) {
+  .grid[data-tab="exp"] .rail, .grid[data-tab="bal"] .ledger { display: none; }
+  .panel-h.tab-dup { display: none; }
+  .ledger .search { padding-top: 12px; }
+  .bal { padding-top: 14px; }
+}
+
+.banner {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+  background: var(--accent-soft); border-radius: var(--r); padding: 8px 8px 8px 14px; margin-bottom: 12px; font-size: 14px;
+}
+.banner p { margin: 0; flex: 1 1 auto; }
+.banner .row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Main grid */
+.grid { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 900px) { .grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } .rail { position: sticky; top: 16px; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); min-width: 0; }
+.panel-h { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; padding: 14px 16px 10px; }
+.panel-h h2 { font: 700 17px/1.2 var(--font-display); margin: 0; margin-right: auto; }
+.panel-h .sub { width: 100%; margin: -4px 0 0; color: var(--muted); font-size: 13px; }
+.rail { display: grid; gap: 16px; min-width: 0; }
+
+.summary { display: flex; flex-wrap: wrap; gap: 4px 18px; padding: 0 18px 14px; color: var(--muted); font-size: 14px; }
+.summary b { color: var(--ink); font-weight: 650; }
+.search { padding: 0 18px 12px; }
+.search input {
+  width: 100%; border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 8px 14px 8px 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23889' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: 12px center; background-size: 16px;
+}
+
+/* Ledger */
+.day { padding: 8px 18px 4px; font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-top: 1px solid var(--line); background: var(--surface-2); display: flex; justify-content: space-between; gap: 8px; }
+.day:first-child { border-top: 0; }
+.ex {
+  display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 12px; align-items: center;
+  width: 100%; text-align: left; border: 0; border-top: 1px solid var(--line); background: transparent;
+  padding: 11px 18px; cursor: pointer;
+}
+.day + .ex { border-top: 0; }
+.ex:hover { background: var(--surface-2); }
+.ex-t { font-weight: 600; overflow-wrap: anywhere; }
+.ex-s { color: var(--muted); font-size: 13px; overflow-wrap: anywhere; }
+.ex-a { text-align: right; font-weight: 650; white-space: nowrap; }
+.ex-a small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.cat { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: .02em; padding: 1px 7px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); margin-left: 6px; vertical-align: 1px; }
+.ex.transfer .ex-t { font-weight: 500; }
+.xfer-ic { width: 30px; height: 30px; border-radius: 50%; border: 1.5px dashed var(--line); display: grid; place-items: center; color: var(--muted); }
+.xfer-ic svg { width: 15px; height: 15px; }
+.empty { padding: 28px 18px 32px; color: var(--muted); text-align: center; }
+.empty strong { display: block; color: var(--ink); font: 700 18px/1.3 var(--font-display); margin-bottom: 4px; }
+
+/* Balances */
+.bal { list-style: none; margin: 0; padding: 0 18px 16px; display: grid; gap: 12px; }
+.bal li { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 4px 10px; align-items: center; }
+.bal .who { font-weight: 600; overflow-wrap: anywhere; }
+.bal .amt { text-align: right; font-weight: 700; white-space: nowrap; }
+.bal .amt small { display: block; font-size: 12px; font-weight: 500; color: var(--muted); }
+.bal .pos { color: var(--pos); }
+.bal .neg { color: var(--neg); }
+.bar { grid-column: 2 / 4; height: 6px; background: var(--surface-2); border-radius: 3px; position: relative; overflow: hidden; }
+.bar::before { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--muted); opacity: .5; }
+.bar i { position: absolute; top: 0; bottom: 0; border-radius: 3px; }
+.bar i.pos { left: 50%; background: var(--pos); }
+.bar i.neg { right: 50%; background: var(--neg); }
+.bal .detail { grid-column: 2 / 4; font-size: 12px; color: var(--muted); }
+
+.xfers { list-style: none; margin: 0; padding: 0 18px 16px; display: grid; gap: 10px; }
+.xfers li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 10px 10px 10px 12px; border: 1px dashed var(--line); border-radius: var(--r); }
+.xfers .pair { display: flex; align-items: center; gap: 6px; min-width: 0; flex: 1 1 auto; overflow-wrap: anywhere; }
+.xfers .arrow { color: var(--muted); display: inline-grid; }
+.xfers .arrow svg { width: 15px; height: 15px; }
+.xfers .amt { font-weight: 700; }
+.square { padding: 0 18px 18px; color: var(--muted); }
+.square strong { color: var(--pos); }
+
+.foot { color: var(--muted); font-size: 13px; text-align: center; padding-top: 28px; }
+
+@media (max-width: 599px) {
+  .ex { padding: 10px 14px; gap: 10px; }
+  .day { padding-inline: 14px; }
+  .bal, .xfers { padding-inline: 14px; }
+  .panel-h { padding-inline: 14px; }
+  .search { padding-inline: 14px; }
+  dialog { width: 100%; max-width: 100%; margin: auto 0 0; border-radius: 18px 18px 0 0; max-height: 94dvh; }
+  .dlg { max-height: 94dvh; }
+  .dlg-h, .dlg-b, .dlg-f { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .dlg-f { padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+}
+/* Floating add on phones */
+@media (max-width: 899px) {
+  #addTop { display: none; }
+  .fab {
+    position: fixed; z-index: 5;
+    right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: 12px 20px; font-size: 16px;
+  }
+}
+@media (min-width: 900px) { .fab { display: none; } }
+
+/* Dialogs */
+dialog {
+  border: 0; padding: 0; border-radius: 16px; background: var(--surface); color: var(--ink);
+  width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+dialog::backdrop { background: rgba(10, 14, 20, .45); }
+.dlg { display: flex; flex-direction: column; max-height: calc(100dvh - 24px); }
+.dlg-h { display: flex; align-items: center; gap: 10px; padding: 16px 20px 8px; }
+.dlg-h h2 { margin: 0 auto 0 0; font: 700 19px/1.2 var(--font-display); }
+.dlg-b { padding: 8px 20px 12px; overflow-y: auto; display: grid; gap: 14px; }
+.dlg-f { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 20px 16px; border-top: 1px solid var(--line); align-items: center; }
+.dlg-f .spacer { margin-right: auto; }
+.x { width: 32px; height: 32px; border-radius: 50%; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--muted); }
+.x:hover { background: var(--surface-2); }
+.x svg { width: 18px; height: 18px; }
+.field { display: grid; gap: 5px; min-width: 0; }
+.field > label, .field > .lbl { font-size: 13px; font-weight: 600; color: var(--muted); }
+.in, select.in {
+  width: 100%; border: 1px solid var(--line); background: var(--surface-2); border-radius: 8px; padding: 9px 11px; min-width: 0;
+}
+.in:focus { border-color: var(--focus); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 25%, transparent); }
+.in.big { font: 700 22px/1.2 var(--font-display); }
+.cols { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.amount-row { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 8px; }
+.rate { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.rate .in { width: 120px; }
+.seg { display: inline-flex; flex-wrap: wrap; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg label { position: relative; }
+.seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg span { display: block; padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--muted); }
+.seg input:checked + span { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.seg input:focus-visible + span { outline: 2px solid var(--focus); }
+.cats { display: flex; flex-wrap: wrap; gap: 6px; }
+.cats label { position: relative; }
+.cats input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.cats span { display: block; padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; }
+.cats input:checked + span { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.cats input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 2px; }
+.split-list { display: grid; gap: 4px; border: 1px solid var(--line); border-radius: var(--r); padding: 6px; }
+.split-row { display: grid; grid-template-columns: minmax(0, 1fr) 110px; gap: 10px; align-items: center; padding: 4px 6px; border-radius: 8px; }
+.split-row:hover { background: var(--surface-2); }
+.split-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; min-width: 0; overflow-wrap: anywhere; }
+.split-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--ink); margin: 0; }
+.split-row .in { padding: 6px 9px; text-align: right; }
+.split-row .share { text-align: right; color: var(--muted); font-size: 14px; }
+.split-tools { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.split-tools .note { margin-left: auto; font-size: 13px; color: var(--muted); }
+.split-tools .note.bad { color: var(--neg); font-weight: 600; }
+.err { color: var(--neg); font-weight: 600; margin: 0; font-size: 14px; }
+.err:empty { display: none; }
+.confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: var(--neg-soft); border-radius: 10px; padding: 8px 10px; width: 100%; }
+.confirm span { margin-right: auto; font-weight: 600; }
+.plist { display: grid; gap: 6px; }
+.prow { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.hint { font-size: 13px; color: var(--muted); margin: 0; }
+textarea.in { min-height: 120px; font: 12px/1.45 var(--font-data); resize: vertical; }
+.section-t { font: 700 15px/1.2 var(--font-display); margin: 6px 0 0; }
+.ilist { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.ilist li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 10px; background: var(--surface-2); border-radius: 8px; font-size: 14px; flex-wrap: wrap; }
+.tag { font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; }
+.tag.new { background: var(--pos-soft); color: var(--pos); }
+.tag.rep { background: var(--accent-soft); color: var(--ink); }
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 20;
+  background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px; font-size: 14px; font-weight: 600;
+  max-width: calc(100vw - 32px); box-shadow: var(--shadow);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toast { animation: rise .2s ease-out; }
+  @keyframes rise { from { transform: translate(-50%, 8px); opacity: .4; } }
+}
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <main id="app"></main>
+</div>
+
+<button class="btn primary fab" id="fab" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span data-i="addExpense">Add expense</span></button>
+
+<!-- Expense dialog -->
+<dialog id="exDlg" aria-labelledby="exDlgT">
+  <form class="dlg" id="exForm" novalidate>
+    <div class="dlg-h">
+      <h2 id="exDlgT"></h2>
+      <button class="x" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="dlg-b">
+      <div class="seg" role="radiogroup" id="kindSeg">
+        <label><input type="radio" name="kind" value="expense" id="kindExpense" checked><span data-i="kindExpense">Expense</span></label>
+        <label><input type="radio" name="kind" value="transfer" id="kindTransfer"><span data-i="kindTransfer">Money given</span></label>
+      </div>
+      <div class="field" id="titleField">
+        <label for="exTitle" data-i="fTitle">What was it for?</label>
+        <input class="in" id="exTitle" maxlength="80" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="exAmount" data-i="fAmount">Amount</label>
+        <div class="amount-row">
+          <input class="in big num" id="exAmount" inputmode="decimal" autocomplete="off" placeholder="0.00">
+          <input class="in" id="exCur" maxlength="3" list="curList" autocomplete="off" aria-label="Currency" style="text-transform:uppercase">
+        </div>
+        <div class="rate" id="rateRow" hidden>
+          <span id="rateL"></span>
+          <input class="in num" id="exRate" inputmode="decimal" autocomplete="off" aria-label="Exchange rate">
+          <span id="rateR"></span>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="field">
+          <label for="exPayer" id="payerL" data-i="fPaidBy">Paid by</label>
+          <select class="in" id="exPayer"></select>
+        </div>
+        <div class="field" id="toField" hidden>
+          <label for="exTo" data-i="fTo">To</label>
+          <select class="in" id="exTo"></select>
+        </div>
+        <div class="field">
+          <label for="exDate" data-i="fDate">Date</label>
+          <input class="in" id="exDate" type="date">
+        </div>
+      </div>
+      <div class="field" id="catField">
+        <span class="lbl" data-i="fCategory">Category</span>
+        <div class="cats" id="catBox" role="radiogroup"></div>
+      </div>
+      <div class="field" id="splitField">
+        <span class="lbl" data-i="fSplit">Split</span>
+        <div class="split-tools">
+          <div class="seg" role="radiogroup">
+            <label><input type="radio" name="mode" value="equal" id="modeEqual" checked><span data-i="mEqual">Equally</span></label>
+            <label><input type="radio" name="mode" value="exact" id="modeExact"><span data-i="mExact">Exact amounts</span></label>
+            <label><input type="radio" name="mode" value="shares" id="modeShares"><span data-i="mShares">Shares</span></label>
+          </div>
+        </div>
+        <div class="split-tools">
+          <button class="btn small" type="button" id="selAll" data-i="all">Everyone</button>
+          <button class="btn small" type="button" id="selNone" data-i="none">No one</button>
+          <span class="note num" id="splitNote" aria-live="polite"></span>
+        </div>
+        <div class="split-list" id="splitList"></div>
+      </div>
+      <p class="err" id="exErr" role="alert"></p>
+    </div>
+    <div class="dlg-f" id="exFoot">
+      <button class="btn danger ghost spacer" type="button" id="exDelete" data-i="delete">Delete</button>
+      <button class="btn" type="button" data-close data-i="cancel">Cancel</button>
+      <button class="btn primary" type="submit" data-i="save">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Trip dialog -->
+<dialog id="tripDlg" aria-labelledby="tripDlgT">
+  <form class="dlg" id="tripForm" novalidate>
+    <div class="dlg-h">
+      <h2 id="tripDlgT"></h2>
+      <button class="x" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="dlg-b">
+      <div class="cols">
+        <div class="field" style="grid-column: 1 / -1">
+          <label for="tripName" data-i="tripName">Trip name</label>
+          <input class="in" id="tripName" maxlength="60" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="tripCur" data-i="baseCur">Main currency</label>
+          <input class="in" id="tripCur" maxlength="3" list="curList" autocomplete="off" style="text-transform:uppercase">
+        </div>
+      </div>
+      <div class="field">
+        <span class="lbl" data-i="people">People</span>
+        <div class="plist" id="plist"></div>
+        <div class="split-tools"><button class="btn small" type="button" id="addPerson" data-i="addPerson">Add person</button></div>
+      </div>
+      <p class="err" id="tripErr" role="alert"></p>
+    </div>
+    <div class="dlg-f" id="tripFoot">
+      <button class="btn danger ghost spacer" type="button" id="tripDelete" data-i="deleteTrip">Delete trip</button>
+      <button class="btn" type="button" data-close data-i="cancel">Cancel</button>
+      <button class="btn primary" type="submit" data-i="save">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Data dialog -->
+<dialog id="dataDlg" aria-labelledby="dataDlgT">
+  <div class="dlg">
+    <div class="dlg-h">
+      <h2 id="dataDlgT" data-i="data">Import / export</h2>
+      <button class="x" type="button" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="dlg-b">
+      <p class="hint" data-i="storageNote">Saved only in this browser.</p>
+      <h3 class="section-t" data-i="exportH">Export</h3>
+      <div class="seg" role="radiogroup">
+        <label><input type="radio" name="scope" value="trip" id="scopeTrip" checked><span data-i="thisTrip">This trip</span></label>
+        <label><input type="radio" name="scope" value="all" id="scopeAll"><span data-i="allTrips">All trips (backup)</span></label>
+      </div>
+      <textarea class="in" id="exportText" readonly aria-label="Export data" spellcheck="false"></textarea>
+      <div class="split-tools">
+        <button class="btn primary small" type="button" id="dlBtn" data-i="download">Download .json</button>
+        <button class="btn small" type="button" id="copyBtn" data-i="copy">Copy</button>
+      </div>
+      <h3 class="section-t" data-i="importH">Import</h3>
+      <input type="file" id="importFile" accept=".json,application/json" class="in">
+      <textarea class="in" id="importText" spellcheck="false" aria-label="Paste data"></textarea>
+      <div class="split-tools"><button class="btn small" type="button" id="checkBtn" data-i="check">Check file</button></div>
+      <ul class="ilist" id="importPreview"></ul>
+      <p class="err" id="importErr" role="alert"></p>
+      <div class="split-tools" id="importGo" hidden><button class="btn primary small" type="button" id="importBtn"></button></div>
+      <h3 class="section-t" data-i="sampleH">Sample data</h3>
+      <div class="split-tools"><button class="btn small" type="button" id="sampleBtn" data-i="loadSample">Load sample trip</button></div>
+    </div>
+  </div>
+</dialog>
+
+<datalist id="curList"></datalist>
+<div id="toastHost" aria-live="polite"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- i18n ---------- */
+const STR = {
+  en: {
+    appName: 'Trip Expense Splitter', newTrip: 'New trip', data: 'Import / export', addExpense: 'Add expense',
+    storageNote: 'Saved only in this browser. Nothing is sent anywhere.', settings: 'Trip settings', switchLang: 'Polski',
+    tripLabel: 'Trip', people: 'People', editTrip: 'Edit trip', tripSettings: 'Trip settings',
+    expenses: 'Expenses', balances: 'Balances', settle: 'Settle up',
+    settleSub: 'The fewest payments that clear every balance.',
+    balSub: 'What each person paid compared to their share.',
+    search: 'Search expenses', totalSpent: 'Total spent', inCur: 'in',
+    nExpenses: { one: '{n} expense', other: '{n} expenses' },
+    nPeople: { one: '{n} person', other: '{n} people' },
+    splitWays: { one: 'for {name}', other: '{n} of {total}' },
+    paidBy: '{name} paid', gave: '{from} paid {to}', moneyGiven: 'Money given',
+    getsBack: 'gets back', owes: 'owes', even: 'settled', paidX: 'paid {x}', shareX: 'share {x}',
+    markPaid: 'Mark as paid', allSquare: 'Everyone is square.', allSquareSub: 'No payments needed.',
+    recorded: 'Recorded {from} → {to}', settleTitle: 'Settle-up payment',
+    sampleBanner: 'Sample data, all made up',
+    removeSample: 'Remove', startOwn: 'New trip',
+    noTrips: 'No trips yet', noTripsHint: 'Create a trip, add who is going, then log who paid for what.',
+    noExpenses: 'No expenses yet', noExpensesHint: 'Tap Add expense to log the first one.',
+    noResults: 'Nothing matches “{q}”.',
+    addTitle: 'Add expense', editTitle: 'Edit expense', addXfer: 'Record money given', editXfer: 'Edit money given',
+    kindExpense: 'Expense', kindTransfer: 'Money given', fTitle: 'What was it for?', fAmount: 'Amount',
+    fPaidBy: 'Paid by', fFrom: 'From', fTo: 'To', fDate: 'Date', fCategory: 'Category', fSplit: 'Split between',
+    mEqual: 'Equally', mExact: 'Exact amounts', mShares: 'Shares', all: 'Everyone', none: 'No one',
+    left: '{x} left to assign', over: '{x} too much', balanced: 'Adds up', perShare: '{x} per share',
+    save: 'Save', cancel: 'Cancel', delete: 'Delete', keep: 'Keep',
+    confirmEx: 'Delete this expense?', confirmTrip: 'Delete “{name}” and all its expenses?', confirmSample: 'Remove the sample trip?',
+    errTitle: 'Add a short description, like “Dinner”.', errAmount: 'Enter an amount greater than zero.',
+    errCur: 'Use a three-letter currency code, like EUR or PLN.', errRate: 'Enter how much 1 {cur} is in {base}.',
+    errSplit: 'Pick at least one person to split with.', errExact: 'The split amounts need to add up to {x}. Right now they total {y}.',
+    errShares: 'Give at least one person a share above zero.', errSame: 'Pick two different people.',
+    tripName: 'Trip name', baseCur: 'Main currency', baseLocked: 'The main currency is fixed once the trip has expenses.',
+    addPerson: 'Add person', personName: 'Name', remove: 'Remove', inUse: 'Has expenses, so cannot be removed',
+    deleteTrip: 'Delete trip', newTripT: 'New trip', errName: 'Give the trip a name.', errPeople: 'Add at least two people.',
+    errDup: 'Each person needs a different name.', deleted: 'Deleted', saved: 'Saved',
+    exportH: 'Export', exportHint: '',
+    thisTrip: 'This trip', allTrips: 'All trips (backup)', download: 'Download .json', copy: 'Copy',
+    copied: 'Copied to clipboard', copyFail: 'Copying is blocked here. The text is selected, so press Ctrl+C or ⌘C.',
+    dlFail: 'Downloads are blocked in this viewer. Use Copy instead.',
+    importH: 'Import', importHint: 'Choose a .json file or paste its contents, then check it.', check: 'Check file',
+    pastePh: 'Paste exported data here', importN: { one: 'Import {n} trip', other: 'Import {n} trips' },
+    tagNew: 'New', tagRep: 'Replaces your copy',
+    importErr: 'This is not a file from this app, or it is damaged. Export it again and retry.',
+    importEmpty: 'Choose a file or paste data first.', importedN: { one: 'Imported {n} trip', other: 'Imported {n} trips' },
+    sampleH: 'Sample data', loadSample: 'Load sample trip', sampleLoaded: 'Sample trip loaded',
+    cats: { food: 'Food & drink', stay: 'Stay', transport: 'Transport', fun: 'Activities', shop: 'Groceries', other: 'Other' },
+    rateEq: '1 {cur} =', today: 'Today', yesterday: 'Yesterday',
+    sampleTrip: 'Lisbon long weekend',
+    sample: {
+      apt: 'Apartment in Alfama, 3 nights', taxi: 'Airport taxi', dinner: 'Dinner at the food market', pastries: 'Custard tarts and coffee',
+      tram: 'Tram and metro passes', surf: 'Surf lesson in Costa da Caparica', shop: 'Supermarket run', breakfast: 'Breakfast at Gatwick',
+      sintra: 'Train to Sintra', palace: 'Pena Palace tickets', drinks: 'Drinks in Bairro Alto', cash: 'Cash for the taxi'
+    }
+  },
+  pl: {
+    appName: 'Podział kosztów wyjazdu', newTrip: 'Nowy wyjazd', data: 'Import / eksport', addExpense: 'Dodaj wydatek',
+    storageNote: 'Zapisane tylko w tej przeglądarce. Nic nie jest wysyłane.', settings: 'Ustawienia wyjazdu', switchLang: 'English',
+    tripLabel: 'Wyjazd', people: 'Osoby', editTrip: 'Edytuj wyjazd', tripSettings: 'Ustawienia wyjazdu',
+    expenses: 'Wydatki', balances: 'Salda', settle: 'Rozliczenie',
+    settleSub: 'Najmniej przelewów, które wyrównują wszystkie salda.',
+    balSub: 'Ile każdy zapłacił w porównaniu z jego częścią.',
+    search: 'Szukaj wydatków', totalSpent: 'Wydano razem', inCur: 'w',
+    nExpenses: { one: '{n} wydatek', few: '{n} wydatki', many: '{n} wydatków', other: '{n} wydatku' },
+    nPeople: { one: '{n} osoba', few: '{n} osoby', many: '{n} osób', other: '{n} osoby' },
+    splitWays: { one: 'dla: {name}', other: '{n} z {total}' },
+    paidBy: 'Płacił(a) {name}', gave: '{from} oddaje {to}', moneyGiven: 'Zwrot pieniędzy',
+    getsBack: 'do odzyskania', owes: 'do oddania', even: 'rozliczone', paidX: 'zapłacone {x}', shareX: 'udział {x}',
+    markPaid: 'Oznacz jako zapłacone', allSquare: 'Wszyscy są rozliczeni.', allSquareSub: 'Nie trzeba robić przelewów.',
+    recorded: 'Zapisano {from} → {to}', settleTitle: 'Spłata rozliczenia',
+    sampleBanner: 'Przykład, zmyślone dane',
+    removeSample: 'Usuń', startOwn: 'Nowy wyjazd',
+    noTrips: 'Brak wyjazdów', noTripsHint: 'Załóż wyjazd, dodaj uczestników i zapisuj, kto za co płacił.',
+    noExpenses: 'Brak wydatków', noExpensesHint: 'Kliknij Dodaj wydatek, aby zapisać pierwszy.',
+    noResults: 'Nic nie pasuje do „{q}”.',
+    addTitle: 'Dodaj wydatek', editTitle: 'Edytuj wydatek', addXfer: 'Zapisz zwrot pieniędzy', editXfer: 'Edytuj zwrot',
+    kindExpense: 'Wydatek', kindTransfer: 'Zwrot pieniędzy', fTitle: 'Za co?', fAmount: 'Kwota',
+    fPaidBy: 'Kto płacił', fFrom: 'Od kogo', fTo: 'Dla kogo', fDate: 'Data', fCategory: 'Kategoria', fSplit: 'Podział między',
+    mEqual: 'Po równo', mExact: 'Dokładne kwoty', mShares: 'Udziały', all: 'Wszyscy', none: 'Nikt',
+    left: 'Zostało {x} do rozdzielenia', over: 'O {x} za dużo', balanced: 'Zgadza się', perShare: '{x} za udział',
+    save: 'Zapisz', cancel: 'Anuluj', delete: 'Usuń', keep: 'Zostaw',
+    confirmEx: 'Usunąć ten wydatek?', confirmTrip: 'Usunąć „{name}” i wszystkie wydatki?', confirmSample: 'Usunąć przykładowy wyjazd?',
+    errTitle: 'Dodaj krótki opis, np. „Kolacja”.', errAmount: 'Wpisz kwotę większą od zera.',
+    errCur: 'Wpisz trzyliterowy kod waluty, np. PLN albo EUR.', errRate: 'Wpisz, ile {base} kosztuje 1 {cur}.',
+    errSplit: 'Wybierz co najmniej jedną osobę do podziału.', errExact: 'Kwoty muszą sumować się do {x}. Teraz to {y}.',
+    errShares: 'Daj co najmniej jednej osobie udział większy od zera.', errSame: 'Wybierz dwie różne osoby.',
+    tripName: 'Nazwa wyjazdu', baseCur: 'Główna waluta', baseLocked: 'Główną walutę można zmienić tylko przed dodaniem wydatków.',
+    addPerson: 'Dodaj osobę', personName: 'Imię', remove: 'Usuń', inUse: 'Ma wydatki, więc nie można usunąć',
+    deleteTrip: 'Usuń wyjazd', newTripT: 'Nowy wyjazd', errName: 'Nazwij wyjazd.', errPeople: 'Dodaj co najmniej dwie osoby.',
+    errDup: 'Każda osoba musi mieć inne imię.', deleted: 'Usunięto', saved: 'Zapisano',
+    exportH: 'Eksport', exportHint: 'Wyślij plik znajomym z wyjazdu. Po imporcie zobaczą ten sam wyjazd.',
+    thisTrip: 'Ten wyjazd', allTrips: 'Wszystkie (kopia zapasowa)', download: 'Pobierz .json', copy: 'Kopiuj',
+    copied: 'Skopiowano do schowka', copyFail: 'Kopiowanie jest tu zablokowane. Tekst jest zaznaczony, naciśnij Ctrl+C lub ⌘C.',
+    dlFail: 'Pobieranie jest zablokowane w tym podglądzie. Użyj Kopiuj.',
+    importH: 'Import', importHint: 'Wybierz plik .json albo wklej jego zawartość i sprawdź.', check: 'Sprawdź plik',
+    pastePh: 'Wklej tutaj wyeksportowane dane', importN: { one: 'Importuj {n} wyjazd', few: 'Importuj {n} wyjazdy', many: 'Importuj {n} wyjazdów', other: 'Importuj {n} wyjazdu' },
+    tagNew: 'Nowy', tagRep: 'Zastąpi Twoją wersję',
+    importErr: 'To nie jest plik z tej aplikacji albo jest uszkodzony. Wyeksportuj go ponownie.',
+    importEmpty: 'Najpierw wybierz plik albo wklej dane.', importedN: { one: 'Zaimportowano {n} wyjazd', few: 'Zaimportowano {n} wyjazdy', many: 'Zaimportowano {n} wyjazdów', other: 'Zaimportowano {n} wyjazdu' },
+    sampleH: 'Przykładowe dane', loadSample: 'Wczytaj przykładowy wyjazd', sampleLoaded: 'Wczytano przykładowy wyjazd',
+    cats: { food: 'Jedzenie i picie', stay: 'Nocleg', transport: 'Transport', fun: 'Atrakcje', shop: 'Zakupy', other: 'Inne' },
+    rateEq: '1 {cur} =', today: 'Dziś', yesterday: 'Wczoraj',
+    sampleTrip: 'Długi weekend w Lizbonie',
+    sample: {
+      apt: 'Mieszkanie w Alfamie, 3 noce', taxi: 'Taksówka z lotniska', dinner: 'Kolacja w hali z jedzeniem', pastries: 'Pastéis de nata i kawa',
+      tram: 'Bilety na tramwaj i metro', surf: 'Lekcja surfingu w Costa da Caparica', shop: 'Zakupy w supermarkecie', breakfast: 'Śniadanie na Gatwick',
+      sintra: 'Pociąg do Sintry', palace: 'Bilety do Pałacu Pena', drinks: 'Drinki w Bairro Alto', cash: 'Gotówka za taksówkę'
+    }
+  }
+};
+const catName = c => (STR[lang].cats[c] || STR.en.cats[c] || c);
+const CATS = ['food', 'stay', 'transport', 'fun', 'shop', 'other'];
+const CURRENCIES = ['EUR', 'USD', 'GBP', 'PLN', 'CHF', 'CZK', 'SEK', 'NOK', 'DKK', 'HUF', 'JPY', 'CAD', 'AUD', 'TRY', 'HRK', 'RON', 'BGN', 'THB', 'MXN'];
+
+let lang = 'en';
+const loc = () => (lang === 'pl' ? 'pl-PL' : 'en-GB');
+function t(key, vars) {
+  let s = STR[lang][key];
+  if (s === undefined) s = STR.en[key];
+  if (s && typeof s === 'object' && vars && typeof vars.n === 'number') {
+    const form = new Intl.PluralRules(loc()).select(vars.n);
+    s = s[form] || s.other;
+  }
+  if (typeof s !== 'string') return key;
+  return vars ? s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : s;
+}
+
+/* ---------- helpers ---------- */
+const $ = (sel, root = document) => root.querySelector(sel);
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'style') for (const [p, pv] of Object.entries(v)) el.style.setProperty(p, pv);
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const kid of kids.flat()) {
+    if (kid === null || kid === undefined || kid === false) continue;
+    el.append(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+const todayISO = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+const fdCache = {};
+function fd(cur) {
+  if (cur in fdCache) return fdCache[cur];
+  let n = 2;
+  try { n = new Intl.NumberFormat('en', { style: 'currency', currency: cur }).resolvedOptions().maximumFractionDigits; } catch (e) { /* unknown code */ }
+  return (fdCache[cur] = n);
+}
+function fmtMoney(value, cur) {
+  try { return new Intl.NumberFormat(loc(), { style: 'currency', currency: cur, minimumFractionDigits: fd(cur) }).format(value); }
+  catch (e) { return value.toFixed(2) + ' ' + cur; }
+}
+const fmtMinor = (minor, cur) => fmtMoney(minor / 10 ** fd(cur), cur);
+function parseNum(str) {
+  if (typeof str !== 'string') return NaN;
+  let s = str.replace(/[\s ']/g, '');
+  if (!s) return NaN;
+  if (s.includes(',') && s.includes('.')) {
+    // whichever comes last is the decimal separator
+    s = s.lastIndexOf(',') > s.lastIndexOf('.') ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+  } else s = s.replace(',', '.');
+  if (!/^\d*\.?\d*$/.test(s) || s === '.') return NaN;
+  return Number(s);
+}
+function numStr(n, digits) {
+  if (!isFinite(n)) return '';
+  const s = String(+n.toFixed(digits));
+  return lang === 'pl' ? s.replace('.', ',') : s;
+}
+const initials = name => (name.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2) || '?').toUpperCase();
+const HUES = [12, 210, 140, 280, 40, 330, 180, 95, 250, 0];
+function avatar(trip, pid, lg) {
+  const idx = trip.people.findIndex(p => p.id === pid);
+  const p = trip.people[idx];
+  return h('span', { class: 'av' + (lg ? ' lg' : ''), 'aria-hidden': 'true', style: { '--h': String(HUES[idx % HUES.length]) } }, p ? initials(p.name) : '?');
+}
+const pname = (trip, pid) => (trip.people.find(p => p.id === pid) || { name: '?' }).name;
+function toast(msg) {
+  const host = $('#toastHost');
+  host.textContent = '';
+  const el = h('div', { class: 'toast', role: 'status' }, msg);
+  host.append(el);
+  clearTimeout(toast.t);
+  toast.t = setTimeout(() => el.remove(), 2600);
+}
+
+/* ---------- storage & validation ---------- */
+const LS_KEY = 'split-the-trip.v1';
+const LS_LANG = 'split-the-trip.lang';
+const ID_RE = /^[a-z0-9]{1,32}$/i;
+const CUR_RE = /^[A-Z]{3}$/;
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const str = (v, max) => (typeof v === 'string' ? v.replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, max) : '');
+const fin = (v, min, max) => typeof v === 'number' && isFinite(v) && v >= min && v <= max;
+
+function cleanTrip(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const name = str(raw.name, 60);
+  const currency = str(raw.currency, 3).toUpperCase();
+  if (!name || !CUR_RE.test(currency) || !Array.isArray(raw.people)) return null;
+  const people = [];
+  const ids = new Set();
+  for (const p of raw.people.slice(0, 50)) {
+    if (!p || !ID_RE.test(p.id) || ids.has(p.id)) continue;
+    const pn = str(p.name, 40);
+    if (!pn) continue;
+    ids.add(p.id); people.push({ id: p.id, name: pn });
+  }
+  if (!people.length) return null;
+  const expenses = [];
+  const exIds = new Set();
+  for (const e of (Array.isArray(raw.expenses) ? raw.expenses : []).slice(0, 5000)) {
+    const c = cleanExpense(e, ids, currency);
+    if (c && !exIds.has(c.id)) { exIds.add(c.id); expenses.push(c); }
+  }
+  const rates = {};
+  if (raw.rates && typeof raw.rates === 'object') for (const [k, v] of Object.entries(raw.rates)) if (CUR_RE.test(k) && fin(v, 1e-9, 1e9)) rates[k] = v;
+  return { id: ID_RE.test(raw.id) ? raw.id : uid(), name, currency, people, expenses, rates, sample: raw.sample === true, updated: str(raw.updated, 30) };
+}
+function cleanExpense(e, ids, base) {
+  if (!e || typeof e !== 'object') return null;
+  const kind = e.kind === 'transfer' ? 'transfer' : 'expense';
+  const currency = str(e.currency, 3).toUpperCase();
+  if (!CUR_RE.test(currency) || !fin(e.amount, 0.000001, 1e10) || !ids.has(e.paidBy)) return null;
+  const rate = currency === base ? 1 : e.rate;
+  if (!fin(rate, 1e-9, 1e9)) return null;
+  const out = {
+    id: ID_RE.test(e.id) ? e.id : uid(), kind, title: str(e.title, 80), amount: e.amount, currency, rate,
+    paidBy: e.paidBy, date: DATE_RE.test(e.date) ? e.date : todayISO()
+  };
+  if (kind === 'transfer') {
+    if (!ids.has(e.to) || e.to === e.paidBy) return null;
+    out.to = e.to;
+  } else {
+    out.category = CATS.includes(e.category) ? e.category : 'other';
+    const mode = ['equal', 'exact', 'shares'].includes(e.split && e.split.mode) ? e.split.mode : 'equal';
+    const parts = {};
+    const src = e.split && e.split.parts && typeof e.split.parts === 'object' ? e.split.parts : {};
+    for (const [pid, v] of Object.entries(src)) if (ids.has(pid) && fin(v, 0, 1e10) && v > 0) parts[pid] = v;
+    if (!Object.keys(parts).length) return null;
+    out.split = { mode, parts };
+  }
+  return out;
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      if (d && Array.isArray(d.trips)) {
+        const trips = d.trips.slice(0, 200).map(cleanTrip).filter(Boolean);
+        return { trips, active: typeof d.active === 'string' ? d.active : (trips[0] && trips[0].id), seeded: true };
+      }
+    }
+  } catch (e) { /* storage blocked or corrupt */ }
+  return null;
+}
+function save() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify({ v: 1, active: S.active, trips: S.trips })); } catch (e) { /* storage unavailable */ }
+}
+
+/* ---------- money math ---------- */
+function baseMinor(trip, e) {
+  const d = fd(trip.currency);
+  const rate = e.currency === trip.currency ? 1 : e.rate;
+  return Math.round(e.amount * rate * 10 ** d);
+}
+// Largest-remainder allocation: shares always add up exactly to the total.
+function allocate(total, weights, order) {
+  const entries = Object.entries(weights).filter(([, w]) => w > 0);
+  const sum = entries.reduce((a, [, w]) => a + w, 0);
+  const out = {};
+  if (!sum) return out;
+  const rows = entries.map(([p, w]) => { const raw = total * w / sum; const fl = Math.floor(raw); out[p] = fl; return { p, frac: raw - fl }; });
+  let rem = total - rows.reduce((a, r) => a + out[r.p], 0);
+  rows.sort((a, b) => (b.frac - a.frac) || (order.indexOf(a.p) - order.indexOf(b.p)));
+  for (let i = 0; rem > 0 && rows.length; i = (i + 1) % rows.length, rem--) out[rows[i].p] += 1;
+  return out;
+}
+function shareMap(trip, e) {
+  const total = baseMinor(trip, e);
+  if (e.kind === 'transfer') return { total, shares: { [e.to]: total } };
+  return { total, shares: allocate(total, e.split.mode === 'equal' ? Object.fromEntries(Object.keys(e.split.parts).map(p => [p, 1])) : e.split.parts, trip.people.map(p => p.id)) };
+}
+function computeBalances(trip) {
+  const rows = Object.fromEntries(trip.people.map(p => [p.id, { paid: 0, share: 0 }]));
+  let spent = 0, count = 0;
+  for (const e of trip.expenses) {
+    const { total, shares } = shareMap(trip, e);
+    if (rows[e.paidBy]) rows[e.paidBy].paid += total;
+    for (const [p, v] of Object.entries(shares)) if (rows[p]) rows[p].share += v;
+    if (e.kind === 'expense') { spent += total; count++; }
+  }
+  return { rows, spent, count };
+}
+// Greedy matching of the largest debtor with the largest creditor: at most n-1 payments.
+function settlements(trip, rows) {
+  const net = trip.people.map(p => ({ id: p.id, v: rows[p.id].paid - rows[p.id].share }));
+  const cred = net.filter(x => x.v > 0).map(x => ({ ...x }));
+  const debt = net.filter(x => x.v < 0).map(x => ({ id: x.id, v: -x.v }));
+  const out = [];
+  while (cred.length && debt.length) {
+    cred.sort((a, b) => b.v - a.v); debt.sort((a, b) => b.v - a.v);
+    const c = cred[0], d = debt[0];
+    const amt = Math.min(c.v, d.v);
+    if (amt > 0) out.push({ from: d.id, to: c.id, amt });
+    c.v -= amt; d.v -= amt;
+    if (c.v <= 0) cred.shift();
+    if (d.v <= 0) debt.shift();
+  }
+  return out;
+}
+
+/* ---------- sample data (made-up people and numbers) ---------- */
+function sampleTrip() {
+  const P = { a: uid(), m: uid(), t: uid(), z: uid() };
+  const s = STR[lang].sample;
+  const all = { [P.a]: 1, [P.m]: 1, [P.t]: 1, [P.z]: 1 };
+  const ex = (title, amount, paidBy, date, category, parts, mode = 'equal', currency = 'EUR', rate = 1) =>
+    ({ id: uid(), kind: 'expense', title, amount, currency, rate, paidBy, date, category, split: { mode, parts } });
+  return {
+    id: uid(), sample: true, name: STR[lang].sampleTrip, currency: 'EUR', rates: { GBP: 1.17 },
+    people: [{ id: P.a, name: 'Alex' }, { id: P.m, name: 'Maya' }, { id: P.t, name: 'Tomek' }, { id: P.z, name: 'Zoe' }],
+    expenses: [
+      ex(s.breakfast, 36.4, P.z, '2026-10-16', 'food', all, 'equal', 'GBP', 1.17),
+      ex(s.apt, 540, P.m, '2026-10-16', 'stay', all),
+      ex(s.taxi, 38.5, P.t, '2026-10-16', 'transport', { [P.a]: 1, [P.m]: 1, [P.t]: 1 }),
+      ex(s.tram, 26.8, P.a, '2026-10-16', 'transport', all),
+      ex(s.dinner, 112.8, P.a, '2026-10-16', 'food', { [P.a]: 24.5, [P.m]: 31.8, [P.t]: 34, [P.z]: 22.5 }, 'exact'),
+      ex(s.pastries, 14.4, P.z, '2026-10-17', 'food', all),
+      ex(s.sintra, 18.4, P.m, '2026-10-17', 'transport', all),
+      ex(s.palace, 80, P.t, '2026-10-17', 'fun', all),
+      ex(s.drinks, 64, P.z, '2026-10-17', 'food', { [P.a]: 1, [P.t]: 2, [P.z]: 1 }, 'shares'),
+      ex(s.surf, 135, P.a, '2026-10-18', 'fun', { [P.a]: 1, [P.t]: 1, [P.z]: 1 }),
+      ex(s.shop, 47.25, P.m, '2026-10-18', 'shop', all),
+      { id: uid(), kind: 'transfer', title: s.cash, amount: 20, currency: 'EUR', rate: 1, paidBy: P.m, to: P.t, date: '2026-10-16' }
+    ]
+  };
+}
+
+/* ---------- state ---------- */
+let S = loadState();
+try { const l = localStorage.getItem(LS_LANG); if (l === 'en' || l === 'pl') lang = l; else if (/^pl\b/i.test(navigator.language || '')) lang = 'pl'; }
+catch (e) { if (/^pl\b/i.test(navigator.language || '')) lang = 'pl'; }
+if (!S) { const tr = sampleTrip(); S = { trips: [tr], active: tr.id }; save(); }
+const activeTrip = () => S.trips.find(x => x.id === S.active) || S.trips[0] || null;
+let query = '';
+let tab = 'exp';
+
+/* ---------- render ---------- */
+const ICON_X = () => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); s.setAttribute('stroke-width', '2'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round'); const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', 'M5 12h14M13 6l6 6-6 6'); s.append(p); return s; };
+
+function applyStatic() {
+  document.documentElement.lang = lang;
+  document.title = t('appName');
+  document.querySelectorAll('[data-i]').forEach(el => { el.textContent = t(el.dataset.i); });
+  $('#importText').placeholder = t('pastePh');
+  const dl = $('#curList'); dl.textContent = '';
+  CURRENCIES.forEach(c => dl.append(h('option', { value: c })));
+}
+
+function render() {
+  const app = $('#app');
+  app.textContent = '';
+  const trip = activeTrip();
+  $('#fab').hidden = true;
+  if (!trip) {
+    app.append(topBar(null, null));
+    app.append(h('section', { class: 'panel' },
+      h('div', { class: 'empty' }, h('strong', null, t('noTrips')), h('p', null, t('noTripsHint')),
+        h('div', { class: 'split-tools', style: { 'justify-content': 'center' } },
+          h('button', { class: 'btn primary', type: 'button', onclick: () => openTrip(null) }, t('newTrip')),
+          h('button', { class: 'btn', type: 'button', onclick: loadSample }, t('loadSample'))))));
+    return;
+  }
+  const { rows, spent, count } = computeBalances(trip);
+
+  const xs = settlements(trip, rows);
+  app.append(topBar(trip, h('div', { class: 'trip-meta num' }, h('strong', null, fmtMinor(spent, trip.currency)), ' · ', t('nExpenses', { n: count }), ' · ', t('nPeople', { n: trip.people.length }))));
+
+  if (trip.sample) {
+    app.append(h('div', { class: 'banner' }, h('p', null, t('sampleBanner')), removeSampleBtn(trip)));
+  }
+
+  const setTab = v => { tab = v; render(); };
+  app.append(h('div', { class: 'tabs', role: 'tablist' },
+    h('button', { type: 'button', role: 'tab', 'aria-selected': String(tab === 'exp'), onclick: () => setTab('exp') }, t('expenses')),
+    h('button', { type: 'button', role: 'tab', 'aria-selected': String(tab === 'bal'), onclick: () => setTab('bal') }, t('balances'), xs.length ? h('span', { class: 'count num' }, String(xs.length)) : null)));
+  $('#fab').hidden = tab !== 'exp';
+
+  const grid = h('div', { class: 'grid', 'data-tab': tab });
+  app.append(grid);
+
+  // Ledger
+  const ledger = h('section', { class: 'panel ledger', 'aria-labelledby': 'exH' });
+  const listBox = h('div');
+  ledger.append(
+    h('div', { class: 'panel-h tab-dup' }, h('h2', { id: 'exH' }, t('expenses')),
+      h('button', { class: 'btn primary', type: 'button', id: 'addTop', onclick: () => openExpense(null) }, t('addExpense'))),
+    trip.expenses.length > 5 ? h('div', { class: 'search' }, h('input', { type: 'search', id: 'q', placeholder: t('search'), 'aria-label': t('search'), value: query, oninput: e => { query = e.target.value; renderList(trip, listBox); } })) : null,
+    listBox);
+  renderList(trip, listBox);
+  grid.append(ledger);
+
+  // Rail
+  const rail = h('div', { class: 'rail' });
+  grid.append(rail);
+  const maxAbs = Math.max(1, ...trip.people.map(p => Math.abs(rows[p.id].paid - rows[p.id].share)));
+  rail.append(h('section', { class: 'panel', 'aria-labelledby': 'balH' },
+    h('div', { class: 'panel-h tab-dup' }, h('h2', { id: 'balH' }, t('balances'))),
+    h('ul', { class: 'bal' }, trip.people.map(p => {
+      const r = rows[p.id]; const net = r.paid - r.share;
+      const cls = net > 0 ? 'pos' : net < 0 ? 'neg' : '';
+      const pct = Math.round(Math.abs(net) / maxAbs * 50);
+      return h('li', null, avatar(trip, p.id, true),
+        h('span', { class: 'who' }, p.name),
+        h('span', { class: 'amt num ' + cls }, (net > 0 ? '+' : net < 0 ? '−' : '') + fmtMinor(Math.abs(net), trip.currency),
+          h('small', null, net > 0 ? t('getsBack') : net < 0 ? t('owes') : t('even'))),
+        h('span', { class: 'bar', 'aria-hidden': 'true' }, cls ? h('i', { class: cls, style: { width: pct + '%' } }) : null));
+    }))));
+
+  rail.append(h('section', { class: 'panel', 'aria-labelledby': 'setH' },
+    h('div', { class: 'panel-h' }, h('h2', { id: 'setH' }, t('settle'))),
+    xs.length ? h('ul', { class: 'xfers' }, xs.map(x => h('li', null,
+      h('span', { class: 'pair' }, avatar(trip, x.from), h('span', null, pname(trip, x.from)), h('span', { class: 'arrow', 'aria-label': '→' }, ICON_X()), avatar(trip, x.to), h('span', null, pname(trip, x.to))),
+      h('span', { class: 'amt num' }, fmtMinor(x.amt, trip.currency)),
+      h('button', { class: 'btn small', type: 'button', onclick: () => markPaid(trip, x) }, t('markPaid')))))
+      : h('p', { class: 'square' }, h('strong', null, t('allSquare')))));
+}
+
+function svgIcon(d) {
+  const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor');
+  s.setAttribute('stroke-width', '2'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round');
+  for (const part of d.split('|')) { const p = document.createElementNS('http://www.w3.org/2000/svg', 'path'); p.setAttribute('d', part); s.append(p); }
+  return s;
+}
+function topBar(trip, meta) {
+  const ib = (label, d, onclick) => h('button', { class: 'icon-btn', type: 'button', 'aria-label': label, title: label, onclick }, svgIcon(d));
+  const pick = trip ? h('div', { class: 'trip-pick' },
+    h('div', { class: 'trip-select-wrap' }, h('select', { id: 'tripSelect', 'aria-label': t('tripLabel'), onchange: e => { if (e.target.value === '__new') { e.target.value = trip.id; openTrip(null); return; } S.active = e.target.value; query = ''; save(); render(); } },
+      S.trips.map(tr => h('option', { value: tr.id, selected: tr.id === trip.id }, tr.name)), h('option', { value: '__new' }, '+ ' + t('newTrip')))), meta)
+    : h('div', { class: 'trip-pick' });
+  return h('header', { class: 'top' }, pick,
+    trip ? ib(t('settings'), 'M4 7h10|M18 7h2|M4 17h2|M10 17h10|M16 4v6|M8 14v6', () => openTrip(trip)) : null,
+    ib(t('data'), 'M7 9l5-5 5 5|M12 4v11|M5 20h14', openData),
+    h('button', { class: 'icon-btn', type: 'button', lang: lang === 'en' ? 'pl' : 'en', 'aria-label': t('switchLang'), title: t('switchLang'), onclick: () => {
+      lang = lang === 'en' ? 'pl' : 'en';
+      try { localStorage.setItem(LS_LANG, lang); } catch (e) { /* ignore */ }
+      applyStatic(); render();
+    } }, lang === 'en' ? 'PL' : 'EN'));
+}
+
+function removeSampleBtn(trip) {
+  const wrap = h('span', { style: { display: 'contents' } });
+  const btn = h('button', { class: 'btn small', type: 'button', onclick: () => {
+    wrap.replaceChildren(h('span', { class: 'confirm', style: { width: 'auto' } }, h('span', null, t('confirmSample')),
+      h('button', { class: 'btn small', type: 'button', onclick: () => wrap.replaceChildren(btn) }, t('keep')),
+      h('button', { class: 'btn small danger', type: 'button', onclick: () => deleteTrip(trip.id) }, t('delete'))));
+  } }, t('removeSample'));
+  wrap.append(btn);
+  return wrap;
+}
+
+function fmtDay(iso) {
+  if (iso === todayISO()) return t('today');
+  const y = new Date(); y.setDate(y.getDate() - 1); y.setMinutes(y.getMinutes() - y.getTimezoneOffset());
+  if (iso === y.toISOString().slice(0, 10)) return t('yesterday');
+  const [Y, M, D] = iso.split('-').map(Number);
+  try { return new Intl.DateTimeFormat(loc(), { weekday: 'short', day: 'numeric', month: 'short', year: Y === new Date().getFullYear() ? undefined : 'numeric' }).format(new Date(Y, M - 1, D)); }
+  catch (e) { return iso; }
+}
+
+function renderList(trip, box) {
+  box.textContent = '';
+  if (!trip.expenses.length) {
+    box.append(h('div', { class: 'empty' }, h('strong', null, t('noExpenses')), h('p', null, t('noExpensesHint'))));
+    return;
+  }
+  const q = query.trim().toLocaleLowerCase();
+  const list = trip.expenses
+    .map((e, i) => ({ e, i }))
+    .filter(({ e }) => !q || [e.title, pname(trip, e.paidBy), e.to ? pname(trip, e.to) : '', e.category ? catName(e.category) : ''].join(' ').toLocaleLowerCase().includes(q))
+    .sort((a, b) => (b.e.date.localeCompare(a.e.date)) || (b.i - a.i));
+  if (!list.length) { box.append(h('div', { class: 'empty' }, h('p', null, t('noResults', { q: query.trim() })))); return; }
+  let day = null;
+  for (const { e } of list) {
+    if (e.date !== day) {
+      day = e.date;
+      const dayTotal = list.filter(x => x.e.date === day && x.e.kind === 'expense').reduce((a, x) => a + baseMinor(trip, x.e), 0);
+      box.append(h('div', { class: 'day' }, h('span', null, fmtDay(day)), h('span', { class: 'num' }, dayTotal ? fmtMinor(dayTotal, trip.currency) : '')));
+    }
+    const foreign = e.currency !== trip.currency;
+    const amount = h('span', { class: 'ex-a num' }, fmtMoney(e.amount, e.currency), foreign ? h('small', null, '≈ ' + fmtMinor(baseMinor(trip, e), trip.currency)) : null);
+    if (e.kind === 'transfer') {
+      const ic = h('span', { class: 'xfer-ic', 'aria-hidden': 'true' }, ICON_X());
+      box.append(h('button', { class: 'ex transfer', type: 'button', onclick: () => openExpense(e) }, ic,
+        h('span', { style: { 'min-width': '0' } }, h('span', { class: 'ex-t' }, t('gave', { from: pname(trip, e.paidBy), to: pname(trip, e.to) })),
+          h('span', { class: 'ex-s', style: { display: 'block' } }, e.title || t('moneyGiven'))), amount));
+    } else {
+      const n = Object.keys(e.split.parts).length;
+      const total = trip.people.length;
+      const ways = n === 1 ? t('splitWays', { n: 1, name: pname(trip, Object.keys(e.split.parts)[0]) }) : n === total ? '' : t('splitWays', { n, total });
+      box.append(h('button', { class: 'ex', type: 'button', onclick: () => openExpense(e) }, avatar(trip, e.paidBy, true),
+        h('span', { style: { 'min-width': '0' } },
+          h('span', { class: 'ex-t' }, e.title),
+          h('span', { class: 'ex-s', style: { display: 'block' } }, t('paidBy', { name: pname(trip, e.paidBy) }) + (ways ? ' · ' + ways : ''))), amount));
+    }
+  }
+}
+
+function markPaid(trip, x) {
+  trip.expenses.push({ id: uid(), kind: 'transfer', title: t('settleTitle'), amount: x.amt / 10 ** fd(trip.currency), currency: trip.currency, rate: 1, paidBy: x.from, to: x.to, date: todayISO() });
+  touch(trip);
+  toast(t('recorded', { from: pname(trip, x.from), to: pname(trip, x.to) }));
+}
+function touch(trip) { trip.updated = new Date().toISOString(); save(); render(); }
+
+/* ---------- expense dialog ---------- */
+const exDlg = $('#exDlg');
+let editing = null; // {trip, expense|null}
+let draftParts = {}; // pid -> string value (exact/shares) ; included set for equal
+let included = new Set();
+
+function openExpense(e) {
+  const trip = activeTrip(); if (!trip) return;
+  editing = { trip, e };
+  const kind = e ? e.kind : 'expense';
+  $('#kind' + (kind === 'transfer' ? 'Transfer' : 'Expense')).checked = true;
+  $('#exTitle').value = e ? e.title : '';
+  $('#exAmount').value = e ? numStr(e.amount, fd(e.currency)) : '';
+  $('#exCur').value = e ? e.currency : trip.currency;
+  $('#exRate').value = e && e.currency !== trip.currency ? numStr(e.rate, 6) : '';
+  $('#exDate').value = e ? e.date : todayISO();
+  const fillSel = (sel, val) => { sel.textContent = ''; trip.people.forEach(p => sel.append(h('option', { value: p.id, selected: p.id === val }, p.name))); };
+  fillSel($('#exPayer'), e ? e.paidBy : trip.people[0].id);
+  fillSel($('#exTo'), e && e.to ? e.to : (trip.people[1] || trip.people[0]).id);
+  const catBox = $('#catBox'); catBox.textContent = '';
+  const cat = e && e.category ? e.category : 'food';
+  CATS.forEach(c => catBox.append(h('label', null, h('input', { type: 'radio', name: 'cat', value: c, id: 'cat-' + c, checked: c === cat }), h('span', null, catName(c)))));
+  const mode = e && e.split ? e.split.mode : 'equal';
+  $('#mode' + mode[0].toUpperCase() + mode.slice(1)).checked = true;
+  included = new Set(e && e.split ? Object.keys(e.split.parts) : trip.people.map(p => p.id));
+  draftParts = {};
+  trip.people.forEach(p => {
+    const v = e && e.split ? e.split.parts[p.id] : undefined;
+    draftParts[p.id] = v !== undefined && mode !== 'equal' ? numStr(v, mode === 'exact' ? fd(e.currency) : 4) : (mode === 'shares' || !e ? '1' : '');
+  });
+  $('#exErr').textContent = '';
+  resetFoot($('#exFoot'), !!e, t('confirmEx'), () => { trip.expenses = trip.expenses.filter(x => x !== e); exDlg.close(); touch(trip); toast(t('deleted')); });
+  syncKind();
+  exDlg.showModal();
+  if (!e) setTimeout(() => $('#exTitle').focus(), 30);
+}
+
+function syncKind() {
+  const trip = editing.trip;
+  const transfer = $('#kindTransfer').checked;
+  const e = editing.e;
+  $('#exDlgT').textContent = transfer ? t(e ? 'editXfer' : 'addXfer') : t(e ? 'editTitle' : 'addTitle');
+  $('#catField').hidden = transfer;
+  $('#splitField').hidden = transfer;
+  $('#toField').hidden = !transfer;
+  $('#payerL').textContent = transfer ? t('fFrom') : t('fPaidBy');
+  syncRate(trip);
+  renderSplit();
+}
+function curVal() { return $('#exCur').value.trim().toUpperCase(); }
+function syncRate(trip) {
+  const cur = curVal();
+  const show = CUR_RE.test(cur) && cur !== trip.currency;
+  $('#rateRow').hidden = !show;
+  if (show) {
+    $('#rateL').textContent = t('rateEq', { cur });
+    $('#rateR').textContent = trip.currency;
+    if (!$('#exRate').value && trip.rates[cur]) $('#exRate').value = numStr(trip.rates[cur], 6);
+  }
+}
+function currentMode() { return document.querySelector('input[name="mode"]:checked').value; }
+
+function renderSplit() {
+  const trip = editing.trip;
+  const mode = currentMode();
+  const list = $('#splitList'); list.textContent = '';
+  trip.people.forEach(p => {
+    const cb = h('input', { type: 'checkbox', id: 'inc-' + p.id, checked: included.has(p.id), onchange: ev => {
+      if (ev.target.checked) { included.add(p.id); if (mode === 'shares' && !(parseNum(draftParts[p.id]) > 0)) draftParts[p.id] = '1'; }
+      else included.delete(p.id);
+      renderSplit();
+    } });
+    let right;
+    if (mode === 'equal') right = h('span', { class: 'share num', id: 'sh-' + p.id });
+    else right = h('input', { class: 'in num', id: 'part-' + p.id, inputmode: 'decimal', autocomplete: 'off', value: included.has(p.id) ? draftParts[p.id] || '' : '', disabled: !included.has(p.id), 'aria-label': p.name,
+      oninput: ev => { draftParts[p.id] = ev.target.value; updateSplitNote(); } });
+    list.append(h('div', { class: 'split-row' }, h('label', { for: 'inc-' + p.id }, cb, avatar(trip, p.id), p.name), right));
+  });
+  updateSplitNote();
+}
+function updateSplitNote() {
+  const trip = editing.trip;
+  const mode = currentMode();
+  const amount = parseNum($('#exAmount').value);
+  const cur = CUR_RE.test(curVal()) ? curVal() : trip.currency;
+  const note = $('#splitNote'); note.className = 'note num'; note.textContent = '';
+  const ids = trip.people.map(p => p.id).filter(id => included.has(id));
+  if (mode === 'equal') {
+    const d = fd(cur);
+    const sh = amount > 0 && ids.length ? allocate(Math.round(amount * 10 ** d), Object.fromEntries(ids.map(i => [i, 1])), ids) : {};
+    trip.people.forEach(p => { const el = $('#sh-' + p.id); if (el) el.textContent = sh[p.id] !== undefined ? fmtMinor(sh[p.id], cur) : '–'; });
+  } else if (mode === 'exact') {
+    const d = fd(cur);
+    const sum = ids.reduce((a, id) => a + Math.round((parseNum(draftParts[id]) || 0) * 10 ** d), 0);
+    const target = amount > 0 ? Math.round(amount * 10 ** d) : 0;
+    const diff = target - sum;
+    if (!target) return;
+    note.textContent = diff === 0 ? t('balanced') : diff > 0 ? t('left', { x: fmtMinor(diff, cur) }) : t('over', { x: fmtMinor(-diff, cur) });
+    if (diff !== 0) note.classList.add('bad');
+  } else {
+    const totalW = ids.reduce((a, id) => a + (parseNum(draftParts[id]) || 0), 0);
+    if (amount > 0 && totalW > 0) note.textContent = t('perShare', { x: fmtMoney(amount / totalW, cur) });
+  }
+}
+
+function resetFoot(foot, canDelete, question, onDelete) {
+  const del = foot.querySelector('.danger');
+  foot.querySelectorAll('.confirm').forEach(c => c.remove());
+  [...foot.children].forEach(c => { c.hidden = false; });
+  del.hidden = !canDelete;
+  del.onclick = () => {
+    const kids = [...foot.children];
+    kids.forEach(c => { c.hidden = true; });
+    const box = h('div', { class: 'confirm' }, h('span', null, question),
+      h('button', { class: 'btn small', type: 'button', onclick: () => { box.remove(); kids.forEach(c => { c.hidden = false; }); } }, t('keep')),
+      h('button', { class: 'btn small danger', type: 'button', onclick: onDelete }, t('delete')));
+    foot.append(box);
+    box.querySelector('button').focus();
+  };
+}
+
+$('#exForm').addEventListener('change', ev => {
+  if (ev.target.name === 'kind') syncKind();
+  if (ev.target.name === 'mode') {
+    const mode = currentMode(); const trip = editing.trip;
+    // sensible defaults when switching modes
+    if (mode === 'shares') trip.people.forEach(p => { if (!(parseNum(draftParts[p.id]) > 0)) draftParts[p.id] = '1'; });
+    if (mode === 'exact') {
+      const amt = parseNum($('#exAmount').value); const cur = CUR_RE.test(curVal()) ? curVal() : trip.currency;
+      const ids = trip.people.map(p => p.id).filter(id => included.has(id));
+      const sh = amt > 0 && ids.length ? allocate(Math.round(amt * 10 ** fd(cur)), Object.fromEntries(ids.map(i => [i, 1])), ids) : {};
+      trip.people.forEach(p => { draftParts[p.id] = sh[p.id] !== undefined ? numStr(sh[p.id] / 10 ** fd(cur), fd(cur)) : ''; });
+    }
+    renderSplit();
+  }
+});
+$('#exAmount').addEventListener('input', updateSplitNote);
+$('#exCur').addEventListener('input', () => { syncRate(editing.trip); updateSplitNote(); });
+$('#selAll').addEventListener('click', () => { editing.trip.people.forEach(p => { included.add(p.id); if (!draftParts[p.id]) draftParts[p.id] = currentMode() === 'shares' ? '1' : ''; }); renderSplit(); });
+$('#selNone').addEventListener('click', () => { included.clear(); renderSplit(); });
+
+$('#exForm').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const { trip, e } = editing;
+  const err = msg => { $('#exErr').textContent = msg; };
+  const transfer = $('#kindTransfer').checked;
+  const title = str($('#exTitle').value, 80);
+  const amount = parseNum($('#exAmount').value);
+  const cur = curVal();
+  if (!transfer && !title) return err(t('errTitle'));
+  if (!(amount > 0) || amount > 1e10) return err(t('errAmount'));
+  if (!CUR_RE.test(cur)) return err(t('errCur'));
+  let rate = 1;
+  if (cur !== trip.currency) {
+    rate = parseNum($('#exRate').value);
+    if (!(rate > 0) || rate > 1e9) return err(t('errRate', { cur, base: trip.currency }));
+  }
+  const date = DATE_RE.test($('#exDate').value) ? $('#exDate').value : todayISO();
+  const rec = { id: e ? e.id : uid(), kind: transfer ? 'transfer' : 'expense', title, amount: +amount.toFixed(fd(cur)), currency: cur, rate, paidBy: $('#exPayer').value, date };
+  if (transfer) {
+    rec.to = $('#exTo').value;
+    if (rec.to === rec.paidBy) return err(t('errSame'));
+  } else {
+    rec.category = (document.querySelector('input[name="cat"]:checked') || { value: 'other' }).value;
+    const mode = currentMode();
+    const ids = trip.people.map(p => p.id).filter(id => included.has(id));
+    if (!ids.length) return err(t('errSplit'));
+    const parts = {};
+    if (mode === 'equal') ids.forEach(id => { parts[id] = 1; });
+    else if (mode === 'exact') {
+      const d = fd(cur);
+      let sum = 0;
+      ids.forEach(id => { const v = Math.round((parseNum(draftParts[id]) || 0) * 10 ** d); if (v > 0) { parts[id] = v / 10 ** d; sum += v; } });
+      const target = Math.round(amount * 10 ** d);
+      if (sum !== target) return err(t('errExact', { x: fmtMinor(target, cur), y: fmtMinor(sum, cur) }));
+    } else {
+      ids.forEach(id => { const v = parseNum(draftParts[id]); if (v > 0 && v < 1e6) parts[id] = +v.toFixed(4); });
+      if (!Object.keys(parts).length) return err(t('errShares'));
+    }
+    rec.split = { mode, parts };
+  }
+  if (cur !== trip.currency) trip.rates[cur] = rate;
+  if (e) trip.expenses[trip.expenses.indexOf(e)] = rec; else trip.expenses.push(rec);
+  exDlg.close();
+  touch(trip);
+  toast(t('saved'));
+});
+
+/* ---------- trip dialog ---------- */
+const tripDlg = $('#tripDlg');
+let tripEditing = null; // {trip|null, people:[{id,name}]}
+function openTrip(trip) {
+  tripEditing = { trip, people: trip ? trip.people.map(p => ({ ...p })) : [{ id: uid(), name: '' }, { id: uid(), name: '' }] };
+  $('#tripDlgT').textContent = trip ? t('tripSettings') : t('newTripT');
+  $('#tripName').value = trip ? trip.name : '';
+  $('#tripCur').value = trip ? trip.currency : (lang === 'pl' ? 'PLN' : 'EUR');
+  const locked = !!(trip && trip.expenses.length);
+  $('#tripCur').disabled = locked;
+  $('#tripErr').textContent = '';
+  resetFoot($('#tripFoot'), !!trip, trip ? t('confirmTrip', { name: trip.name }) : '', () => { tripDlg.close(); deleteTrip(trip.id); });
+  renderPeople();
+  tripDlg.showModal();
+  if (!trip) setTimeout(() => $('#tripName').focus(), 30);
+}
+function renderPeople() {
+  const box = $('#plist'); box.textContent = '';
+  const used = new Set();
+  if (tripEditing.trip) tripEditing.trip.expenses.forEach(e => { used.add(e.paidBy); if (e.to) used.add(e.to); if (e.split) Object.keys(e.split.parts).forEach(p => used.add(p)); });
+  tripEditing.people.forEach((p, i) => {
+    const fake = { people: tripEditing.people };
+    const inUse = used.has(p.id);
+    box.append(h('div', { class: 'prow' }, avatar(fake, p.id, true),
+      h('input', { class: 'in', id: 'pn-' + p.id, value: p.name, maxlength: '40', placeholder: t('personName') + ' ' + (i + 1), 'aria-label': t('personName') + ' ' + (i + 1), autocomplete: 'off', oninput: ev => { p.name = ev.target.value; } }),
+      h('button', { class: 'x', type: 'button', disabled: inUse || tripEditing.people.length <= 1, title: inUse ? t('inUse') : t('remove'), 'aria-label': (inUse ? t('inUse') : t('remove')) + ': ' + (p.name || i + 1), onclick: () => { tripEditing.people.splice(i, 1); renderPeople(); } },
+        (() => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); s.setAttribute('stroke-width', '2'); s.setAttribute('stroke-linecap', 'round'); const pa = document.createElementNS('http://www.w3.org/2000/svg', 'path'); pa.setAttribute('d', inUse ? 'M7 11V8a5 5 0 0 1 10 0v3M6 11h12v9H6z' : 'M6 6l12 12M18 6 6 18'); s.append(pa); return s; })())));
+  });
+}
+$('#addPerson').addEventListener('click', () => {
+  if (tripEditing.people.length >= 50) return;
+  const p = { id: uid(), name: '' }; tripEditing.people.push(p); renderPeople(); $('#pn-' + p.id).focus();
+});
+$('#tripForm').addEventListener('submit', ev => {
+  ev.preventDefault();
+  const err = m => { $('#tripErr').textContent = m; };
+  const name = str($('#tripName').value, 60);
+  const cur = $('#tripCur').value.trim().toUpperCase();
+  const people = tripEditing.people.map(p => ({ id: p.id, name: str(p.name, 40) })).filter(p => p.name);
+  if (!name) return err(t('errName'));
+  if (!CUR_RE.test(cur)) return err(t('errCur'));
+  if (people.length < 2) return err(t('errPeople'));
+  if (new Set(people.map(p => p.name.toLocaleLowerCase())).size !== people.length) return err(t('errDup'));
+  let trip = tripEditing.trip;
+  if (trip) {
+    // keep people that are referenced even if their name was cleared
+    const keep = new Set(people.map(p => p.id));
+    const used = new Set(); trip.expenses.forEach(e => { used.add(e.paidBy); if (e.to) used.add(e.to); if (e.split) Object.keys(e.split.parts).forEach(p => used.add(p)); });
+    for (const id of used) if (!keep.has(id)) { const old = trip.people.find(p => p.id === id); if (old) people.push(old); }
+    trip.name = name; if (!trip.expenses.length) trip.currency = cur; trip.people = people;
+  } else {
+    trip = { id: uid(), name, currency: cur, people, expenses: [], rates: {} };
+    S.trips.push(trip); S.active = trip.id;
+  }
+  tripDlg.close();
+  touch(trip);
+  toast(t('saved'));
+});
+function deleteTrip(id) {
+  S.trips = S.trips.filter(x => x.id !== id);
+  if (S.active === id) S.active = S.trips[0] ? S.trips[0].id : null;
+  save(); render(); toast(t('deleted'));
+}
+function loadSample() {
+  const tr = sampleTrip(); S.trips.push(tr); S.active = tr.id; save(); render(); toast(t('sampleLoaded'));
+}
+
+/* ---------- import / export ---------- */
+const dataDlg = $('#dataDlg');
+let pendingImport = null;
+function exportPayload() {
+  const trip = activeTrip();
+  const trips = $('#scopeAll').checked ? S.trips : (trip ? [trip] : []);
+  return JSON.stringify({ format: 'trip-expense-splitter-multi-currency', version: 1, exported: new Date().toISOString(), trips }, null, 2);
+}
+function openData() {
+  $('#exportText').value = exportPayload();
+  $('#importText').value = ''; $('#importFile').value = '';
+  $('#importPreview').textContent = ''; $('#importErr').textContent = ''; $('#importGo').hidden = true; pendingImport = null;
+  dataDlg.showModal();
+}
+document.querySelectorAll('input[name="scope"]').forEach(r => r.addEventListener('change', () => { $('#exportText').value = exportPayload(); }));
+$('#copyBtn').addEventListener('click', () => {
+  const ta = $('#exportText');
+  const fallback = () => { ta.focus(); ta.select(); toast(t('copyFail')); };
+  try { navigator.clipboard.writeText(ta.value).then(() => toast(t('copied')), fallback); } catch (e) { fallback(); }
+});
+$('#dlBtn').addEventListener('click', () => {
+  try {
+    const trip = activeTrip();
+    const base = $('#scopeAll').checked ? 'all-trips' : (trip ? trip.name : 'trip');
+    const slug = base.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'trip';
+    const url = URL.createObjectURL(new Blob([exportPayload()], { type: 'application/json' }));
+    const a = h('a', { href: url, download: 'trip-expense-splitter-' + slug + '.json' });
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+    if (window.top !== window) toast(t('dlFail'));
+  } catch (e) { toast(t('dlFail')); }
+});
+$('#importFile').addEventListener('change', ev => {
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) return;
+  if (f.size > 5 * 1024 * 1024) { $('#importErr').textContent = t('importErr'); return; }
+  const r = new FileReader();
+  r.onload = () => { $('#importText').value = String(r.result); checkImport(); };
+  r.readAsText(f);
+});
+function checkImport() {
+  const errEl = $('#importErr'); const prev = $('#importPreview');
+  errEl.textContent = ''; prev.textContent = ''; $('#importGo').hidden = true; pendingImport = null;
+  const raw = $('#importText').value.trim();
+  if (!raw) { errEl.textContent = t('importEmpty'); return; }
+  let data;
+  try { data = JSON.parse(raw); } catch (e) { errEl.textContent = t('importErr'); return; }
+  let list = Array.isArray(data) ? data : data && Array.isArray(data.trips) ? data.trips : data && data.people ? [data] : null;
+  const trips = list ? list.slice(0, 200).map(cleanTrip).filter(Boolean) : [];
+  if (!trips.length) { errEl.textContent = t('importErr'); return; }
+  pendingImport = trips;
+  trips.forEach(tr => {
+    const exists = S.trips.some(x => x.id === tr.id);
+    prev.append(h('li', null, h('span', null, tr.name + ' · ' + t('nExpenses', { n: tr.expenses.filter(e => e.kind === 'expense').length })),
+      h('span', { class: 'tag ' + (exists ? 'rep' : 'new') }, exists ? t('tagRep') : t('tagNew'))));
+  });
+  $('#importBtn').textContent = t('importN', { n: trips.length });
+  $('#importGo').hidden = false;
+}
+$('#checkBtn').addEventListener('click', checkImport);
+$('#importBtn').addEventListener('click', () => {
+  if (!pendingImport) return;
+  pendingImport.forEach(tr => {
+    const i = S.trips.findIndex(x => x.id === tr.id);
+    if (i >= 0) S.trips[i] = tr; else S.trips.push(tr);
+  });
+  S.active = pendingImport[0].id;
+  const n = pendingImport.length;
+  pendingImport = null;
+  save(); dataDlg.close(); render(); toast(t('importedN', { n }));
+});
+$('#sampleBtn').addEventListener('click', () => { dataDlg.close(); loadSample(); });
+
+/* ---------- wiring ---------- */
+document.querySelectorAll('dialog').forEach(d => {
+  d.addEventListener('click', ev => { if (ev.target === d) d.close(); });
+  d.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => d.close()));
+});
+$('#fab').addEventListener('click', () => openExpense(null));
+applyStatic();
+render();
+
+// expose pure functions for automated tests
+window.__splitTrip = { allocate, settlements, computeBalances, parseNum, cleanTrip, sampleTrip };
+})();
+</script>
+
+</body>
+</html>

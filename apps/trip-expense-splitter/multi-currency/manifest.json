@@ -1,0 +1,108 @@
+{
+  "$schema": "../../../schemas/manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "trip-expense-splitter/multi-currency",
+  "appType": "trip-expense-splitter",
+  "variant": "multi-currency",
+  "name": {
+    "en": "Trip Expense Splitter",
+    "pl": "Podział kosztów wyjazdu"
+  },
+  "variantName": {
+    "en": "Multi-currency",
+    "pl": "Wiele walut"
+  },
+  "description": {
+    "en": "Split shared trip costs between friends in several currencies and settle up with the fewest payments.",
+    "pl": "Dziel wspólne koszty wyjazdu w kilku walutach i rozlicz się najmniejszą liczbą przelewów."
+  },
+  "version": "1.0.0",
+  "dataVersion": 1,
+  "status": "review",
+  "category": "travel",
+  "tags": [
+    "split-bills",
+    "group",
+    "trip",
+    "currency",
+    "settle-up"
+  ],
+  "languages": [
+    "en",
+    "pl"
+  ],
+  "entry": "trip-expense-splitter-multi-currency.html",
+  "license": "MIT",
+  "authors": [
+    {
+      "github": "piotr-liszka"
+    }
+  ],
+  "madeWith": [
+    "Claude"
+  ],
+  "created": "2026-11-05",
+  "updated": "2026-11-05",
+  "storage": {
+    "localStorage": [
+      "split-the-trip.v1",
+      "split-the-trip.lang"
+    ]
+  },
+  "dataFormats": {
+    "export": [
+      "json"
+    ],
+    "import": [
+      "json"
+    ]
+  },
+  "browserApis": [
+    "clipboard",
+    "file-input",
+    "download"
+  ],
+  "sampleData": [
+    {
+      "file": "sample-data/trip-expense-splitter-sample.json",
+      "description": {
+        "en": "A made-up long weekend trip of four friends.",
+        "pl": "Przykładowy długi weekend czworga znajomych."
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "screenshots/phone-light.png",
+      "theme": "light",
+      "device": "phone",
+      "caption": {
+        "en": "Main screen",
+        "pl": "Ekran główny"
+      }
+    },
+    {
+      "file": "screenshots/phone-dark.png",
+      "theme": "dark",
+      "device": "phone",
+      "caption": {
+        "en": "Dark mode",
+        "pl": "Tryb ciemny"
+      }
+    },
+    {
+      "file": "screenshots/phone-balances.png",
+      "theme": "light",
+      "device": "phone",
+      "caption": {
+        "en": "Balances and settle-up",
+        "pl": "Salda i rozliczenie"
+      },
+      "actions": [
+        {
+          "click": "text=Balances"
+        }
+      ]
+    }
+  ]
+}

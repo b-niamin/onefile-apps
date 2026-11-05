@@ -1,0 +1,264 @@
+{
+  "format": "trip-expense-splitter-multi-currency",
+  "version": 1,
+  "exported": "2026-11-05T00:00:00.000Z",
+  "trips": [
+    {
+      "id": "k99zwpn77hbd",
+      "sample": true,
+      "name": "Lisbon long weekend",
+      "currency": "EUR",
+      "rates": {
+        "GBP": 1.17
+      },
+      "people": [
+        {
+          "id": "bta3ecas7hbd",
+          "name": "Alex"
+        },
+        {
+          "id": "tha34o5a7hbd",
+          "name": "Maya"
+        },
+        {
+          "id": "933u1h1x7hbd",
+          "name": "Tomek"
+        },
+        {
+          "id": "bbyqk0vx7hbd",
+          "name": "Zoe"
+        }
+      ],
+      "expenses": [
+        {
+          "id": "dwo22j5q7hbd",
+          "kind": "expense",
+          "title": "Breakfast at Gatwick",
+          "amount": 36.4,
+          "currency": "GBP",
+          "rate": 1.17,
+          "paidBy": "bbyqk0vx7hbd",
+          "date": "2026-10-16",
+          "category": "food",
+          "split": {
+            "mode": "equal",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "tha34o5a7hbd": 1,
+              "933u1h1x7hbd": 1,
+              "bbyqk0vx7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "b0momn8q7hbd",
+          "kind": "expense",
+          "title": "Apartment in Alfama, 3 nights",
+          "amount": 540,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "tha34o5a7hbd",
+          "date": "2026-10-16",
+          "category": "stay",
+          "split": {
+            "mode": "equal",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "tha34o5a7hbd": 1,
+              "933u1h1x7hbd": 1,
+              "bbyqk0vx7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "tj0j9lgs7hbd",
+          "kind": "expense",
+          "title": "Airport taxi",
+          "amount": 38.5,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "933u1h1x7hbd",
+          "date": "2026-10-16",
+          "category": "transport",
+          "split": {
+            "mode": "equal",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "tha34o5a7hbd": 1,
+              "933u1h1x7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "u4v8vhxh7hbd",
+          "kind": "expense",
+          "title": "Tram and metro passes",
+          "amount": 26.8,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "bta3ecas7hbd",
+          "date": "2026-10-16",
+          "category": "transport",
+          "split": {
+            "mode": "equal",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "tha34o5a7hbd": 1,
+              "933u1h1x7hbd": 1,
+              "bbyqk0vx7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "emm76r267hbd",
+          "kind": "expense",
+          "title": "Dinner at the food market",
+          "amount": 112.8,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "bta3ecas7hbd",
+          "date": "2026-10-16",
+          "category": "food",
+          "split": {
+            "mode": "exact",
+            "parts": {
+              "bta3ecas7hbd": 24.5,
+              "tha34o5a7hbd": 31.8,
+              "933u1h1x7hbd": 34,
+              "bbyqk0vx7hbd": 22.5
+            }
+          }
+        },
+        {
+          "id": "5y7ipwdj7hbd",
+          "kind": "expense",
+          "title": "Custard tarts and coffee",
+          "amount": 14.4,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "bbyqk0vx7hbd",
+          "date": "2026-10-17",
+          "category": "food",
+          "split": {
+            "mode": "equal",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "tha34o5a7hbd": 1,
+              "933u1h1x7hbd": 1,
+              "bbyqk0vx7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "zi9nxduj7hbd",
+          "kind": "expense",
+          "title": "Train to Sintra",
+          "amount": 18.4,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "tha34o5a7hbd",
+          "date": "2026-10-17",
+          "category": "transport",
+          "split": {
+            "mode": "equal",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "tha34o5a7hbd": 1,
+              "933u1h1x7hbd": 1,
+              "bbyqk0vx7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "ucgej1ke7hbd",
+          "kind": "expense",
+          "title": "Pena Palace tickets",
+          "amount": 80,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "933u1h1x7hbd",
+          "date": "2026-10-17",
+          "category": "fun",
+          "split": {
+            "mode": "equal",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "tha34o5a7hbd": 1,
+              "933u1h1x7hbd": 1,
+              "bbyqk0vx7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "4j6lz8cb7hbd",
+          "kind": "expense",
+          "title": "Drinks in Bairro Alto",
+          "amount": 64,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "bbyqk0vx7hbd",
+          "date": "2026-10-17",
+          "category": "food",
+          "split": {
+            "mode": "shares",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "933u1h1x7hbd": 2,
+              "bbyqk0vx7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "r986dv9p7hbd",
+          "kind": "expense",
+          "title": "Surf lesson in Costa da Caparica",
+          "amount": 135,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "bta3ecas7hbd",
+          "date": "2026-10-18",
+          "category": "fun",
+          "split": {
+            "mode": "equal",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "933u1h1x7hbd": 1,
+              "bbyqk0vx7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "vh094r6a7hbd",
+          "kind": "expense",
+          "title": "Supermarket run",
+          "amount": 47.25,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "tha34o5a7hbd",
+          "date": "2026-10-18",
+          "category": "shop",
+          "split": {
+            "mode": "equal",
+            "parts": {
+              "bta3ecas7hbd": 1,
+              "tha34o5a7hbd": 1,
+              "933u1h1x7hbd": 1,
+              "bbyqk0vx7hbd": 1
+            }
+          }
+        },
+        {
+          "id": "mcbmf5k57hbd",
+          "kind": "transfer",
+          "title": "Cash for the taxi",
+          "amount": 20,
+          "currency": "EUR",
+          "rate": 1,
+          "paidBy": "tha34o5a7hbd",
+          "to": "933u1h1x7hbd",
+          "date": "2026-10-16"
+        }
+      ]
+    }
+  ]
+}
