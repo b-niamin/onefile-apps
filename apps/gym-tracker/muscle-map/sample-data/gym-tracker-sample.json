@@ -1,0 +1,3581 @@
+{
+  "app": "gym-tracker-muscle-map",
+  "version": 1,
+  "exportedAt": "2026-11-05T00:00:00.000Z",
+  "docs": {
+    "pSampleUpper": {
+      "kind": "plan",
+      "name": "Upper A",
+      "createdAt": 1788728539207,
+      "usedAt": null,
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Bench press",
+          "lib": "bench",
+          "n": 4
+        },
+        {
+          "name": "Barbell row",
+          "lib": "bbrow",
+          "n": 4
+        },
+        {
+          "name": "Overhead press",
+          "lib": "ohp",
+          "n": 3
+        },
+        {
+          "name": "Lat pulldown",
+          "lib": "pulldown",
+          "n": 3
+        },
+        {
+          "name": "Lateral raise",
+          "lib": "lateral",
+          "n": 3
+        },
+        {
+          "name": "Triceps pushdown",
+          "lib": "pushdown",
+          "n": 3
+        }
+      ]
+    },
+    "pSampleLower": {
+      "kind": "plan",
+      "name": "Lower A",
+      "createdAt": 1788728539208,
+      "usedAt": null,
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Back squat",
+          "lib": "squat",
+          "n": 4
+        },
+        {
+          "name": "Romanian deadlift",
+          "lib": "rdl",
+          "n": 3
+        },
+        {
+          "name": "Leg press",
+          "lib": "legpress",
+          "n": 3
+        },
+        {
+          "name": "Hip thrust",
+          "lib": "hipthrust",
+          "n": 3
+        },
+        {
+          "name": "Standing calf raise",
+          "lib": "calfraise",
+          "n": 3
+        },
+        {
+          "name": "Plank",
+          "lib": "plank",
+          "n": 3
+        }
+      ]
+    },
+    "pSampleFull": {
+      "kind": "plan",
+      "name": "Full body B",
+      "createdAt": 1788728539208,
+      "usedAt": null,
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "lib": "deadlift",
+          "n": 3
+        },
+        {
+          "name": "Incline dumbbell press",
+          "lib": "inclinedb",
+          "n": 3
+        },
+        {
+          "name": "Pull-up",
+          "lib": "pullup",
+          "n": 3
+        },
+        {
+          "name": "Dips",
+          "lib": "dips",
+          "n": 3
+        },
+        {
+          "name": "Dumbbell lunge",
+          "lib": "lunge",
+          "n": 3
+        },
+        {
+          "name": "Face pull",
+          "lib": "facepull",
+          "n": 3
+        },
+        {
+          "name": "Captain's chair knee raise",
+          "lib": "kneeraise",
+          "n": 3
+        }
+      ]
+    },
+    "wSample20260911": {
+      "date": "2026-09-11",
+      "createdAt": 1789149780000,
+      "startedAt": 1789149780000,
+      "finishedAt": 1789153440000,
+      "done": true,
+      "planId": "pSampleUpper",
+      "planName": "Upper A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Bench press",
+          "lib": "bench",
+          "sets": [
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Barbell row",
+          "lib": "bbrow",
+          "sets": [
+            {
+              "kg": "55",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Overhead press",
+          "lib": "ohp",
+          "sets": [
+            {
+              "kg": "37.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "37.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "37.5",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lat pulldown",
+          "lib": "pulldown",
+          "sets": [
+            {
+              "kg": "50",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "50",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "50",
+              "reps": "8",
+              "done": true
+            }
+          ],
+          "note": "Thigh pad on notch 3"
+        },
+        {
+          "name": "Lateral raise",
+          "lib": "lateral",
+          "sets": [
+            {
+              "kg": "16",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "16",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "16",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Triceps pushdown",
+          "lib": "pushdown",
+          "sets": [
+            {
+              "kg": "25",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "25",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "25",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20260914": {
+      "date": "2026-09-14",
+      "createdAt": 1789410180000,
+      "startedAt": 1789410180000,
+      "finishedAt": 1789413480000,
+      "done": true,
+      "planId": "pSampleLower",
+      "planName": "Lower A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Back squat",
+          "lib": "squat",
+          "sets": [
+            {
+              "kg": "80",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "4",
+              "done": true
+            }
+          ],
+          "note": "Belt from the 3rd set"
+        },
+        {
+          "name": "Romanian deadlift",
+          "lib": "rdl",
+          "sets": [
+            {
+              "kg": "70",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "70",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "70",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Leg press",
+          "lib": "legpress",
+          "sets": [
+            {
+              "kg": "140",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "140",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "140",
+              "reps": "10",
+              "done": true
+            }
+          ],
+          "note": "Seat on hole 5"
+        },
+        {
+          "name": "Hip thrust",
+          "lib": "hipthrust",
+          "sets": [
+            {
+              "kg": "80",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Standing calf raise",
+          "lib": "calfraise",
+          "sets": [
+            {
+              "kg": "60",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Plank",
+          "lib": "plank",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "45",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "45",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "40",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20260916": {
+      "date": "2026-09-16",
+      "createdAt": 1789582200000,
+      "startedAt": 1789582200000,
+      "finishedAt": 1789586100000,
+      "done": true,
+      "planId": "pSampleFull",
+      "planName": "Full body B",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "lib": "deadlift",
+          "sets": [
+            {
+              "kg": "100",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "100",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "100",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Incline dumbbell press",
+          "lib": "inclinedb",
+          "sets": [
+            {
+              "kg": "40",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "40",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "40",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Pull-up",
+          "lib": "pullup",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "6",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "6",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dips",
+          "lib": "dips",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dumbbell lunge",
+          "lib": "lunge",
+          "sets": [
+            {
+              "kg": "24",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "24",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "24",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Face pull",
+          "lib": "facepull",
+          "sets": [
+            {
+              "kg": "20",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "20",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "20",
+              "reps": "15",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Captain's chair knee raise",
+          "lib": "kneeraise",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20260918": {
+      "date": "2026-09-18",
+      "createdAt": 1789756080000,
+      "startedAt": 1789756080000,
+      "finishedAt": 1789760160000,
+      "done": true,
+      "planId": "pSampleUpper",
+      "planName": "Upper A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Bench press",
+          "lib": "bench",
+          "sets": [
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Barbell row",
+          "lib": "bbrow",
+          "sets": [
+            {
+              "kg": "55",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Overhead press",
+          "lib": "ohp",
+          "sets": [
+            {
+              "kg": "37.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "37.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "37.5",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lat pulldown",
+          "lib": "pulldown",
+          "sets": [
+            {
+              "kg": "50",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "50",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "50",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lateral raise",
+          "lib": "lateral",
+          "sets": [
+            {
+              "kg": "16",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "16",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "16",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Triceps pushdown",
+          "lib": "pushdown",
+          "sets": [
+            {
+              "kg": "25",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "25",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "25",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20260921": {
+      "date": "2026-09-21",
+      "createdAt": 1790014200000,
+      "startedAt": 1790014200000,
+      "finishedAt": 1790017680000,
+      "done": true,
+      "planId": "pSampleLower",
+      "planName": "Lower A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Back squat",
+          "lib": "squat",
+          "sets": [
+            {
+              "kg": "80",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "4",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Romanian deadlift",
+          "lib": "rdl",
+          "sets": [
+            {
+              "kg": "70",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "70",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "70",
+              "reps": "6",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Leg press",
+          "lib": "legpress",
+          "sets": [
+            {
+              "kg": "140",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "140",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "140",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Hip thrust",
+          "lib": "hipthrust",
+          "sets": [
+            {
+              "kg": "80",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "80",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Standing calf raise",
+          "lib": "calfraise",
+          "sets": [
+            {
+              "kg": "60",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Plank",
+          "lib": "plank",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "50",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "50",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "45",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20260923": {
+      "date": "2026-09-23",
+      "createdAt": 1790186700000,
+      "startedAt": 1790186700000,
+      "finishedAt": 1790190060000,
+      "done": true,
+      "planId": "pSampleFull",
+      "planName": "Full body B",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "lib": "deadlift",
+          "sets": [
+            {
+              "kg": "100",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "100",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "100",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Incline dumbbell press",
+          "lib": "inclinedb",
+          "sets": [
+            {
+              "kg": "40",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "40",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "40",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Pull-up",
+          "lib": "pullup",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "6",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "6",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dips",
+          "lib": "dips",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dumbbell lunge",
+          "lib": "lunge",
+          "sets": [
+            {
+              "kg": "24",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "24",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "24",
+              "reps": "9",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Face pull",
+          "lib": "facepull",
+          "sets": [
+            {
+              "kg": "20",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "20",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "20",
+              "reps": "15",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Captain's chair knee raise",
+          "lib": "kneeraise",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20260925": {
+      "date": "2026-09-25",
+      "createdAt": 1790361300000,
+      "startedAt": 1790361300000,
+      "finishedAt": 1790365200000,
+      "done": true,
+      "planId": "pSampleUpper",
+      "planName": "Upper A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Bench press",
+          "lib": "bench",
+          "sets": [
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Barbell row",
+          "lib": "bbrow",
+          "sets": [
+            {
+              "kg": "57.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Overhead press",
+          "lib": "ohp",
+          "sets": [
+            {
+              "kg": "38.75",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "38.75",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "38.75",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lat pulldown",
+          "lib": "pulldown",
+          "sets": [
+            {
+              "kg": "52.5",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "52.5",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "52.5",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lateral raise",
+          "lib": "lateral",
+          "sets": [
+            {
+              "kg": "18",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "18",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "18",
+              "reps": "11",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Triceps pushdown",
+          "lib": "pushdown",
+          "sets": [
+            {
+              "kg": "27.5",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "27.5",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "27.5",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20260928": {
+      "date": "2026-09-28",
+      "createdAt": 1790620140000,
+      "startedAt": 1790620140000,
+      "finishedAt": 1790623440000,
+      "done": true,
+      "planId": "pSampleLower",
+      "planName": "Lower A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Back squat",
+          "lib": "squat",
+          "sets": [
+            {
+              "kg": "82.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "82.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "82.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "82.5",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Romanian deadlift",
+          "lib": "rdl",
+          "sets": [
+            {
+              "kg": "72.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "72.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "72.5",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Leg press",
+          "lib": "legpress",
+          "sets": [
+            {
+              "kg": "145",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "145",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "145",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Hip thrust",
+          "lib": "hipthrust",
+          "sets": [
+            {
+              "kg": "85",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Standing calf raise",
+          "lib": "calfraise",
+          "sets": [
+            {
+              "kg": "65",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Plank",
+          "lib": "plank",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "50",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "50",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "45",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20260930": {
+      "date": "2026-09-30",
+      "createdAt": 1790791860000,
+      "startedAt": 1790791860000,
+      "finishedAt": 1790795820000,
+      "done": true,
+      "planId": "pSampleFull",
+      "planName": "Full body B",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "lib": "deadlift",
+          "sets": [
+            {
+              "kg": "105",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "105",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "105",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Incline dumbbell press",
+          "lib": "inclinedb",
+          "sets": [
+            {
+              "kg": "42",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "42",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "42",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Pull-up",
+          "lib": "pullup",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "6",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dips",
+          "lib": "dips",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dumbbell lunge",
+          "lib": "lunge",
+          "sets": [
+            {
+              "kg": "26",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "26",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "26",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Face pull",
+          "lib": "facepull",
+          "sets": [
+            {
+              "kg": "22.5",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "22.5",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "22.5",
+              "reps": "15",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Captain's chair knee raise",
+          "lib": "kneeraise",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "11",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "11",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261002": {
+      "date": "2026-10-02",
+      "createdAt": 1790965440000,
+      "startedAt": 1790965440000,
+      "finishedAt": 1790969640000,
+      "done": true,
+      "planId": "pSampleUpper",
+      "planName": "Upper A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Bench press",
+          "lib": "bench",
+          "sets": [
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Barbell row",
+          "lib": "bbrow",
+          "sets": [
+            {
+              "kg": "57.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Overhead press",
+          "lib": "ohp",
+          "sets": [
+            {
+              "kg": "38.75",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "38.75",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "38.75",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lat pulldown",
+          "lib": "pulldown",
+          "sets": [
+            {
+              "kg": "52.5",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "52.5",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "52.5",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lateral raise",
+          "lib": "lateral",
+          "sets": [
+            {
+              "kg": "18",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "18",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "18",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Triceps pushdown",
+          "lib": "pushdown",
+          "sets": [
+            {
+              "kg": "27.5",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "27.5",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "27.5",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261003": {
+      "date": "2026-10-03",
+      "createdAt": 1791022860000,
+      "startedAt": 1791022860000,
+      "finishedAt": 1791026340000,
+      "done": true,
+      "planId": "pSampleLower",
+      "planName": "Lower A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Back squat",
+          "lib": "squat",
+          "sets": [
+            {
+              "kg": "82.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "82.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "82.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "82.5",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Romanian deadlift",
+          "lib": "rdl",
+          "sets": [
+            {
+              "kg": "72.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "72.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "72.5",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Leg press",
+          "lib": "legpress",
+          "sets": [
+            {
+              "kg": "145",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "145",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "145",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Hip thrust",
+          "lib": "hipthrust",
+          "sets": [
+            {
+              "kg": "85",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Standing calf raise",
+          "lib": "calfraise",
+          "sets": [
+            {
+              "kg": "65",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Plank",
+          "lib": "plank",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "55",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "55",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "50",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261005": {
+      "date": "2026-10-05",
+      "createdAt": 1791224820000,
+      "startedAt": 1791224820000,
+      "finishedAt": 1791227940000,
+      "done": true,
+      "planId": "pSampleFull",
+      "planName": "Full body B",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "lib": "deadlift",
+          "sets": [
+            {
+              "kg": "105",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "105",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "105",
+              "reps": "4",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Incline dumbbell press",
+          "lib": "inclinedb",
+          "sets": [
+            {
+              "kg": "42",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "42",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "42",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Pull-up",
+          "lib": "pullup",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "6",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dips",
+          "lib": "dips",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dumbbell lunge",
+          "lib": "lunge",
+          "sets": [
+            {
+              "kg": "26",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "26",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "26",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Face pull",
+          "lib": "facepull",
+          "sets": [
+            {
+              "kg": "22.5",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "22.5",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "22.5",
+              "reps": "15",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Captain's chair knee raise",
+          "lib": "kneeraise",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "11",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "11",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261007": {
+      "date": "2026-10-07",
+      "createdAt": 1791397740000,
+      "startedAt": 1791397740000,
+      "finishedAt": 1791401760000,
+      "done": true,
+      "planId": "pSampleUpper",
+      "planName": "Upper A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Bench press",
+          "lib": "bench",
+          "sets": [
+            {
+              "kg": "65",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Barbell row",
+          "lib": "bbrow",
+          "sets": [
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Overhead press",
+          "lib": "ohp",
+          "sets": [
+            {
+              "kg": "40",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "40",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "40",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lat pulldown",
+          "lib": "pulldown",
+          "sets": [
+            {
+              "kg": "55",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lateral raise",
+          "lib": "lateral",
+          "sets": [
+            {
+              "kg": "20",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "20",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "20",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Triceps pushdown",
+          "lib": "pushdown",
+          "sets": [
+            {
+              "kg": "30",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "30",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "30",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261012": {
+      "date": "2026-10-12",
+      "createdAt": 1791828540000,
+      "startedAt": 1791828540000,
+      "finishedAt": 1791832320000,
+      "done": true,
+      "planId": "pSampleLower",
+      "planName": "Lower A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Back squat",
+          "lib": "squat",
+          "sets": [
+            {
+              "kg": "85",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Romanian deadlift",
+          "lib": "rdl",
+          "sets": [
+            {
+              "kg": "75",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "75",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "75",
+              "reps": "6",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Leg press",
+          "lib": "legpress",
+          "sets": [
+            {
+              "kg": "150",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "150",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "150",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Hip thrust",
+          "lib": "hipthrust",
+          "sets": [
+            {
+              "kg": "90",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "90",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "90",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Standing calf raise",
+          "lib": "calfraise",
+          "sets": [
+            {
+              "kg": "70",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "70",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "70",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Plank",
+          "lib": "plank",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "55",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "55",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "50",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261016": {
+      "date": "2026-10-16",
+      "createdAt": 1792174980000,
+      "startedAt": 1792174980000,
+      "finishedAt": 1792178760000,
+      "done": true,
+      "planId": "pSampleFull",
+      "planName": "Full body B",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "lib": "deadlift",
+          "sets": [
+            {
+              "kg": "110",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "110",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "110",
+              "reps": "4",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Incline dumbbell press",
+          "lib": "inclinedb",
+          "sets": [
+            {
+              "kg": "44",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "44",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "44",
+              "reps": "9",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Pull-up",
+          "lib": "pullup",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "6",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dips",
+          "lib": "dips",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dumbbell lunge",
+          "lib": "lunge",
+          "sets": [
+            {
+              "kg": "28",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "28",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "28",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Face pull",
+          "lib": "facepull",
+          "sets": [
+            {
+              "kg": "25",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "25",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "25",
+              "reps": "15",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Captain's chair knee raise",
+          "lib": "kneeraise",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "11",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "11",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261019": {
+      "date": "2026-10-19",
+      "createdAt": 1792434180000,
+      "startedAt": 1792434180000,
+      "finishedAt": 1792437600000,
+      "done": true,
+      "planId": "pSampleUpper",
+      "planName": "Upper A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Bench press",
+          "lib": "bench",
+          "sets": [
+            {
+              "kg": "65",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "65",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Barbell row",
+          "lib": "bbrow",
+          "sets": [
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "60",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Overhead press",
+          "lib": "ohp",
+          "sets": [
+            {
+              "kg": "40",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "40",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "40",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lat pulldown",
+          "lib": "pulldown",
+          "sets": [
+            {
+              "kg": "55",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "55",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lateral raise",
+          "lib": "lateral",
+          "sets": [
+            {
+              "kg": "20",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "20",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "20",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Triceps pushdown",
+          "lib": "pushdown",
+          "sets": [
+            {
+              "kg": "30",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "30",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "30",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261021": {
+      "date": "2026-10-21",
+      "createdAt": 1792606620000,
+      "startedAt": 1792606620000,
+      "finishedAt": 1792610040000,
+      "done": true,
+      "planId": "pSampleLower",
+      "planName": "Lower A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Back squat",
+          "lib": "squat",
+          "sets": [
+            {
+              "kg": "85",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "85",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Romanian deadlift",
+          "lib": "rdl",
+          "sets": [
+            {
+              "kg": "75",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "75",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "75",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Leg press",
+          "lib": "legpress",
+          "sets": [
+            {
+              "kg": "150",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "150",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "150",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Hip thrust",
+          "lib": "hipthrust",
+          "sets": [
+            {
+              "kg": "90",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "90",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "90",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Standing calf raise",
+          "lib": "calfraise",
+          "sets": [
+            {
+              "kg": "70",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "70",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "70",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Plank",
+          "lib": "plank",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "60",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "60",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "55",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261023": {
+      "date": "2026-10-23",
+      "createdAt": 1792780680000,
+      "startedAt": 1792780680000,
+      "finishedAt": 1792783920000,
+      "done": true,
+      "planId": "pSampleFull",
+      "planName": "Full body B",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "lib": "deadlift",
+          "sets": [
+            {
+              "kg": "110",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "110",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "110",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Incline dumbbell press",
+          "lib": "inclinedb",
+          "sets": [
+            {
+              "kg": "44",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "44",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "44",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Pull-up",
+          "lib": "pullup",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "7",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dips",
+          "lib": "dips",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dumbbell lunge",
+          "lib": "lunge",
+          "sets": [
+            {
+              "kg": "28",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "28",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "28",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Face pull",
+          "lib": "facepull",
+          "sets": [
+            {
+              "kg": "25",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "25",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "25",
+              "reps": "14",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Captain's chair knee raise",
+          "lib": "kneeraise",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261026": {
+      "date": "2026-10-26",
+      "createdAt": 1793039820000,
+      "startedAt": 1793039820000,
+      "finishedAt": 1793043960000,
+      "done": true,
+      "planId": "pSampleUpper",
+      "planName": "Upper A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Bench press",
+          "lib": "bench",
+          "sets": [
+            {
+              "kg": "67.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "67.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "67.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "67.5",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Barbell row",
+          "lib": "bbrow",
+          "sets": [
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Overhead press",
+          "lib": "ohp",
+          "sets": [
+            {
+              "kg": "41.25",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "41.25",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "41.25",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lat pulldown",
+          "lib": "pulldown",
+          "sets": [
+            {
+              "kg": "57.5",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lateral raise",
+          "lib": "lateral",
+          "sets": [
+            {
+              "kg": "22",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "22",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "22",
+              "reps": "11",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Triceps pushdown",
+          "lib": "pushdown",
+          "sets": [
+            {
+              "kg": "32.5",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "32.5",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "32.5",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261028": {
+      "date": "2026-10-28",
+      "createdAt": 1793212440000,
+      "startedAt": 1793212440000,
+      "finishedAt": 1793216460000,
+      "done": true,
+      "planId": "pSampleLower",
+      "planName": "Lower A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Back squat",
+          "lib": "squat",
+          "sets": [
+            {
+              "kg": "87.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "87.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "87.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "87.5",
+              "reps": "3",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Romanian deadlift",
+          "lib": "rdl",
+          "sets": [
+            {
+              "kg": "77.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "77.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "77.5",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Leg press",
+          "lib": "legpress",
+          "sets": [
+            {
+              "kg": "155",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "155",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "155",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Hip thrust",
+          "lib": "hipthrust",
+          "sets": [
+            {
+              "kg": "95",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "95",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "95",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Standing calf raise",
+          "lib": "calfraise",
+          "sets": [
+            {
+              "kg": "75",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "75",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "75",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Plank",
+          "lib": "plank",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "60",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "60",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "55",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261030": {
+      "date": "2026-10-30",
+      "createdAt": 1793384220000,
+      "startedAt": 1793384220000,
+      "finishedAt": 1793387760000,
+      "done": true,
+      "planId": "pSampleFull",
+      "planName": "Full body B",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Deadlift",
+          "lib": "deadlift",
+          "sets": [
+            {
+              "kg": "115",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "115",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "115",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Incline dumbbell press",
+          "lib": "inclinedb",
+          "sets": [
+            {
+              "kg": "46",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "46",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "46",
+              "reps": "9",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Pull-up",
+          "lib": "pullup",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "6",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dips",
+          "lib": "dips",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "9",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Dumbbell lunge",
+          "lib": "lunge",
+          "sets": [
+            {
+              "kg": "30",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "30",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "30",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Face pull",
+          "lib": "facepull",
+          "sets": [
+            {
+              "kg": "27.5",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "27.5",
+              "reps": "15",
+              "done": true
+            },
+            {
+              "kg": "27.5",
+              "reps": "14",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Captain's chair knee raise",
+          "lib": "kneeraise",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "11",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261102": {
+      "date": "2026-11-02",
+      "createdAt": 1793642640000,
+      "startedAt": 1793642640000,
+      "finishedAt": 1793646900000,
+      "done": true,
+      "planId": "pSampleUpper",
+      "planName": "Upper A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Bench press",
+          "lib": "bench",
+          "sets": [
+            {
+              "kg": "67.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "67.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "67.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "67.5",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Barbell row",
+          "lib": "bbrow",
+          "sets": [
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "62.5",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Overhead press",
+          "lib": "ohp",
+          "sets": [
+            {
+              "kg": "41.25",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "41.25",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "41.25",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lat pulldown",
+          "lib": "pulldown",
+          "sets": [
+            {
+              "kg": "57.5",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "57.5",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Lateral raise",
+          "lib": "lateral",
+          "sets": [
+            {
+              "kg": "22",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "22",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "22",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Triceps pushdown",
+          "lib": "pushdown",
+          "sets": [
+            {
+              "kg": "32.5",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "32.5",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "32.5",
+              "reps": "11",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "wSample20261104": {
+      "date": "2026-11-04",
+      "createdAt": 1793815260000,
+      "startedAt": 1793815260000,
+      "finishedAt": 1793818380000,
+      "done": true,
+      "planId": "pSampleLower",
+      "planName": "Lower A",
+      "sample": true,
+      "exercises": [
+        {
+          "name": "Back squat",
+          "lib": "squat",
+          "sets": [
+            {
+              "kg": "87.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "87.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "87.5",
+              "reps": "5",
+              "done": true
+            },
+            {
+              "kg": "87.5",
+              "reps": "5",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Romanian deadlift",
+          "lib": "rdl",
+          "sets": [
+            {
+              "kg": "77.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "77.5",
+              "reps": "8",
+              "done": true
+            },
+            {
+              "kg": "77.5",
+              "reps": "7",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Leg press",
+          "lib": "legpress",
+          "sets": [
+            {
+              "kg": "155",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "155",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "155",
+              "reps": "8",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Hip thrust",
+          "lib": "hipthrust",
+          "sets": [
+            {
+              "kg": "95",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "95",
+              "reps": "10",
+              "done": true
+            },
+            {
+              "kg": "95",
+              "reps": "10",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Standing calf raise",
+          "lib": "calfraise",
+          "sets": [
+            {
+              "kg": "75",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "75",
+              "reps": "12",
+              "done": true
+            },
+            {
+              "kg": "75",
+              "reps": "12",
+              "done": true
+            }
+          ]
+        },
+        {
+          "name": "Plank",
+          "lib": "plank",
+          "sets": [
+            {
+              "kg": "",
+              "reps": "65",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "65",
+              "done": true
+            },
+            {
+              "kg": "",
+              "reps": "60",
+              "done": true
+            }
+          ]
+        }
+      ]
+    },
+    "settings": {
+      "kind": "settings",
+      "goal": 3,
+      "unit": "kg",
+      "sound": true,
+      "wake": true,
+      "seeded": true
+    }
+  }
+}
