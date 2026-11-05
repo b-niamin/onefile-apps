@@ -1,0 +1,398 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/b-niamin/onefile-apps/schemas/manifest.schema.json",
+  "title": "One File Apps manifest",
+  "description": "Describes one app variant: apps/<app-type>/<variant>/manifest.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "id",
+    "appType",
+    "variant",
+    "name",
+    "variantName",
+    "description",
+    "version",
+    "status",
+    "category",
+    "tags",
+    "languages",
+    "entry",
+    "license",
+    "storage",
+    "screenshots",
+    "authors",
+    "dataVersion"
+  ],
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 40
+    },
+    "localized": {
+      "type": "object",
+      "description": "Text per language. English is required; every language in `languages` should be present.",
+      "required": [
+        "en"
+      ],
+      "propertyNames": {
+        "pattern": "^[a-z]{2}$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "relFile": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\.\\.)[A-Za-z0-9._/-]+$"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*/[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "<appType>/<variant>, equal to the folder path under apps/, e.g. gym-tracker/muscle-map."
+    },
+    "appType": {
+      "$ref": "#/$defs/slug",
+      "description": "Self-explanatory kind of app, e.g. gym-tracker. Shared by all variants."
+    },
+    "variant": {
+      "$ref": "#/$defs/slug",
+      "description": "Self-explanatory name of what makes this variant different from its siblings, e.g. muscle-map, minimal, weekly-grid. Never a number or version (v1, v2, new)."
+    },
+    "name": {
+      "$ref": "#/$defs/localized",
+      "description": "Plain name of the app type, e.g. {\"en\": \"Gym Tracker\", \"pl\": \"Dziennik treningowy\"}. No brand-like names."
+    },
+    "variantName": {
+      "$ref": "#/$defs/localized",
+      "description": "Short label of what makes this variant different from its siblings, e.g. {\"en\": \"Muscle map\", \"pl\": \"Mapa mięśni\"}."
+    },
+    "description": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/localized"
+        }
+      ],
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 200
+      },
+      "description": "One sentence, at most 200 characters, per language."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+      "description": "Semantic version of this variant: MAJOR when saved data or backups from older versions no longer work as is (always together with a dataVersion bump and a migration), MINOR for new features that keep the data compatible, PATCH for fixes."
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "review",
+        "stable",
+        "deprecated"
+      ],
+      "description": "draft = work in progress, review = waiting for maintainer review, stable = reviewed and published, deprecated = kept for existing users only."
+    },
+    "category": {
+      "enum": [
+        "health-fitness",
+        "money",
+        "productivity",
+        "travel",
+        "home",
+        "family",
+        "learning",
+        "fun",
+        "tools"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/slug"
+      }
+    },
+    "languages": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z]{2}$"
+      },
+      "contains": {
+        "const": "en"
+      }
+    },
+    "entry": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+\\.html$",
+      "description": "The single HTML file, named <appType>-<variant>.html, e.g. gym-tracker-muscle-map.html."
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX id of the app code, normally MIT."
+    },
+    "authors": {
+      "type": "array",
+      "minItems": 1,
+      "description": "GitHub logins of the people who created the variant. The first is the original creator; add others who made substantial changes.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "github"
+        ],
+        "properties": {
+          "github": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$"
+          },
+          "name": {
+            "type": "string",
+            "description": "Optional display name or nickname."
+          }
+        }
+      }
+    },
+    "madeWith": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional: AI tools or models used to build it, e.g. [\"Claude\"]. Transparency only."
+    },
+    "created": {
+      "$ref": "#/$defs/date"
+    },
+    "updated": {
+      "$ref": "#/$defs/date"
+    },
+    "storage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "localStorage"
+      ],
+      "description": "Every browser storage key the app writes. Keys must be unique across the repo so two apps opened from the same origin never clash.",
+      "properties": {
+        "localStorage": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "sessionStorage": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "indexedDB": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dataFormats": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "export": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "json",
+              "csv",
+              "txt",
+              "ics"
+            ]
+          }
+        },
+        "import": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "json",
+              "csv",
+              "txt",
+              "ics"
+            ]
+          }
+        }
+      }
+    },
+    "browserApis": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Browser features beyond storage, for the security review and for users. Anything needing a permission prompt must be listed.",
+      "items": {
+        "enum": [
+          "clipboard",
+          "file-input",
+          "download",
+          "wake-lock",
+          "vibrate",
+          "audio",
+          "notifications",
+          "camera",
+          "microphone",
+          "geolocation",
+          "share",
+          "crypto-random"
+        ]
+      }
+    },
+    "sampleData": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "file",
+          "description"
+        ],
+        "properties": {
+          "file": {
+            "$ref": "#/$defs/relFile"
+          },
+          "description": {
+            "$ref": "#/$defs/localized"
+          }
+        }
+      }
+    },
+    "screenshots": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "file",
+          "theme",
+          "device"
+        ],
+        "properties": {
+          "file": {
+            "$ref": "#/$defs/relFile"
+          },
+          "theme": {
+            "enum": [
+              "light",
+              "dark"
+            ]
+          },
+          "device": {
+            "enum": [
+              "phone",
+              "tablet",
+              "desktop"
+            ]
+          },
+          "actions": {
+            "type": "array",
+            "description": "Steps before the capture, as Playwright selectors, e.g. [{\"click\": \"text=Progress\"}] or [{\"scroll\": \"#ledger\"}].",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "minProperties": 1,
+              "maxProperties": 1,
+              "properties": {
+                "click": {
+                  "type": "string"
+                },
+                "scroll": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "caption": {
+            "$ref": "#/$defs/localized",
+            "description": "Optional short caption shown in README.md."
+          }
+        }
+      },
+      "description": "At least 3: the main screen in light and dark, plus one or more other screens. tools/screenshots.mjs generates them; `actions` say how to reach a screen."
+    },
+    "thirdParty": {
+      "type": "array",
+      "description": "Every embedded font, icon set, image or code snippet not written for this repo. Open-source licenses only.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "license",
+          "url",
+          "usage"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "license": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "usage": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command"
+      ],
+      "description": "Only when the HTML is generated from src/. The built file is committed; CI checks it is up to date.",
+      "properties": {
+        "command": {
+          "type": "string"
+        },
+        "sources": {
+          "$ref": "#/$defs/relFile"
+        }
+      }
+    },
+    "dataVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Version of the stored and exported data structure. Increase it whenever that structure changes incompatibly; that requires a MAJOR version bump and a migration of older data on load and import."
+    }
+  }
+}
