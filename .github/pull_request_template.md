@@ -27,6 +27,7 @@
 - [ ] English + Polish, language switch works
 - [ ] Phone-first (320-430 px), light + dark, minimal text
 - [ ] Space used well: no logo, no artificial header, no footer
+- [ ] Every screen checked against the [UI rules](../ARTIFACTS-DEVELOPMENT.md#ui-rules) (any broken "(default)" rule explained under What)
 - [ ] Sample data is fake; `sample-data/` updated
 - [ ] Export (with Copy fallback) and import tested
 - [ ] Only open-source assets, listed in `thirdParty`

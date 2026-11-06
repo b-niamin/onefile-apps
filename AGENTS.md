@@ -42,6 +42,8 @@ their metadata, docs and the checks. There is no backend and no shared code.
 - One HTML file. No external requests of any kind: no CDN, web fonts,
   analytics, `fetch`, iframes. Keep the strict CSP meta.
 - English and Polish UI with a switch.
+- Check every screen against the [UI rules](ARTIFACTS-DEVELOPMENT.md#ui-rules)
+  before showing it. Rules marked (default) may be broken when the design needs it.
 - Phone-first, compact, minimal text, light + dark. Use space well: no logo,
   no artificial header or app-name banner, no footer.
 - Only open-source assets, credited in the manifest. No logos or brands.
