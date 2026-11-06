@@ -1,10 +1,17 @@
 version: 2
+
+# All updates (GitHub Actions + npm) land in a single monthly pull request.
+multi-ecosystem-groups:
+  all-dependencies:
+    schedule:
+      interval: monthly
+
 updates:
   - package-ecosystem: github-actions
     directory: /
-    schedule:
-      interval: monthly
+    patterns: ["*"]
+    multi-ecosystem-group: all-dependencies
   - package-ecosystem: npm
     directory: /
-    schedule:
-      interval: monthly
+    patterns: ["*"]
+    multi-ecosystem-group: all-dependencies
