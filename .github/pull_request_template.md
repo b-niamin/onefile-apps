@@ -1,12 +1,24 @@
-## What
+<!-- Title: <appType>/<variant>: <what changed>. One variant per PR. Short, simple English. -->
 
-<!-- Which app variant (apps/<appType>/<variant>) and what changed. One variant per PR. -->
+## Why the change
+
+<!-- One sentence. -->
+
+## Special things to note
+
+- None.
+
+## Change outline
+
+<!-- Short tree or diff blocks, no prose changelog. -->
 
 ## Screenshots
 
-<!-- 3+ phone screenshots. Regenerate with: node tools/screenshots.mjs apps/<type>/<variant> -->
+<!-- Apps only. 3+ phone screenshots: node tools/screenshots.mjs apps/<type>/<variant> -->
 
 ## Checklist
+
+<!-- Apps only. Delete for docs or tooling. -->
 
 - [ ] Follows [ARTIFACTS-DEVELOPMENT.md](../ARTIFACTS-DEVELOPMENT.md)
 - [ ] Self-explanatory names: `apps/<appType>/<variant>/`, file `<appType>-<variant>.html`

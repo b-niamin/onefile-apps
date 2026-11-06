@@ -320,6 +320,7 @@ Agent skills live in [`.ai/skills/`](.ai/README.md). Use them like this:
 | `frontend-design` | committing to a distinctive visual direction for a new app |
 | `webapp-testing` | Playwright scripts to test flows in a real browser |
 | `web-artifacts-builder` | only for complex apps that need React; output must still pass all checks |
+| `visual-pr` | the pull request description: short, simple English |
 
 ## 15. Definition of done
 

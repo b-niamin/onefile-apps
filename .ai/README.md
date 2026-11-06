@@ -9,6 +9,7 @@ Agent skills used to build and review apps in this repo. They are vendored
 | [frontend-design](skills/frontend-design/SKILL.md) | [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/frontend-design) | Apache-2.0 | choosing a distinctive, non-generic visual direction |
 | [webapp-testing](skills/webapp-testing/SKILL.md) | [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/webapp-testing) | Apache-2.0 | Playwright tests of app flows |
 | [web-artifacts-builder](skills/web-artifacts-builder/SKILL.md) | [anthropics/skills](https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder) | Apache-2.0 | React apps bundled into one HTML file (rarely needed here) |
+| [visual-pr](skills/visual-pr/SKILL.md) | [humanlayer/skills](https://github.com/humanlayer/skills/tree/main/plugins/visual-pr) | MIT ([LICENSE](skills/visual-pr/LICENSE.txt)) | short pull request descriptions |
 
 Installed with the [skills.sh](https://skills.sh) CLI; versions are pinned by
 content hash in [`../skills-lock.json`](../skills-lock.json).
@@ -26,7 +27,7 @@ symlinks; rerun only if your checkout lost them).
 ## Updating or adding a skill
 
 ```bash
-tools/update-skills.sh                                   # refresh all four to the latest upstream
+tools/update-skills.sh                                   # refresh all of them to the latest upstream
 tools/update-skills.sh owner/repo skill-name             # add another skill
 ```
 
@@ -44,3 +45,8 @@ Only add skills under an open-source license, and add a row to the table above.
 - `web-artifacts-builder` targets claude.ai artifacts with React + shadcn/ui.
   Use it only when an app really needs a framework, and the bundle must still
   pass `tools/check.py` and the smoke test.
+- `visual-pr` writes the pull request body. Run it as `/visual-pr` (Claude
+  Code) or ask your agent to follow its `SKILL.md`. Keep it short: simple
+  English, short sentences, one-word bullets are fine. Add the `Screenshots`
+  and `Checklist` sections from the PR template for app changes. Its draft
+  goes to `.humanlayer/`, which is git-ignored.
