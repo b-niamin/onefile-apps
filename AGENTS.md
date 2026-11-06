@@ -16,7 +16,8 @@ their metadata, docs and the checks. There is no backend and no shared code.
    security, review). Follow it exactly.
 2. Load the relevant skills from [`.ai/skills/`](.ai/README.md):
    `impeccable` and `frontend-design` for any UI work, `webapp-testing` for
-   browser tests, `web-artifacts-builder` only for React-based apps.
+   browser tests, `web-artifacts-builder` only for React-based apps,
+   `visual-pr` to write the pull request description.
 3. Look at `catalog.json` to see what already exists before adding an app type.
 
 ## Where things go
@@ -70,5 +71,7 @@ you open a pull request. Use the PR template and fill in every checklist item.
   rebase only, so keep commits clean.
 - One app variant per pull request.
 - Title: `<appType>/<variant>: <what changed>`.
+- Description: use the `visual-pr` skill and the PR template. Short, simple
+  English, short sentences; one-word bullets are fine. No tool ads or chat links.
 - New apps start with `"status": "review"`; only a maintainer sets `stable`.
 - Do not commit `node_modules/`, test output, personal data or secrets.

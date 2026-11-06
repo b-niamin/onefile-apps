@@ -60,7 +60,9 @@ EN/PL switch, export then import, dark mode.
 ## 5. Open a pull request
 
 One variant per pull request, titled `<app-type>/<variant>: <what changed>`.
-Fill in the template checklist.
+Keep the description short, in simple English; the template has three short
+sections plus a checklist. With an AI agent, use the `visual-pr` skill from
+[`.ai/`](.ai/README.md).
 **Every change goes through a pull request from a fork**, maintainers' own
 changes included. Nobody pushes to `main` or creates branches in this
 repository; work in your fork and open the PR from there. The history of `main` stays linear: pull requests are merged with **rebase
