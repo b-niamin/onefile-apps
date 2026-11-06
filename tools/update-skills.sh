@@ -16,6 +16,7 @@ if [ $# -eq 2 ]; then
 else
   npx -y skills@latest add anthropics/skills --skill frontend-design --skill webapp-testing --skill web-artifacts-builder -a claude-code -y
   npx -y skills@latest add pbakaus/impeccable --skill impeccable -a claude-code -y
+  npx -y skills@latest add humanlayer/skills --skill visual-pr -a claude-code -y
 fi
 mkdir -p "$ROOT/.ai/skills"
 for s in .claude/skills/*; do
@@ -30,5 +31,10 @@ if [ -d "$ROOT/.ai/skills/impeccable" ] && [ ! -f "$ROOT/.ai/skills/impeccable/L
   git clone -q --depth 1 https://github.com/pbakaus/impeccable "$TMP/impeccable-src"
   cp "$TMP/impeccable-src/LICENSE" "$ROOT/.ai/skills/impeccable/LICENSE.txt"
   cp "$TMP/impeccable-src/NOTICE.md" "$ROOT/.ai/skills/impeccable/NOTICE.md"
+fi
+# humanlayer/skills also keeps its license at the repo root
+if [ -d "$ROOT/.ai/skills/visual-pr" ] && [ ! -f "$ROOT/.ai/skills/visual-pr/LICENSE.txt" ]; then
+  git clone -q --depth 1 https://github.com/humanlayer/skills "$TMP/humanlayer-src"
+  cp "$TMP/humanlayer-src/LICENSE" "$ROOT/.ai/skills/visual-pr/LICENSE.txt"
 fi
 echo "Review the diff (git diff .ai skills-lock.json) before committing."

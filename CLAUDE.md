@@ -9,6 +9,7 @@
   is missing after a fresh clone on a system without symlink support).
 - For UI work invoke `/impeccable` (e.g. `/impeccable critique apps/habit-tracker/weekly-grid`)
   and read the `frontend-design` skill before writing CSS.
+- Write pull request descriptions with `/visual-pr`.
 - Use the `webapp-testing` skill for browser checks; Playwright with Chromium
   is the only test dependency.
 - When a person asks to "make an artifact" from an app here, give them the
