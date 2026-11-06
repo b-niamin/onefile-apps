@@ -7,7 +7,7 @@ this file, and every pull request is reviewed against it. Where a rule says
 Contents: [What we build](#1-what-we-build) · [Hard rules](#2-hard-rules) ·
 [Naming](#3-naming) · [Where an app goes](#4-where-an-app-goes) ·
 [Folder layout](#5-folder-layout) · [Manifest](#6-manifest) ·
-[Design and UX](#7-design-and-ux) · [Languages](#8-languages) ·
+[Design and UX](#7-design-and-ux) ([UI rules](#ui-rules)) · [Languages](#8-languages) ·
 [Data and storage](#9-data-and-storage) · [Security](#10-security) ·
 [Building](#11-building-from-sources) · [Testing](#12-testing) ·
 [Review and release](#13-review-and-release) · [Skills](#14-skills) ·
@@ -216,6 +216,48 @@ over spectacle.
 - System font stack, or an open-source font subset and embedded as base64
   (keep the file small).
 
+### UI rules
+
+Check every screen against these before showing it.
+
+Rules marked (default) are starting points. Break them when the design needs it.
+
+**Spacing**
+
+- Use gaps from one scale only: 4, 8, 16, 24, 32. (default)
+- Put a label closer to its own field than to the field above.
+- More space between groups than within a group.
+- Align everything on one edge. No mixed centering. (default)
+- Pad cards with 16px or more. (default)
+- Nested corners: inner radius = outer radius minus padding, never below 0.
+
+**Color**
+
+- One accent color, for the main action only. Other buttons are neutral. (default)
+- Never show an error with color alone. Add a message.
+- Keep meanings fixed: red is danger, green is success.
+- Check text contrast on colored buttons too (4.5:1 minimum).
+- Soft tints for large areas, strong color only for small details. (default)
+- Links get color and an underline.
+
+**Mobile**
+
+- Tap targets at least 44x44.
+- Main button at the bottom, where the thumb is. (default)
+- Inputs use 16px text, or iPhone zooms in on focus.
+- Set the right input type so the right keyboard opens.
+- No hover-only actions.
+- Bottom sheets instead of small centered dialogs. (default)
+
+**Dashboards**
+
+- Lead with the one number that matters most. (default)
+- Every number gets a period and a change ("+8.1% vs September").
+- Bar charts start at zero.
+- More than 3 parts? Sorted bars, not a pie. (default)
+- Right-align numbers in tables.
+- Highlight one line, gray out the rest. (default)
+
 **Avoid AI slop.** Each app gets its own considered look that fits its job.
 Do not ship the defaults: Inter-for-everything, purple-to-blue gradients,
 cards in cards, icon tiles above every heading, gray text on colored
@@ -330,6 +372,7 @@ Agent skills live in [`.ai/skills/`](.ai/README.md). Use them like this:
 - [ ] English and Polish, switch works, `<html lang>` updates
 - [ ] Phone-first, works at 320 px, light + dark
 - [ ] Space used well: no logo, no artificial header, no footer, minimal text
+- [ ] Every screen checked against the [UI rules](#ui-rules)
 - [ ] First-run sample data (fake), clearable; same data in `sample-data/`
 - [ ] Export (with Copy fallback) and validated import; data versioned
 - [ ] Only open-source assets, all listed in `thirdParty`
