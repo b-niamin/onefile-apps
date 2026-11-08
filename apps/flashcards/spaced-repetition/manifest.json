@@ -1,0 +1,129 @@
+{
+  "$schema": "../../../schemas/manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "flashcards/spaced-repetition",
+  "appType": "flashcards",
+  "variant": "spaced-repetition",
+  "name": {
+    "en": "Flashcards",
+    "pl": "Fiszki"
+  },
+  "variantName": {
+    "en": "Spaced repetition",
+    "pl": "Powtórki rozłożone w czasie"
+  },
+  "description": {
+    "en": "Learn with flip cards in decks; each answer sets when you see the card again. Paste cards from a spreadsheet, track reviews and your streak.",
+    "pl": "Ucz się z fiszek w taliach; każda odpowiedź ustala, kiedy karta wróci. Wklej karty z arkusza, śledź powtórki i serię dni."
+  },
+  "version": "1.0.0",
+  "dataVersion": 1,
+  "status": "review",
+  "category": "learning",
+  "tags": [
+    "flashcards",
+    "spaced-repetition",
+    "learning",
+    "vocabulary",
+    "study",
+    "csv"
+  ],
+  "languages": [
+    "en",
+    "pl"
+  ],
+  "entry": "flashcards-spaced-repetition.html",
+  "license": "MIT",
+  "authors": [
+    {
+      "github": "piotr-liszka"
+    }
+  ],
+  "madeWith": [
+    "Claude"
+  ],
+  "created": "2026-11-06",
+  "updated": "2026-11-06",
+  "storage": {
+    "localStorage": [
+      "flashcards-spaced-repetition:data",
+      "flashcards-spaced-repetition:data:unreadable"
+    ]
+  },
+  "dataFormats": {
+    "export": [
+      "json",
+      "csv"
+    ],
+    "import": [
+      "json",
+      "csv"
+    ]
+  },
+  "browserApis": [
+    "clipboard",
+    "file-input",
+    "download",
+    "crypto-random"
+  ],
+  "sampleData": [
+    {
+      "file": "sample-data/flashcards-sample.json",
+      "description": {
+        "en": "Two small decks: basic Spanish words and European capitals, with some review history.",
+        "pl": "Dwie małe talie: podstawowe słowa hiszpańskie i stolice Europy, z historią powtórek."
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "screenshots/phone-light.png",
+      "theme": "light",
+      "device": "phone",
+      "caption": {
+        "en": "Decks",
+        "pl": "Talie"
+      }
+    },
+    {
+      "file": "screenshots/phone-dark.png",
+      "theme": "dark",
+      "device": "phone",
+      "caption": {
+        "en": "Dark mode",
+        "pl": "Tryb ciemny"
+      }
+    },
+    {
+      "file": "screenshots/phone-study.png",
+      "theme": "light",
+      "device": "phone",
+      "caption": {
+        "en": "Studying a card",
+        "pl": "Nauka z kartą"
+      },
+      "actions": [
+        {
+          "click": ".deck .btn.primary >> nth=0"
+        },
+        {
+          "click": "#showBtn"
+        }
+      ]
+    },
+    {
+      "file": "screenshots/phone-stats.png",
+      "theme": "light",
+      "device": "phone",
+      "caption": {
+        "en": "Stats",
+        "pl": "Statystyki"
+      },
+      "actions": [
+        {
+          "click": "#tabStats"
+        }
+      ]
+    }
+  ]
+}

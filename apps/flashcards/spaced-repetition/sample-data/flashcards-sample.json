@@ -1,0 +1,507 @@
+{
+ "app": "flashcards-spaced-repetition",
+ "dataVersion": 1,
+ "lang": "en",
+ "sample": true,
+ "newPerDay": 15,
+ "decks": [
+  {
+   "id": "d1",
+   "name": "Spanish basics",
+   "color": 0
+  },
+  {
+   "id": "d2",
+   "name": "European capitals",
+   "color": 2
+  }
+ ],
+ "cards": [
+  {
+   "id": "cd1-0",
+   "deck": "d1",
+   "front": "house",
+   "back": "la casa",
+   "reps": 3,
+   "ivl": 1,
+   "ease": 250,
+   "lapses": 1,
+   "due": "2026-11-04",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-1",
+   "deck": "d1",
+   "front": "water",
+   "back": "el agua",
+   "reps": 2,
+   "ivl": 6,
+   "ease": 218,
+   "lapses": 0,
+   "due": "2026-11-10",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-2",
+   "deck": "d1",
+   "front": "bread",
+   "back": "el pan",
+   "reps": 6,
+   "ivl": 6,
+   "ease": 254,
+   "lapses": 0,
+   "due": "2026-11-08",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-3",
+   "deck": "d1",
+   "front": "friend",
+   "back": "el amigo",
+   "reps": 2,
+   "ivl": 1,
+   "ease": 276,
+   "lapses": 0,
+   "due": "2026-11-05",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-4",
+   "deck": "d1",
+   "front": "book",
+   "back": "el libro",
+   "reps": 4,
+   "ivl": 3,
+   "ease": 248,
+   "lapses": 1,
+   "due": "2026-11-07",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-5",
+   "deck": "d1",
+   "front": "thank you",
+   "back": "gracias",
+   "reps": 6,
+   "ivl": 1,
+   "ease": 268,
+   "lapses": 0,
+   "due": "2026-11-04",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-6",
+   "deck": "d1",
+   "front": "please",
+   "back": "por favor",
+   "reps": 2,
+   "ivl": 12,
+   "ease": 268,
+   "lapses": 0,
+   "due": "2026-11-12",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-7",
+   "deck": "d1",
+   "front": "good morning",
+   "back": "buenos días",
+   "reps": 3,
+   "ivl": 12,
+   "ease": 258,
+   "lapses": 0,
+   "due": "2026-11-13",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-8",
+   "deck": "d1",
+   "front": "goodbye",
+   "back": "adiós",
+   "reps": 6,
+   "ivl": 6,
+   "ease": 216,
+   "lapses": 1,
+   "due": "2026-11-07",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-9",
+   "deck": "d1",
+   "front": "cat",
+   "back": "el gato",
+   "reps": 2,
+   "ivl": 25,
+   "ease": 251,
+   "lapses": 0,
+   "due": "2026-11-14",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-10",
+   "deck": "d1",
+   "front": "dog",
+   "back": "el perro",
+   "reps": 3,
+   "ivl": 3,
+   "ease": 211,
+   "lapses": 1,
+   "due": "2026-11-05",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-11",
+   "deck": "d1",
+   "front": "city",
+   "back": "la ciudad",
+   "reps": 6,
+   "ivl": 40,
+   "ease": 223,
+   "lapses": 0,
+   "due": "2026-11-27",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-12",
+   "deck": "d1",
+   "front": "street",
+   "back": "la calle",
+   "reps": 3,
+   "ivl": 3,
+   "ease": 219,
+   "lapses": 0,
+   "due": "2026-11-04",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-13",
+   "deck": "d1",
+   "front": "tomorrow",
+   "back": "mañana",
+   "reps": 6,
+   "ivl": 25,
+   "ease": 240,
+   "lapses": 0,
+   "due": "2026-11-11",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-14",
+   "deck": "d1",
+   "front": "yesterday",
+   "back": "ayer",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-15",
+   "deck": "d1",
+   "front": "to speak",
+   "back": "hablar",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-16",
+   "deck": "d1",
+   "front": "to eat",
+   "back": "comer",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-17",
+   "deck": "d1",
+   "front": "to live",
+   "back": "vivir",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-18",
+   "deck": "d1",
+   "front": "to be (lasting)",
+   "back": "ser",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd1-19",
+   "deck": "d1",
+   "front": "to be (state)",
+   "back": "estar",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-0",
+   "deck": "d2",
+   "front": "Portugal",
+   "back": "Lisbon",
+   "reps": 2,
+   "ivl": 12,
+   "ease": 218,
+   "lapses": 1,
+   "due": "2026-11-11",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-1",
+   "deck": "d2",
+   "front": "Hungary",
+   "back": "Budapest",
+   "reps": 5,
+   "ivl": 6,
+   "ease": 224,
+   "lapses": 1,
+   "due": "2026-11-08",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-2",
+   "deck": "d2",
+   "front": "Ireland",
+   "back": "Dublin",
+   "reps": 6,
+   "ivl": 25,
+   "ease": 258,
+   "lapses": 0,
+   "due": "2026-11-14",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-3",
+   "deck": "d2",
+   "front": "Finland",
+   "back": "Helsinki",
+   "reps": 2,
+   "ivl": 1,
+   "ease": 247,
+   "lapses": 0,
+   "due": "2026-11-05",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-4",
+   "deck": "d2",
+   "front": "Slovenia",
+   "back": "Ljubljana",
+   "reps": 4,
+   "ivl": 25,
+   "ease": 240,
+   "lapses": 1,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-5",
+   "deck": "d2",
+   "front": "Croatia",
+   "back": "Zagreb",
+   "reps": 6,
+   "ivl": 40,
+   "ease": 265,
+   "lapses": 1,
+   "due": "2026-11-19",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-6",
+   "deck": "d2",
+   "front": "Romania",
+   "back": "Bucharest",
+   "reps": 3,
+   "ivl": 6,
+   "ease": 268,
+   "lapses": 0,
+   "due": "2026-11-05",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-7",
+   "deck": "d2",
+   "front": "Belgium",
+   "back": "Brussels",
+   "reps": 3,
+   "ivl": 12,
+   "ease": 228,
+   "lapses": 0,
+   "due": "2026-11-04",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-8",
+   "deck": "d2",
+   "front": "Estonia",
+   "back": "Tallinn",
+   "reps": 5,
+   "ivl": 6,
+   "ease": 243,
+   "lapses": 1,
+   "due": "2026-11-08",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-9",
+   "deck": "d2",
+   "front": "Greece",
+   "back": "Athens",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-10",
+   "deck": "d2",
+   "front": "Norway",
+   "back": "Oslo",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-11",
+   "deck": "d2",
+   "front": "Austria",
+   "back": "Vienna",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-12",
+   "deck": "d2",
+   "front": "Lithuania",
+   "back": "Vilnius",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  },
+  {
+   "id": "cd2-13",
+   "deck": "d2",
+   "front": "Denmark",
+   "back": "Copenhagen",
+   "reps": 0,
+   "ivl": 0,
+   "ease": 250,
+   "lapses": 0,
+   "due": "2026-11-06",
+   "added": "2026-10-17"
+  }
+ ],
+ "log": {
+  "2026-10-19": {
+   "r": 18,
+   "ok": 16,
+   "n": 1
+  },
+  "2026-10-20": {
+   "r": 15,
+   "ok": 14,
+   "n": 1
+  },
+  "2026-10-21": {
+   "r": 26,
+   "ok": 22,
+   "n": 5
+  },
+  "2026-10-23": {
+   "r": 17,
+   "ok": 14,
+   "n": 5
+  },
+  "2026-10-24": {
+   "r": 21,
+   "ok": 19,
+   "n": 1
+  },
+  "2026-10-25": {
+   "r": 21,
+   "ok": 16,
+   "n": 2
+  },
+  "2026-10-26": {
+   "r": 22,
+   "ok": 21,
+   "n": 0
+  },
+  "2026-10-27": {
+   "r": 12,
+   "ok": 11,
+   "n": 4
+  },
+  "2026-10-28": {
+   "r": 11,
+   "ok": 10,
+   "n": 3
+  },
+  "2026-10-30": {
+   "r": 22,
+   "ok": 20,
+   "n": 4
+  },
+  "2026-10-31": {
+   "r": 27,
+   "ok": 26,
+   "n": 3
+  },
+  "2026-11-01": {
+   "r": 7,
+   "ok": 6,
+   "n": 3
+  },
+  "2026-11-03": {
+   "r": 6,
+   "ok": 6,
+   "n": 2
+  },
+  "2026-11-04": {
+   "r": 18,
+   "ok": 16,
+   "n": 0
+  },
+  "2026-11-05": {
+   "r": 18,
+   "ok": 14,
+   "n": 0
+  }
+ },
+ "exportedAt": "2026-11-06T12:49:38.731Z"
+}

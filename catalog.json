@@ -36,6 +36,41 @@
       "screenshot": "apps/expense-tracker/monthly-budget/screenshots/phone-light.png"
     },
     {
+      "id": "flashcards/spaced-repetition",
+      "appType": "flashcards",
+      "variant": "spaced-repetition",
+      "name": {
+        "en": "Flashcards",
+        "pl": "Fiszki"
+      },
+      "variantName": {
+        "en": "Spaced repetition",
+        "pl": "Powtórki rozłożone w czasie"
+      },
+      "description": {
+        "en": "Learn with flip cards in decks; each answer sets when you see the card again. Paste cards from a spreadsheet, track reviews and your streak.",
+        "pl": "Ucz się z fiszek w taliach; każda odpowiedź ustala, kiedy karta wróci. Wklej karty z arkusza, śledź powtórki i serię dni."
+      },
+      "version": "1.0.0",
+      "status": "review",
+      "category": "learning",
+      "tags": [
+        "flashcards",
+        "spaced-repetition",
+        "learning",
+        "vocabulary",
+        "study",
+        "csv"
+      ],
+      "languages": [
+        "en",
+        "pl"
+      ],
+      "path": "apps/flashcards/spaced-repetition",
+      "file": "apps/flashcards/spaced-repetition/flashcards-spaced-repetition.html",
+      "screenshot": "apps/flashcards/spaced-repetition/screenshots/phone-light.png"
+    },
+    {
       "id": "focus-timer/pomodoro",
       "appType": "focus-timer",
       "variant": "pomodoro",
