@@ -1,0 +1,113 @@
+{
+  "$schema": "../../../schemas/manifest.schema.json",
+  "schemaVersion": 1,
+  "id": "focus-timer/pomodoro",
+  "appType": "focus-timer",
+  "variant": "pomodoro",
+  "name": {
+    "en": "Focus Timer",
+    "pl": "Timer skupienia"
+  },
+  "variantName": {
+    "en": "Pomodoro",
+    "pl": "Pomodoro"
+  },
+  "description": {
+    "en": "Work in focus sessions with short and long breaks on a minute dial; see sessions per day, a weekly chart and your streak.",
+    "pl": "Pracuj w sesjach skupienia z krótkimi i długimi przerwami na tarczy minut; zobacz sesje dnia, wykres tygodnia i serię dni."
+  },
+  "version": "1.0.0",
+  "dataVersion": 1,
+  "status": "review",
+  "category": "productivity",
+  "tags": [
+    "pomodoro",
+    "timer",
+    "focus",
+    "breaks",
+    "productivity",
+    "stats"
+  ],
+  "languages": [
+    "en",
+    "pl"
+  ],
+  "entry": "focus-timer-pomodoro.html",
+  "license": "MIT",
+  "authors": [
+    {
+      "github": "piotr-liszka"
+    }
+  ],
+  "madeWith": [
+    "Claude"
+  ],
+  "created": "2026-11-06",
+  "updated": "2026-11-06",
+  "storage": {
+    "localStorage": [
+      "focus-timer-pomodoro:data",
+      "focus-timer-pomodoro:data:unreadable"
+    ]
+  },
+  "dataFormats": {
+    "export": [
+      "json",
+      "csv"
+    ],
+    "import": [
+      "json"
+    ]
+  },
+  "browserApis": [
+    "clipboard",
+    "file-input",
+    "download",
+    "audio",
+    "vibrate",
+    "crypto-random"
+  ],
+  "sampleData": [
+    {
+      "file": "sample-data/focus-timer-sample.json",
+      "description": {
+        "en": "About three weeks of made-up focus sessions with short labels.",
+        "pl": "Około trzech tygodni zmyślonych sesji skupienia z krótkimi opisami."
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "screenshots/phone-light.png",
+      "theme": "light",
+      "device": "phone",
+      "caption": {
+        "en": "Timer",
+        "pl": "Timer"
+      }
+    },
+    {
+      "file": "screenshots/phone-dark.png",
+      "theme": "dark",
+      "device": "phone",
+      "caption": {
+        "en": "Dark mode",
+        "pl": "Tryb ciemny"
+      }
+    },
+    {
+      "file": "screenshots/phone-stats.png",
+      "theme": "light",
+      "device": "phone",
+      "caption": {
+        "en": "Stats",
+        "pl": "Statystyki"
+      },
+      "actions": [
+        {
+          "click": "#tabStats"
+        }
+      ]
+    }
+  ]
+}
