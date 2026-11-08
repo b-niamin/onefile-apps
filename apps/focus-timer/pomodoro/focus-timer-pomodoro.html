@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; font-src data:; img-src data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>Focus Timer</title>
+<style>
+/* Focus timer: one dial with minute ticks, like a kitchen timer; the colored arc is the time left. Stats are a quiet second tab. */
+:root {
+  --bg: #F2F3F5; --surface: #FFFFFF; --ink: #15171C; --muted: #5B606B; --line: #D9DCE2; --cell: #E4E6EB;
+  --focus-c: #2F55B8; --short-c: #1F7A5C; --long-c: #6A46B5;
+  --accent: var(--phase, #2F55B8); --accent-ink: #FFFFFF; --accent-soft: #DCE3F4; --danger: #B42318; --focus: #2457C5;
+  --tick: #B9BEC8;
+  --font-display: ui-rounded, "SF Pro Rounded", "Segoe UI Variable Display", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Ubuntu, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #101216; --surface: #191C22; --ink: #E8EAEE; --muted: #A1A6B1; --line: #2A2E36; --cell: #23272F;
+    --focus-c: #8EA9FF; --short-c: #4FD1A1; --long-c: #BBA0F5;
+    --accent-ink: #14161A; --accent-soft: #1E2A44; --danger: #F48B80; --focus: #8DB2FF; --tick: #444A55;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 1rem; line-height: 1.45;
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+}
+::selection { background: var(--accent); color: var(--accent-ink); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+[hidden] { display: none !important; }
+.wrap {
+  max-width: 600px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: 16px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 6; background: var(--bg);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 56px;
+}
+.topbar h1 { margin: 0; font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tools { display: flex; align-items: center; gap: 4px; flex: none; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px; padding: 0 16px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--surface); font-size: 0.9375rem; font-weight: 600;
+  white-space: nowrap; touch-action: manipulation;
+}
+.btn:hover { border-color: var(--muted); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.07); }
+.btn.quiet { background: transparent; border-color: transparent; color: var(--muted); }
+.btn.quiet:hover { color: var(--ink); background: var(--cell); }
+.btn.small { min-height: 44px; padding: 0 12px; font-size: 0.875rem; }
+.btn.danger { color: var(--danger); }
+.btn.armed { background: var(--danger); border-color: var(--danger); color: var(--surface); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.icon-btn { width: 44px; padding: 0; }
+.btn.wide { width: 100%; }
+
+.seg { display: inline-flex; background: var(--cell); border-radius: 12px; padding: 4px; gap: 4px; }
+.seg button {
+  border: 0; background: transparent; min-height: 44px; padding: 0 16px; border-radius: 8px;
+  font-size: 0.875rem; font-weight: 600; color: var(--muted);
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / .14); }
+
+.notice {
+  display: flex; gap: 8px; align-items: center;
+  background: var(--accent-soft); color: var(--ink); border-radius: 12px; padding: 4px 4px 4px 16px; font-size: 0.875rem;
+}
+.notice span { flex: 1; min-width: 0; }
+.notice.warn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 8px 16px; }
+
+/* Bottom tabs */
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 7;
+  background: var(--surface); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.tabbar > div { max-width: 600px; margin: 0 auto; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; }
+.tabbar button {
+  border: 0; background: transparent; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  font-size: 0.75rem; font-weight: 600; color: var(--muted);
+}
+.tabbar button svg { width: 22px; height: 22px; }
+.tabbar button[aria-current="page"] { color: var(--accent); }
+
+.fab {
+  position: fixed; z-index: 8; right: max(16px, calc(50vw - 284px));
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  width: 56px; height: 56px; border-radius: 18px; border: 0;
+  background: var(--accent); color: var(--accent-ink); display: grid; place-items: center;
+  box-shadow: 0 6px 18px rgb(0 0 0 / .22);
+}
+.fab svg { width: 26px; height: 26px; }
+.fab.no-tabs { bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+
+/* Sheets */
+dialog {
+  border: 0; padding: 0; border-radius: 16px; background: var(--surface); color: var(--ink);
+  width: min(480px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); overflow-y: auto;
+  box-shadow: 0 24px 60px rgb(0 0 0 / .3);
+}
+dialog::backdrop { background: rgb(8 12 20 / .5); }
+.dlg { padding: 16px 16px 24px; display: flex; flex-direction: column; gap: 16px; }
+.dlg-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: -6px -8px -4px 0; }
+dialog h2 { margin: 0; font-family: var(--font-display); font-size: 1.2rem; letter-spacing: -0.01em; }
+dialog h3 { margin: 0; font-size: 0.9375rem; }
+.field { display: flex; flex-direction: column; gap: 6px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.field > label, .field > legend { font-size: 0.875rem; font-weight: 600; padding: 0; }
+.row { display: flex; gap: 8px 16px; flex-wrap: wrap; align-items: center; }
+.row > .field { flex: 1 1 120px; }
+.hint { font-size: 0.8125rem; color: var(--muted); margin: 0; overflow-wrap: anywhere; }
+.err { color: var(--danger); font-size: 0.875rem; margin: 0; }
+input[type="text"], input[type="number"], input[type="date"], input[type="time"], input[type="search"], select, textarea {
+  width: 100%; min-height: 44px; border: 1px solid var(--line); background: var(--bg); border-radius: 10px;
+  padding: 9px 12px; font-size: 1rem; min-width: 0;
+}
+select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 32px; }
+textarea { min-height: 88px; resize: vertical; line-height: 1.4; }
+textarea.code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 1rem; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--focus); outline-offset: 0; border-color: transparent; }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: .8; }
+.dlg-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.dlg-actions .spacer { flex: 1; }
+.section { display: flex; flex-direction: column; gap: 8px; padding-top: 24px; border-top: 1px solid var(--line); }
+label.btn { cursor: pointer; }
+.file-in { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.file-in:focus-visible + label { outline: 2px solid var(--focus); outline-offset: 2px; }
+.swatches { display: flex; gap: 4px; flex-wrap: wrap; }
+.swatches label { position: relative; width: 44px; height: 44px; display: grid; place-items: center; }
+.swatches input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.swatches span { display: block; width: 32px; height: 32px; border-radius: 50%; background: var(--c); }
+.swatches input:checked + span { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--c); }
+.swatches input:focus-visible + span { outline: 2px solid var(--focus); outline-offset: 5px; }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 0.875rem; font-weight: 600;
+  max-width: calc(100vw - 32px); z-index: 30; box-shadow: 0 6px 18px rgb(0 0 0 / .2);
+}
+.empty { padding: 32px 0; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.empty h2 { margin: 0; font-family: var(--font-display); font-size: 1.2rem; }
+.empty p { margin: 0; color: var(--muted); max-width: 32ch; }
+
+@media (max-width: 560px) {
+  dialog {
+    width: 100%; max-width: 100%; margin: auto 0 0; border-radius: 18px 18px 0 0;
+    max-height: calc(100dvh - 32px - env(safe-area-inset-top, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  dialog[open] { animation: sheet-up .22s cubic-bezier(.2,.8,.2,1); }
+}
+@keyframes sheet-up { from { transform: translateY(40px); opacity: .6; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* The whole room takes the color of the current phase: blue = work, green = short break, violet = long break. */
+:root[data-phase="focus"] { --phase: var(--focus-c); --bg: #E3EAFA; --cell: #D0DBF4; --line: #BFCDEE; --tick: #9FB2E0; --muted: #4A5675; --accent-soft: #CDD9F5; }
+:root[data-phase="short"] { --phase: var(--short-c); --bg: #DFF2E8; --cell: #C9E7D7; --line: #B3DCC7; --tick: #8FC5A9; --muted: #45604F; --accent-soft: #C6E6D5; }
+:root[data-phase="long"] { --phase: var(--long-c); --bg: #ECE5FA; --cell: #DCD1F4; --line: #CDBFEE; --tick: #AE9BDD; --muted: #574D70; --accent-soft: #DCD0F5; }
+@media (prefers-color-scheme: dark) {
+  :root[data-phase="focus"] { --bg: #0E1628; --surface: #16213A; --cell: #1E2C4B; --line: #283A5F; --tick: #3B5182; --muted: #A3B0CC; --accent-soft: #1E2C4B; }
+  :root[data-phase="short"] { --bg: #0B1A14; --surface: #12261D; --cell: #193326; --line: #224431; --tick: #346650; --muted: #9EBDAD; --accent-soft: #193326; }
+  :root[data-phase="long"] { --bg: #161129; --surface: #201A3A; --cell: #2A2249; --line: #352C5A; --tick: #514487; --muted: #B3A9CF; --accent-soft: #2A2249; }
+}
+body, .topbar, body::before { transition: background-color .5s ease; }
+@media (prefers-reduced-motion: reduce) { body, .topbar, body::before { transition: none; } }
+.dial-wrap::before { content: ""; position: absolute; inset: 6%; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 2px rgb(0 0 0 / .06), 0 12px 36px color-mix(in srgb, var(--phase) 22%, transparent); }
+.dial-wrap > * { position: relative; }
+.dial-center { position: absolute; }
+.time { color: var(--ink); }
+.running .time { color: var(--phase); }
+.topbar .phases { flex: 1 1 auto; min-width: 0; max-width: 360px; }
+.phases button { flex: 1 1 0; min-width: 0; padding: 0 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.phases button[aria-pressed="true"] { color: var(--phase); font-weight: 700; }
+
+#timerView { display: flex; flex-direction: column; align-items: center; gap: 16px; padding-top: 4px; }
+.dial-wrap { position: relative; width: min(100%, 340px, 52dvh); aspect-ratio: 1; }
+.dial { width: 100%; height: 100%; display: block; }
+.dial .tick { stroke: var(--tick); stroke-width: 1.2; stroke-linecap: round; }
+.dial .tick.major { stroke: var(--muted); stroke-width: 2.2; }
+.dial .tick.done { stroke: var(--phase); opacity: .35; }
+.arc-bg { fill: none; stroke: var(--cell); stroke-width: 10; }
+.arc { fill: none; stroke: var(--phase); stroke-width: 10; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 110px 110px; stroke-dasharray: 1000; transition: stroke-dashoffset .4s linear, stroke .3s; }
+.dial-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; pointer-events: none; }
+.time { font-family: var(--font-display); font-weight: 700; font-size: clamp(3rem, 17vw, 4.6rem); letter-spacing: -0.03em; line-height: 1; }
+.paused .time { color: var(--muted); }
+.cycle { display: flex; gap: 8px; }
+.cycle i { width: 9px; height: 9px; border-radius: 50%; background: var(--cell); box-shadow: inset 0 0 0 1.5px var(--tick); }
+.cycle i.on { background: var(--phase); box-shadow: none; }
+
+.task { width: min(100%, 340px); }
+.task input { text-align: center; background: transparent; border-color: transparent; border-bottom: 1px solid var(--line); border-radius: 0; font-weight: 600; }
+.task input:focus { border-radius: 10px; }
+.controls { display: flex; align-items: center; justify-content: center; gap: 24px; }
+.controls .round { width: 52px; height: 52px; border-radius: 50%; background: var(--surface); color: var(--ink); border: 1px solid transparent; }
+.controls .round svg { width: 22px; height: 22px; }
+.controls .main { min-width: 132px; height: 64px; border-radius: 32px; font-size: 1.125rem; gap: 8px; }
+.controls .main svg { width: 22px; height: 22px; }
+.today-line { margin: 0; color: var(--muted); font-size: 0.875rem; text-align: center; }
+.today-line b { color: var(--ink); }
+
+/* Stats */
+#statsView { display: flex; flex-direction: column; gap: 16px; }
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.kpi { background: var(--surface); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.kpi .chg { font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.kpi b { font-family: var(--font-display); font-size: 1.6rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 0.8125rem; color: var(--muted); }
+.panel { background: var(--surface); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.panel h2 { margin: 0; font-size: 0.9375rem; font-weight: 650; }
+.panel .sub { font-size: 0.8125rem; color: var(--muted); }
+.bars { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; align-items: end; height: 140px; }
+.bars .b { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; min-width: 0; }
+.bars .v { font-size: 0.6875rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bars .col { width: 100%; max-width: 34px; border-radius: 6px 6px 3px 3px; background: var(--tick); min-height: 2px; }
+.bars .b.today .col { background: var(--phase); }
+.bars .col.zero { background: var(--cell); }
+.bars .goal-met { box-shadow: inset 0 3px 0 rgb(255 255 255 / .55); }
+.bars .d { font-size: 0.75rem; color: var(--muted); }
+.bars .b.today .d { color: var(--ink); font-weight: 700; }
+.week-nav { display: flex; align-items: center; gap: 2px; }
+.log { list-style: none; margin: 0; padding: 0; }
+.log li { display: grid; grid-template-columns: 3.2em minmax(0, 1fr) auto 44px; gap: 8px; align-items: center; min-height: 44px; border-top: 1px solid var(--line); font-size: 0.9375rem; }
+.log li:first-child { border-top: 0; }
+.log .tm { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 0.8125rem; }
+.log .lb { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.log .lb.none { color: var(--muted); }
+.log .mn { font-variant-numeric: tabular-nums; font-weight: 600; }
+.log-day { font-size: 0.8125rem; font-weight: 650; color: var(--muted); margin: 8px 0 0; }
+.goal-bar { height: 8px; border-radius: 99px; background: var(--cell); overflow: hidden; }
+.goal-bar span { display: block; height: 100%; background: var(--phase); border-radius: inherit; }
+.set-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; font-weight: 600; font-size: 0.9375rem; }
+.toggle input { width: 22px; height: 22px; accent-color: var(--phase); }
+@media (max-height: 640px) { .dial-wrap { width: min(100%, 260px, 48dvh); } .controls .main { height: 56px; } }
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <header class="topbar">
+    <div class="seg phases" role="group" id="phaseSeg">
+      <button type="button" data-phase="focus"></button>
+      <button type="button" data-phase="short"></button>
+      <button type="button" data-phase="long"></button>
+    </div>
+    <div class="tools">
+      <button type="button" class="btn quiet icon-btn" id="settingsBtn" data-icon="more"></button>
+    </div>
+  </header>
+  <div id="banners"></div>
+  <main id="timerView">
+    <div class="dial-wrap">
+      <svg class="dial" id="dial" viewBox="0 0 220 220" role="img" aria-labelledby="timeText">
+        <g id="ticks"></g>
+        <circle class="arc-bg" cx="110" cy="110" r="84"></circle>
+        <circle class="arc" id="arc" cx="110" cy="110" r="84" pathLength="1000"></circle>
+      </svg>
+      <div class="dial-center">
+        <div class="time num" id="timeText" aria-live="off"></div>
+        <div class="cycle" id="cycleDots" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="task">
+      <label class="vh" for="taskInput" id="taskLabel"></label>
+      <input type="text" id="taskInput" maxlength="60" autocomplete="off">
+    </div>
+    <div class="controls">
+      <button type="button" class="btn quiet icon-btn round" id="resetBtn" data-icon="reset"></button>
+      <button type="button" class="btn primary main" id="startBtn"></button>
+      <button type="button" class="btn quiet icon-btn round" id="skipBtn" data-icon="skip"></button>
+    </div>
+    <p class="today-line num" id="todayLine"></p>
+    <p class="vh" aria-live="polite" id="announce"></p>
+  </main>
+  <main id="statsView" hidden></main>
+</div>
+<nav class="tabbar" id="tabbar"><div>
+  <button type="button" id="tabTimer" data-icon="clock" data-view="timer"><span></span></button>
+  <button type="button" id="tabStats" data-icon="chart" data-view="stats"><span></span></button>
+</div></nav>
+
+<script>
+(() => {
+  "use strict";
+  /* ---------- helpers: DOM, text, dates ---------- */
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const $ = (id) => document.getElementById(id);
+  const pluralPl = (n, one, few, many) => {
+    n = Math.abs(n);
+    if (n === 1) return one;
+    const m10 = n % 10, m100 = n % 100;
+    return (m10 >= 2 && m10 <= 4 && !(m100 >= 12 && m100 <= 14)) ? few : many;
+  };
+  function el(tag, props, ...kids) {
+    const n = document.createElement(tag);
+    if (props) for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
+      if (k === "class") n.className = v;
+      else if (k === "text") n.textContent = v;
+      else if (k === "style") n.style.cssText = v;
+      else if (k.startsWith("on") && typeof v === "function") n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? "" : String(v));
+    }
+    for (const c of kids.flat()) if (c != null && c !== false) n.append(c instanceof Node ? c : String(c));
+    return n;
+  }
+  const ICONS = {
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    more: '<circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
+    close: '<path d="M6 6l12 12M18 6 6 18"/>',
+    left: '<path d="m15 5-7 7 7 7"/>',
+    right: '<path d="m9 5 7 7-7 7"/>',
+    check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    trash: '<path d="M4 7h16M10 7V4.5h4V7M6.5 7l1 12.5h9l1-12.5"/>',
+    edit: '<path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4"/>',
+    list: '<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>',
+    chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+    history: '<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.7"/><path d="M4 4v4.7h4.7M12 8v4l3 2"/>',
+    play: '<path d="M7 4.5v15l12-7.5z" fill="currentColor"/>',
+    pause: '<path d="M8 5v14M16 5v14" stroke-width="3"/>',
+    skip: '<path d="M5 5v14l10-7zM19 5v14"/>',
+    reset: '<path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.7"/><path d="M4 4v4.7h4.7"/>',
+    cards: '<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/>',
+    flip: '<path d="M4 9h13l-3-3M20 15H7l3 3"/>',
+    search: '<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>',
+    trophy: '<path d="M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H4.5v1A3.5 3.5 0 0 0 8 10.5M16 6h3.5v1a3.5 3.5 0 0 1-3.5 3.5M12 13v4M8 20h8M9.5 17h5"/>',
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.5 6.5 0 0 1 3.5 5.8"/>',
+    undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>',
+    flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+    pin: '<path d="M12 21v-6M7 4h10l-1.5 6 2.5 3v2H6v-2l2.5-3z"/>',
+  };
+  function icon(name, extra) {
+    const s = document.createElementNS(SVG_NS, "svg");
+    s.setAttribute("viewBox", "0 0 24 24");
+    s.setAttribute("aria-hidden", "true");
+    s.setAttribute("fill", "none");
+    s.setAttribute("stroke", "currentColor");
+    s.setAttribute("stroke-width", "2");
+    s.setAttribute("stroke-linecap", "round");
+    s.setAttribute("stroke-linejoin", "round");
+    if (extra) s.setAttribute("class", extra);
+    s.innerHTML = ICONS[name] || "";
+    return s;
+  }
+  function fillIcons(root) {
+    (root || document).querySelectorAll("[data-icon]").forEach((n) => {
+      if (!n.querySelector("svg")) n.prepend(icon(n.dataset.icon));
+    });
+  }
+  const cleanText = (v, max) => typeof v === "string" ? v.replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, " ").trim().slice(0, max) : "";
+  const cleanLine = (v, max) => cleanText(v, max).replace(/\s+/g, " ");
+  const isId = (v) => typeof v === "string" && /^[A-Za-z0-9_-]{1,40}$/.test(v);
+  function uid(p) {
+    try { return (p || "i") + Array.from(crypto.getRandomValues(new Uint32Array(2)), (n) => n.toString(36)).join(""); }
+    catch (e) { return (p || "i") + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  }
+  const pad = (n) => String(n).padStart(2, "0");
+  const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+  const keyOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const parseKey = (k) => { const [y, m, d] = k.split("-").map(Number); return new Date(y, m - 1, d); };
+  const validKey = (k) => typeof k === "string" && DATE_RE.test(k) && keyOf(parseKey(k)) === k;
+  const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  const startOfDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const todayKey = () => keyOf(new Date());
+  const dayDiff = (a, b) => Math.round((startOfDay(b) - startOfDay(a)) / 86400000);
+  const clampInt = (v, lo, hi, dflt) => Number.isInteger(v) && v >= lo && v <= hi ? v : dflt;
+
+  /* ---------- storage that survives being blocked ---------- */
+  const Store = {
+    ok: true,
+    read(key) { try { return localStorage.getItem(key); } catch (e) { this.ok = false; return null; } },
+    write(key, val) { try { localStorage.setItem(key, val); this.ok = true; } catch (e) { this.ok = false; } },
+  };
+
+  /* ---------- kit strings ---------- */
+  const KT = {
+    en: {
+      settings: "Settings", close: "Close", language: "Language",
+      backup: "Backup", backupHint: "Copy or download a backup to keep it safe or move it to another device.",
+      copyJson: "Copy backup", dlJson: "Download .json", copyCsv: "Copy CSV", dlCsv: "Download .csv",
+      copied: "Copied", copyFail: "Copy failed. The text is selected: copy it by hand.",
+      dlStarted: "Download started. If nothing happens, use Copy.",
+      importTitle: "Import", importHint: "Choose a backup file or paste its text.",
+      chooseFile: "Choose file", pastePh: "Paste backup text here", check: "Check",
+      importBad: "This isn’t a backup from this app, or the text is incomplete.",
+      importEmpty: "Choose a file or paste a backup first.",
+      merge: "Merge", replace: "Replace", replaceArmed: "Replace all?",
+      startOver: "Start over", loadSample: "Load example data", deleteAll: "Delete all data", deleteArmed: "Delete everything?",
+      deleted: "All data deleted", sampleLoaded: "Example data loaded", imported: "Imported",
+      privacy: "Your data is saved only in this browser. Nothing is sent anywhere.",
+      storageOff: "This browser blocks saving. Copy a backup before you close the page.",
+      example: "Example data", clear: "Clear",
+      version: (v) => `Version ${v}`,
+      cancel: "Cancel", save: "Save", del: "Delete", delArmed: "Delete?",
+    },
+    pl: {
+      settings: "Ustawienia", close: "Zamknij", language: "Język",
+      backup: "Kopia zapasowa", backupHint: "Skopiuj lub pobierz kopię, żeby ją zachować albo przenieść na inne urządzenie.",
+      copyJson: "Kopiuj kopię", dlJson: "Pobierz .json", copyCsv: "Kopiuj CSV", dlCsv: "Pobierz .csv",
+      copied: "Skopiowano", copyFail: "Nie udało się skopiować. Tekst jest zaznaczony: skopiuj go ręcznie.",
+      dlStarted: "Pobieranie rozpoczęte. Jeśli nic się nie dzieje, użyj Kopiuj.",
+      importTitle: "Import", importHint: "Wybierz plik kopii albo wklej jej treść.",
+      chooseFile: "Wybierz plik", pastePh: "Wklej tu tekst kopii", check: "Sprawdź",
+      importBad: "To nie jest kopia z tej aplikacji albo tekst jest niepełny.",
+      importEmpty: "Najpierw wybierz plik albo wklej kopię.",
+      merge: "Połącz", replace: "Zastąp", replaceArmed: "Zastąpić wszystko?",
+      startOver: "Od nowa", loadSample: "Wczytaj przykładowe dane", deleteAll: "Usuń wszystkie dane", deleteArmed: "Usunąć wszystko?",
+      deleted: "Usunięto wszystkie dane", sampleLoaded: "Wczytano przykładowe dane", imported: "Zaimportowano",
+      privacy: "Dane są zapisane tylko w tej przeglądarce. Nic nie jest nigdzie wysyłane.",
+      storageOff: "Ta przeglądarka blokuje zapis. Skopiuj kopię przed zamknięciem strony.",
+      example: "Przykładowe dane", clear: "Wyczyść",
+      version: (v) => `Wersja ${v}`,
+      cancel: "Anuluj", save: "Zapisz", del: "Usuń", delArmed: "Usunąć?",
+    },
+  };
+
+  /* ---------- toast, sheets, two-tap confirm ---------- */
+  let toastTimer = 0;
+  function toast(msg) {
+    let n = $("toast");
+    if (!n) { n = el("div", { id: "toast", class: "toast", role: "status", "aria-live": "polite" }); document.body.append(n); }
+    n.textContent = msg; n.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { n.hidden = true; }, 2600);
+  }
+  function openSheet(dlg) {
+    if (dlg.open) return;
+    dlg.showModal();
+    const first = dlg.querySelector("[autofocus]");
+    if (first) first.focus();
+  }
+  function closeSheet(dlg) { if (dlg.open) dlg.close(); }
+  document.addEventListener("click", (e) => {
+    if (e.target instanceof HTMLDialogElement && e.target.open) {
+      const r = e.target.getBoundingClientRect();
+      if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) e.target.close();
+    }
+    const c = e.target.closest("[data-close]");
+    if (c) { const d = c.closest("dialog"); if (d) d.close(); }
+  });
+  // Two taps for anything destructive: the first arms the button for 3 s.
+  function armed(btn, armedText, action) {
+    if (btn.classList.contains("armed")) {
+      btn.classList.remove("armed"); clearTimeout(btn._armT); btn.textContent = btn._label; action(); return;
+    }
+    btn._label = btn.textContent;
+    btn.classList.add("armed"); btn.textContent = armedText;
+    btn._armT = setTimeout(() => { btn.classList.remove("armed"); btn.textContent = btn._label; }, 3000);
+  }
+  function dlgHead(titleId) {
+    return el("div", { class: "dlg-head" },
+      el("h2", { id: titleId }),
+      el("button", { type: "button", class: "btn quiet icon-btn", "data-close": true, "aria-label": "Close", "data-kclose": true }, icon("close")));
+  }
+
+  /* ---------- copy, download, CSV ---------- */
+  async function copyText(text, area) {
+    try { await navigator.clipboard.writeText(text); toast(t().copied); return true; }
+    catch (e) {
+      if (area) { area.value = text; area.hidden = false; area.focus(); area.select(); }
+      try { if (document.execCommand && document.execCommand("copy")) { toast(t().copied); return true; } } catch (e2) { /* ignore */ }
+      toast(t().copyFail); return false;
+    }
+  }
+  function download(name, text, mime) {
+    try {
+      const url = URL.createObjectURL(new Blob([text], { type: mime }));
+      const a = el("a", { href: url, download: name });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      toast(t().dlStarted);
+    } catch (e) { toast(t().dlStarted); }
+  }
+  function csvCell(v) {
+    let s = v == null ? "" : String(v);
+    if (/^[=+\-@\t\r]/.test(s) && !/^-?\d+([.,]\d+)?$/.test(s)) s = "'" + s;
+    return /[",;\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  }
+  const toCsv = (rows) => rows.map((r) => r.map(csvCell).join(",")).join("\r\n") + "\r\n";
+  function parseCsv(text) {
+    text = String(text).replace(/^﻿/, "");
+    const first = text.split(/\r?\n/, 1)[0] || "";
+    const counts = { "\t": first.split("\t").length, ";": first.split(";").length, ",": first.split(",").length };
+    const sep = Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0];
+    const rows = []; let row = [], cell = "", q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; }
+        else cell += c;
+      } else if (c === '"' && cell === "") q = true;
+      else if (c === sep) { row.push(cell); cell = ""; }
+      else if (c === "\n" || c === "\r") {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(cell); rows.push(row); row = []; cell = "";
+      } else cell += c;
+      if (rows.length > 20000) break;
+    }
+    if (cell !== "" || row.length) { row.push(cell); rows.push(row); }
+    return rows.filter((r) => r.some((c) => c.trim() !== ""));
+  }
+  const readFile = (file) => new Promise((res, rej) => {
+    if (!file || file.size > 5 * 1024 * 1024) return rej(new Error("size"));
+    const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = rej; r.readAsText(file);
+  });
+
+  /* ---------- settings sheet: language, backup, import, reset ---------- */
+  // cfg: { version, fileBase, exportJson(), csv?(), parseImport(obj) -> {label, merge(), replace()} | null,
+  //        clearAll(), loadSample(), extra?(container), setLang(l) }
+  function buildSettings(cfg) {
+    const dlg = el("dialog", { id: "settingsDlg", "aria-labelledby": "setTitle" });
+    const box = el("div", { class: "dlg" });
+    dlg.append(box);
+    document.body.append(dlg);
+    let pending = null;
+    function render() {
+      const s = t();
+      box.replaceChildren();
+      const head = dlgHead("setTitle"); head.querySelector("h2").textContent = s.settings;
+      head.querySelector("button").setAttribute("aria-label", s.close);
+      box.append(head);
+      const langSeg = el("div", { class: "seg", role: "group", "aria-label": s.language },
+        ...[["en", "English"], ["pl", "Polski"]].map(([l, name]) => el("button", {
+          type: "button", "aria-pressed": state.lang === l ? "true" : "false", lang: l, text: name,
+          onclick: () => { cfg.setLang(l); render(); },
+        })));
+      box.append(el("div", { class: "field" }, el("span", { class: "hint", text: s.language }), langSeg));
+      if (cfg.extra) { const x = el("div", { class: "section" }); cfg.extra(x); if (x.childNodes.length) box.append(x); }
+
+      const area = el("textarea", { class: "code", readonly: true, rows: 3, hidden: true, "aria-label": s.backup });
+      const bk = el("div", { class: "section" },
+        el("h3", { text: s.backup }), el("p", { class: "hint", text: s.backupHint }),
+        el("div", { class: "row" },
+          el("button", { type: "button", class: "btn primary", text: s.copyJson, onclick: () => copyText(JSON.stringify(cfg.exportJson(), null, 1), area) }),
+          el("button", { type: "button", class: "btn", text: s.dlJson, onclick: () => download(`${cfg.fileBase}-${todayKey()}.json`, JSON.stringify(cfg.exportJson(), null, 1), "application/json") })),
+        cfg.csv ? el("div", { class: "row" },
+          el("button", { type: "button", class: "btn", text: s.copyCsv, onclick: () => copyText(cfg.csv(), area) }),
+          el("button", { type: "button", class: "btn", text: s.dlCsv, onclick: () => download(`${cfg.fileBase}-${todayKey()}.csv`, "﻿" + cfg.csv(), "text/csv") })) : null,
+        area);
+      box.append(bk);
+
+      const paste = el("textarea", { class: "code", rows: 3, placeholder: s.pastePh, "aria-label": s.pastePh });
+      const msg = el("p", { class: "hint", role: "status" });
+      const actions = el("div", { class: "row", hidden: true });
+      const file = el("input", { type: "file", id: "importFile", class: "file-in", accept: ".json,application/json,.txt" });
+      const check = (text) => {
+        actions.hidden = true; pending = null; msg.classList.remove("err");
+        if (!text.trim()) { msg.textContent = s.importEmpty; msg.classList.add("err"); return; }
+        let obj = null; try { obj = JSON.parse(text); } catch (e) { obj = null; }
+        const res = obj ? cfg.parseImport(obj) : null;
+        if (!res) { msg.textContent = s.importBad; msg.classList.add("err"); return; }
+        pending = res; msg.textContent = res.label; actions.hidden = false;
+      };
+      file.addEventListener("change", async () => {
+        try { const text = await readFile(file.files[0]); paste.value = text.slice(0, 200000); check(text); }
+        catch (e) { msg.textContent = s.importBad; msg.classList.add("err"); }
+        file.value = "";
+      });
+      const done = () => { toast(s.imported); paste.value = ""; msg.textContent = ""; actions.hidden = true; pending = null; };
+      actions.append(
+        el("button", { type: "button", class: "btn primary", text: s.merge, onclick: () => { if (pending) { pending.merge(); done(); } } }),
+        el("button", { type: "button", class: "btn danger", text: s.replace, onclick: (e) => armed(e.currentTarget, s.replaceArmed, () => { if (pending) { pending.replace(); done(); } }) }));
+      box.append(el("div", { class: "section" },
+        el("h3", { text: s.importTitle }), el("p", { class: "hint", text: s.importHint }),
+        el("div", { class: "row" }, file, el("label", { for: "importFile", class: "btn", text: s.chooseFile }),
+          el("button", { type: "button", class: "btn", text: s.check, onclick: () => check(paste.value) })),
+        paste, msg, actions));
+
+      box.append(el("div", { class: "section" },
+        el("h3", { text: s.startOver }),
+        el("div", { class: "row" },
+          el("button", { type: "button", class: "btn", text: s.loadSample, onclick: () => { cfg.loadSample(); toast(s.sampleLoaded); closeSheet(dlg); } }),
+          el("button", { type: "button", class: "btn danger", text: s.deleteAll, onclick: (e) => armed(e.currentTarget, s.deleteArmed, () => { cfg.clearAll(); toast(s.deleted); closeSheet(dlg); }) })),
+        el("p", { class: "hint", text: s.privacy }),
+        el("p", { class: "hint", text: s.version(cfg.version) })));
+    }
+    return { open() { render(); openSheet(dlg); }, render, dlg };
+  }
+
+  // One-line banners: example data and blocked storage.
+  function renderBanners(host, onClearSample) {
+    const s = t();
+    host.replaceChildren();
+    if (!Store.ok) host.append(el("div", { class: "notice warn", role: "alert" }, el("span", { text: s.storageOff })));
+    if (state.sample) host.append(el("div", { class: "notice" }, el("span", { text: s.example }),
+      el("button", { type: "button", class: "btn small", text: s.clear, onclick: onClearSample })));
+  }
+  const pickLang = () => ((navigator.language || "en").toLowerCase().startsWith("pl") ? "pl" : "en");
+
+  /* ================= Focus Timer ================= */
+  const APP_ID = "focus-timer-pomodoro";
+  const STORE_KEY = "focus-timer-pomodoro:data";
+  const VERSION = "1.0.0";
+  const DATA_VERSION = 1;
+  const MAX_SESSIONS = 20000;
+  const PHASES = ["focus", "short", "long"];
+  const DEFAULTS = { focus: 25, short: 5, long: 15, every: 4, auto: false, sound: true, goal: 8 };
+
+  const T = {
+    en: {
+      appName: "Focus Timer", timer: "Timer", stats: "Stats",
+      focus: "Focus", short: "Short break", long: "Long break",
+      focusS: "Focus", shortS: "Break", longS: "Long break",
+      start: "Start", pause: "Pause", resume: "Resume", reset: "Reset", skip: "Skip to next",
+      taskLabel: "What are you working on?", taskPh: "What are you working on?",
+      todayLine: (n, m) => `Today: ${n} ${n === 1 ? "session" : "sessions"} · ${m}`,
+      focusDone: "Focus session done. Time for a break.", breakDone: "Break over. Ready to focus?",
+      today: "Today", thisWeek: "This week", streak: "Day streak",
+      sessionsN: (n) => `${n} ${n === 1 ? "session" : "sessions"}`,
+      minutes: (m) => m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${m % 60 ? (m % 60) + " min" : ""}`.trim(),
+      goal: (d, g) => `${d} of ${g} sessions`,
+      week: "Focus minutes", prevWeek: "Previous week", nextWeek: "Next week",
+      recent: "Sessions", noLabel: "No label", noSessions: "Finished focus sessions show up here.",
+      delSession: "Delete session", sessionDeleted: "Session deleted",
+      timerSettings: "Timer", focusMin: "Focus (min)", shortMin: "Short break (min)", longMin: "Long break (min)",
+      every: "Long break after", goalSet: "Daily goal (sessions)",
+      auto: "Start the next timer automatically", sound: "Sound at the end",
+      importLabel: (n) => `${n} ${n === 1 ? "session" : "sessions"} and timer settings.`,
+      cycle: (d, n) => `Session ${d} of ${n} before the long break`,
+      remaining: (t, p) => `${t} left, ${p}`,
+      vsYesterday: (d) => `${d} vs yesterday`, vsLastWeek: (d) => `${d} vs last week`, vsPrevWeek: (d) => `${d} vs week before`, best: (n) => `best ${n}`,
+    },
+    pl: {
+      appName: "Timer skupienia", timer: "Timer", stats: "Statystyki",
+      focus: "Skupienie", short: "Krótka przerwa", long: "Długa przerwa",
+      focusS: "Praca", shortS: "Przerwa", longS: "Długa",
+      start: "Start", pause: "Pauza", resume: "Wznów", reset: "Od nowa", skip: "Przejdź dalej",
+      taskLabel: "Nad czym pracujesz?", taskPh: "Nad czym pracujesz?",
+      todayLine: (n, m) => `Dziś: ${n} ${pluralPl(n, "sesja", "sesje", "sesji")} · ${m}`,
+      focusDone: "Sesja skupienia zakończona. Czas na przerwę.", breakDone: "Koniec przerwy. Gotowe do pracy?",
+      today: "Dziś", thisWeek: "Ten tydzień", streak: "Seria dni",
+      sessionsN: (n) => `${n} ${pluralPl(n, "sesja", "sesje", "sesji")}`,
+      minutes: (m) => m < 60 ? `${m} min` : `${Math.floor(m / 60)} godz. ${m % 60 ? (m % 60) + " min" : ""}`.trim(),
+      goal: (d, g) => `${d} z ${g} sesji`,
+      week: "Minuty skupienia", prevWeek: "Poprzedni tydzień", nextWeek: "Następny tydzień",
+      recent: "Sesje", noLabel: "Bez opisu", noSessions: "Tu pojawią się zakończone sesje skupienia.",
+      delSession: "Usuń sesję", sessionDeleted: "Sesja usunięta",
+      timerSettings: "Timer", focusMin: "Skupienie (min)", shortMin: "Krótka przerwa (min)", longMin: "Długa przerwa (min)",
+      every: "Długa przerwa po", goalSet: "Cel dzienny (sesje)",
+      auto: "Uruchamiaj kolejny timer automatycznie", sound: "Dźwięk na koniec",
+      importLabel: (n) => `${n} ${pluralPl(n, "sesja", "sesje", "sesji")} i ustawienia timera.`,
+      cycle: (d, n) => `Sesja ${d} z ${n} przed długą przerwą`,
+      remaining: (t, p) => `Zostało ${t}, ${p}`,
+      vsYesterday: (d) => `${d} wobec wczoraj`, vsLastWeek: (d) => `${d} wobec zeszłego tyg.`, vsPrevWeek: (d) => `${d} wobec tyg. wcześniej`, best: (n) => `rekord ${n}`,
+    },
+  };
+  for (const l of ["en", "pl"]) T[l] = { ...KT[l], ...T[l] };
+
+  let state = {
+    lang: "en", sample: false, settings: { ...DEFAULTS },
+    timer: { phase: "focus", running: false, endsAt: 0, left: 0, done: 0, label: "", startedAt: 0 },
+    sessions: [],
+  };
+  let view = "timer", weekOffset = 0;
+  const t = () => T[state.lang] || T.en;
+  const locale = () => (state.lang === "pl" ? "pl-PL" : "en-GB");
+  const nf = (n) => new Intl.NumberFormat(locale()).format(n);
+
+  /* ---------- data ---------- */
+  const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+  function sanitize(obj) {
+    if (!obj || typeof obj !== "object" || !Array.isArray(obj.sessions)) return null;
+    if (obj.app && obj.app !== APP_ID) return null;
+    const st = obj.settings && typeof obj.settings === "object" ? obj.settings : {};
+    const settings = {
+      focus: clampInt(st.focus, 1, 180, DEFAULTS.focus), short: clampInt(st.short, 1, 60, DEFAULTS.short),
+      long: clampInt(st.long, 1, 90, DEFAULTS.long), every: clampInt(st.every, 2, 8, DEFAULTS.every),
+      auto: st.auto === true, sound: st.sound !== false, goal: clampInt(st.goal, 1, 24, DEFAULTS.goal),
+    };
+    const ids = new Set();
+    const sessions = [];
+    for (const s of obj.sessions.slice(-MAX_SESSIONS)) {
+      if (!s || !validKey(s.d) || typeof s.t !== "string" || !TIME_RE.test(s.t)) continue;
+      const m = clampInt(s.m, 1, 600, 0); if (!m) continue;
+      let id = isId(s.id) && !ids.has(s.id) ? s.id : uid("s"); ids.add(id);
+      sessions.push({ id, d: s.d, t: s.t, m, label: cleanLine(s.label, 60) });
+    }
+    sessions.sort((a, b) => (a.d + a.t).localeCompare(b.d + b.t));
+    const tm = obj.timer && typeof obj.timer === "object" ? obj.timer : {};
+    const timer = {
+      phase: PHASES.includes(tm.phase) ? tm.phase : "focus",
+      running: tm.running === true && Number.isFinite(tm.endsAt) && tm.endsAt > 0,
+      endsAt: Number.isFinite(tm.endsAt) ? tm.endsAt : 0,
+      left: Number.isFinite(tm.left) && tm.left > 0 ? Math.min(tm.left, 180 * 60000) : 0,
+      done: clampInt(tm.done, 0, 8, 0),
+      label: cleanLine(tm.label, 60),
+      startedAt: Number.isFinite(tm.startedAt) ? tm.startedAt : 0,
+    };
+    return { lang: obj.lang === "pl" || obj.lang === "en" ? obj.lang : null, sample: obj.sample === true, settings, timer, sessions };
+  }
+  const serialize = () => ({ app: APP_ID, dataVersion: DATA_VERSION, lang: state.lang, sample: state.sample, settings: state.settings, timer: state.timer, sessions: state.sessions });
+  function save() { Store.write(STORE_KEY, JSON.stringify(serialize())); }
+  function load() {
+    const raw = Store.read(STORE_KEY);
+    if (raw) {
+      let parsed = null;
+      try { parsed = sanitize(JSON.parse(raw)); } catch (e) { parsed = null; }
+      if (parsed) { state = { ...state, ...parsed, lang: parsed.lang || pickLang() }; return; }
+      Store.write(STORE_KEY + ":unreadable", raw);
+    }
+    state.lang = pickLang();
+    loadSample(true);
+  }
+  function loadSample(quiet) {
+    let seed = 7;
+    const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    const labels = state.lang === "pl"
+      ? ["Szkic raportu", "Czytanie", "Przegląd kodu", "Hiszpański", "Porządki w mailach", ""]
+      : ["Report draft", "Reading", "Code review", "Spanish practice", "Inbox cleanup", ""];
+    const out = [];
+    const now = new Date();
+    for (let ago = 24; ago >= 0; ago--) {
+      const day = addDays(now, -ago);
+      if (day.getDay() === 0 && rnd() < 0.7) continue;
+      let n = ago === 0 ? 3 : Math.floor(rnd() * 8);
+      let h = 8 + Math.floor(rnd() * 2), mi = Math.floor(rnd() * 4) * 15;
+      for (let i = 0; i < n; i++) {
+        const lb = labels[Math.floor(rnd() * labels.length)];
+        out.push({ id: `s${ago}-${i}`, d: keyOf(day), t: `${pad(h)}:${pad(mi)}`, m: rnd() < 0.85 ? 25 : 50, label: lb });
+        mi += 30 + (i % 4 === 3 ? 15 : 0); h += Math.floor(mi / 60); mi %= 60;
+        if (h > 20) break;
+      }
+    }
+    state.sessions = out;
+    state.timer = { phase: "focus", running: false, endsAt: 0, left: 0, done: 3, label: labels[0], startedAt: 0 };
+    state.sample = true;
+    save();
+    if (!quiet) render();
+  }
+  function clearAll() { state.sessions = []; state.timer = { phase: "focus", running: false, endsAt: 0, left: 0, done: 0, label: "", startedAt: 0 }; state.sample = false; save(); render(); }
+
+  /* ---------- timer engine ---------- */
+  const durMs = (p) => state.settings[p] * 60000;
+  const leftMs = () => {
+    const tm = state.timer;
+    if (tm.running) return Math.max(0, tm.endsAt - Date.now());
+    return tm.left > 0 ? tm.left : durMs(tm.phase);
+  };
+  let audioCtx = null;
+  function primeAudio() {
+    try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === "suspended") audioCtx.resume(); } catch (e) { audioCtx = null; }
+  }
+  function chime() {
+    if (!state.settings.sound || !audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      [0, 0.32, 0.64].forEach((off, i) => {
+        const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+        o.type = "sine"; o.frequency.value = [880, 660, 990][i];
+        g.gain.setValueAtTime(0.0001, now + off);
+        g.gain.exponentialRampToValueAtTime(0.25, now + off + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, now + off + 0.5);
+        o.connect(g).connect(audioCtx.destination); o.start(now + off); o.stop(now + off + 0.55);
+      });
+    } catch (e) { /* no sound is fine */ }
+    try { if (navigator.vibrate) navigator.vibrate([180, 90, 180]); } catch (e) { /* ignore */ }
+  }
+  function start() {
+    primeAudio();
+    const tm = state.timer;
+    const ms = leftMs();
+    if (!tm.left || tm.left === durMs(tm.phase)) tm.startedAt = Date.now();
+    tm.running = true; tm.endsAt = Date.now() + ms; tm.left = 0;
+    save(); render();
+  }
+  function pause() {
+    const tm = state.timer;
+    tm.left = leftMs(); tm.running = false; tm.endsAt = 0;
+    save(); render();
+  }
+  function reset() {
+    const tm = state.timer;
+    tm.running = false; tm.endsAt = 0; tm.left = 0; tm.startedAt = 0;
+    save(); render();
+  }
+  function nextPhase(completedFocus) {
+    const tm = state.timer;
+    if (tm.phase === "focus") {
+      if (completedFocus) tm.done = Math.min(8, tm.done + 1);
+      tm.phase = tm.done >= state.settings.every ? "long" : "short";
+    } else {
+      if (tm.phase === "long") tm.done = 0;
+      tm.phase = "focus";
+    }
+    tm.running = false; tm.endsAt = 0; tm.left = 0; tm.startedAt = 0;
+  }
+  function complete(at) {
+    const tm = state.timer;
+    const wasFocus = tm.phase === "focus";
+    if (wasFocus) {
+      const startAt = new Date((at || Date.now()) - durMs("focus"));
+      state.sessions.push({ id: uid("s"), d: keyOf(startAt), t: `${pad(startAt.getHours())}:${pad(startAt.getMinutes())}`, m: state.settings.focus, label: tm.label });
+      if (state.sessions.length > MAX_SESSIONS) state.sessions.shift();
+    }
+    nextPhase(wasFocus);
+    const late = at && Date.now() - at > 60000;
+    if (state.settings.auto && !late) { tm.running = true; tm.startedAt = Date.now(); tm.endsAt = Date.now() + durMs(tm.phase); }
+    save();
+    chime();
+    $("announce").textContent = wasFocus ? t().focusDone : t().breakDone;
+    toast(wasFocus ? t().focusDone : t().breakDone);
+    render();
+  }
+  function setPhase(p) {
+    const tm = state.timer;
+    if (tm.phase === p) return;
+    tm.phase = p; tm.running = false; tm.endsAt = 0; tm.left = 0; tm.startedAt = 0;
+    save(); render();
+  }
+  function tick() {
+    const tm = state.timer;
+    if (tm.running && Date.now() >= tm.endsAt) { complete(tm.endsAt); return; }
+    paintTime();
+  }
+
+  /* ---------- rendering ---------- */
+  const fmtClock = (ms) => { const s = Math.ceil(ms / 1000); return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`; };
+  function buildTicks() {
+    const g = $("ticks"); g.replaceChildren();
+    for (let i = 0; i < 60; i++) {
+      const a = (i / 60) * Math.PI * 2 - Math.PI / 2, major = i % 5 === 0;
+      const r1 = major ? 98 : 101, r2 = 106;
+      const ln = document.createElementNS(SVG_NS, "line");
+      ln.setAttribute("x1", (110 + r1 * Math.cos(a)).toFixed(2)); ln.setAttribute("y1", (110 + r1 * Math.sin(a)).toFixed(2));
+      ln.setAttribute("x2", (110 + r2 * Math.cos(a)).toFixed(2)); ln.setAttribute("y2", (110 + r2 * Math.sin(a)).toFixed(2));
+      ln.setAttribute("class", "tick" + (major ? " major" : ""));
+      g.append(ln);
+    }
+  }
+  let lastSecond = -1;
+  function paintTime() {
+    const s = t(), tm = state.timer;
+    const ms = leftMs(), total = durMs(tm.phase);
+    const frac = Math.max(0, Math.min(1, ms / total));
+    const sec = Math.ceil(ms / 1000);
+    if (sec === lastSecond) return;
+    lastSecond = sec;
+    $("timeText").textContent = fmtClock(ms);
+    $("arc").style.strokeDashoffset = String(1000 * (1 - frac));
+    $("dial").setAttribute("aria-label", s.remaining(fmtClock(ms), s[tm.phase]));
+    const ticks = $("ticks").children;
+    const doneTicks = Math.floor((1 - frac) * 60);
+    for (let i = 0; i < ticks.length; i++) ticks[i].classList.toggle("done", i < doneTicks);
+    document.title = tm.running ? `${fmtClock(ms)} · ${s[tm.phase]}` : s.appName;
+  }
+  const minutesToday = () => { const k = todayKey(); return state.sessions.filter((x) => x.d === k).reduce((a, x) => a + x.m, 0); };
+  function render() {
+    const s = t(), tm = state.timer;
+    document.documentElement.lang = state.lang;
+    document.documentElement.dataset.phase = tm.phase;
+    $("tabTimer").querySelector("span").textContent = s.timer;
+    $("tabStats").querySelector("span").textContent = s.stats;
+    $("tabTimer").setAttribute("aria-current", view === "timer" ? "page" : "false");
+    $("tabStats").setAttribute("aria-current", view === "stats" ? "page" : "false");
+    $("settingsBtn").setAttribute("aria-label", s.settings);
+    $("timerView").hidden = view !== "timer"; $("statsView").hidden = view !== "stats";
+    $("phaseSeg").setAttribute("aria-label", s.timer);
+    $("phaseSeg").querySelectorAll("button").forEach((b) => {
+      const p = b.dataset.phase;
+      b.textContent = p === "focus" ? s.focusS : (p === "short" ? s.shortS : s.longS);
+      b.setAttribute("aria-label", s[p]);
+      b.setAttribute("aria-pressed", String(p === tm.phase));
+    });
+    renderBanners($("banners"), () => { state.sessions = []; state.sample = false; state.timer.done = 0; state.timer.label = ""; save(); render(); });
+    if (view === "timer") renderTimer(); else renderStats();
+  }
+  function renderTimer() {
+    const s = t(), tm = state.timer;
+    const started = tm.running || (tm.left > 0 && tm.left < durMs(tm.phase));
+    $("timerView").classList.toggle("paused", !tm.running && started);
+    $("timerView").classList.toggle("running", tm.running);
+    const sb = $("startBtn");
+    sb.replaceChildren(icon(tm.running ? "pause" : "play"), el("span", { text: tm.running ? s.pause : (started ? s.resume : s.start) }));
+    $("resetBtn").setAttribute("aria-label", s.reset); $("resetBtn").disabled = !started;
+    $("skipBtn").setAttribute("aria-label", s.skip);
+    $("taskLabel").textContent = s.taskLabel;
+    const ti = $("taskInput"); ti.placeholder = s.taskPh; if (document.activeElement !== ti) ti.value = tm.label;
+    const dots = $("cycleDots"); dots.replaceChildren();
+    for (let i = 0; i < state.settings.every; i++) dots.append(el("i", { class: i < tm.done ? "on" : "" }));
+    dots.parentElement.setAttribute("title", s.cycle(Math.min(tm.done + (tm.phase === "focus" ? 1 : 0), state.settings.every), state.settings.every));
+    const k = todayKey(); const n = state.sessions.filter((x) => x.d === k).length;
+    $("todayLine").replaceChildren(s.todayLine(n, s.minutes(minutesToday())));
+    lastSecond = -1; paintTime();
+  }
+  function streak() {
+    const days = new Set(state.sessions.map((x) => x.d));
+    let d = new Date(), n = 0;
+    if (!days.has(keyOf(d))) d = addDays(d, -1);
+    while (days.has(keyOf(d))) { n++; d = addDays(d, -1); }
+    return n;
+  }
+  function bestStreak() {
+    const days = [...new Set(state.sessions.map((x) => x.d))].sort();
+    let best = 0, run = 0, prev = null;
+    for (const d of days) { run = prev && keyOf(addDays(parseKey(prev), 1)) === d ? run + 1 : 1; best = Math.max(best, run); prev = d; }
+    return best;
+  }
+  function renderStats() {
+    const s = t(), host = $("statsView");
+    host.replaceChildren();
+    const k = todayKey();
+    const todayS = state.sessions.filter((x) => x.d === k);
+    const monday = addDays(startOfDay(new Date()), -((new Date().getDay() + 6) % 7) + weekOffset * 7);
+    const days = Array.from({ length: 7 }, (_, i) => keyOf(addDays(monday, i)));
+    const byDay = new Map(days.map((d) => [d, { m: 0, n: 0 }]));
+    for (const x of state.sessions) { const e = byDay.get(x.d); if (e) { e.m += x.m; e.n++; } }
+    const weekMin = [...byDay.values()].reduce((a, e) => a + e.m, 0);
+    const prevStart = keyOf(addDays(monday, -7));
+    const prevMin = state.sessions.filter((x) => x.d >= prevStart && x.d < days[0]).reduce((a, x) => a + x.m, 0);
+    const yk = keyOf(addDays(new Date(), -1));
+    const yN = state.sessions.filter((x) => x.d === yk).length;
+    const signed = (n) => new Intl.NumberFormat(locale(), { signDisplay: "exceptZero" }).format(n);
+    const pct = prevMin ? signed(Math.round((weekMin - prevMin) / prevMin * 100)) + "%" : "–";
+    host.append(el("div", { class: "kpis" },
+      el("div", { class: "kpi" }, el("b", { text: nf(todayS.length) }), el("span", { text: s.today }), el("span", { class: "chg", text: s.vsYesterday(signed(todayS.length - yN)) })),
+      el("div", { class: "kpi" }, el("b", { text: nf(Math.round(weekMin / 6) / 10) + " h" }), el("span", { text: weekOffset ? df2(days[0]) : s.thisWeek }), el("span", { class: "chg", text: weekOffset ? s.vsPrevWeek(pct) : s.vsLastWeek(pct) })),
+      el("div", { class: "kpi" }, el("b", { text: nf(streak()) }), el("span", { text: s.streak }), el("span", { class: "chg", text: s.best(nf(bestStreak())) }))));
+    const g = state.settings.goal;
+    host.append(el("section", { class: "panel" },
+      el("div", { class: "panel-head" }, el("h2", { text: s.today }), el("span", { class: "sub num", text: s.goal(todayS.length, g) })),
+      el("div", { class: "goal-bar", role: "progressbar", "aria-valuemin": 0, "aria-valuemax": g, "aria-valuenow": Math.min(g, todayS.length), "aria-label": s.goal(todayS.length, g) },
+        el("span", { style: `width:${Math.min(100, todayS.length / g * 100).toFixed(1)}%` }))));
+    const max = Math.max(60, ...[...byDay.values()].map((e) => e.m));
+    const wd = new Intl.DateTimeFormat(locale(), { weekday: "narrow" });
+    host.append(el("section", { class: "panel" },
+      el("div", { class: "panel-head" }, el("h2", { text: s.week }),
+        el("div", { class: "week-nav" },
+          el("button", { type: "button", class: "btn quiet icon-btn", "aria-label": s.prevWeek, onclick: () => { weekOffset--; renderStats(); } }, icon("left")),
+          el("span", { class: "sub num", text: `${df2(days[0])} – ${df2(days[6])}` }),
+          el("button", { type: "button", class: "btn quiet icon-btn", "aria-label": s.nextWeek, disabled: weekOffset >= 0, onclick: () => { weekOffset++; renderStats(); } }, icon("right")))),
+      el("div", { class: "bars", role: "img", "aria-label": days.map((d) => `${df2(d)}: ${s.minutes(byDay.get(d).m)}`).join(", ") },
+        ...days.map((d) => {
+          const e = byDay.get(d);
+          return el("div", { class: "b" + (d === k ? " today" : "") },
+            el("span", { class: "v", text: e.m ? nf(e.m) : "" }),
+            el("span", { class: "col" + (e.m ? "" : " zero") + (e.n >= g ? " goal-met" : ""), style: `height:${e.m ? Math.max(4, e.m / max * 100).toFixed(1) : 2}%` }),
+            el("span", { class: "d", text: wd.format(parseKey(d)) }));
+        }))));
+    const recent = state.sessions.slice(-20).reverse();
+    const panel = el("section", { class: "panel" }, el("h2", { text: s.recent }));
+    if (!recent.length) panel.append(el("p", { class: "hint", text: s.noSessions }));
+    let lastDay = "";
+    let ul = null;
+    for (const x of recent) {
+      if (x.d !== lastDay) { lastDay = x.d; panel.append(el("p", { class: "log-day", text: x.d === k ? s.today : df2(x.d, true) })); ul = el("ul", { class: "log" }); panel.append(ul); }
+      ul.append(el("li", null,
+        el("span", { class: "tm", text: x.t }),
+        el("span", { class: "lb" + (x.label ? "" : " none"), text: x.label || s.noLabel }),
+        el("span", { class: "mn", text: s.minutes(x.m) }),
+        el("button", { type: "button", class: "btn quiet icon-btn", "aria-label": `${s.delSession} ${x.t}`, onclick: (e) => {
+          const b = e.currentTarget;
+          if (!b.classList.contains("armed")) { b.classList.add("armed"); b.setAttribute("aria-label", s.delArmed); setTimeout(() => { b.classList.remove("armed"); b.setAttribute("aria-label", s.delSession); }, 3000); return; }
+          state.sessions = state.sessions.filter((y) => y !== x); save(); renderStats(); toast(s.sessionDeleted);
+        } }, icon("trash"))));
+    }
+    host.append(panel);
+  }
+  function df2(k, long) { return new Intl.DateTimeFormat(locale(), long ? { weekday: "short", day: "numeric", month: "short" } : { day: "numeric", month: "short" }).format(parseKey(k)); }
+
+  /* ---------- settings ---------- */
+  function extraSettings(box) {
+    const s = t(), st = state.settings;
+    const num = (key, label, min, max) => {
+      const id = "set-" + key;
+      const inp = el("input", { type: "number", id, min, max, step: 1, inputmode: "numeric", value: st[key] });
+      inp.addEventListener("change", () => {
+        const v = clampInt(parseInt(inp.value, 10), min, max, st[key]);
+        inp.value = v; st[key] = v;
+        if (!state.timer.running && !state.timer.left) lastSecond = -1;
+        save(); render();
+      });
+      return el("div", { class: "field" }, el("label", { for: id, text: label }), inp);
+    };
+    const tog = (key, label) => {
+      const inp = el("input", { type: "checkbox", id: "set-" + key });
+      inp.checked = st[key];
+      inp.addEventListener("change", () => { st[key] = inp.checked; save(); });
+      return el("label", { class: "toggle", for: "set-" + key }, el("span", { text: label }), inp);
+    };
+    box.append(el("h3", { text: s.timerSettings }),
+      el("div", { class: "set-grid" }, num("focus", s.focusMin, 1, 180), num("short", s.shortMin, 1, 60), num("long", s.longMin, 1, 90), num("every", s.every, 2, 8), num("goal", s.goalSet, 1, 24)),
+      tog("auto", s.auto), tog("sound", s.sound));
+  }
+  const settings = buildSettings({
+    version: VERSION, fileBase: "focus-timer",
+    exportJson: () => ({ ...serialize(), exportedAt: new Date().toISOString() }),
+    csv: () => toCsv([["date", "start", "minutes", "label"], ...state.sessions.map((x) => [x.d, x.t, x.m, x.label])]),
+    parseImport(obj) {
+      const d = sanitize(obj); if (!d) return null;
+      return {
+        label: t().importLabel(d.sessions.length),
+        merge() {
+          const have = new Set(state.sessions.map((x) => x.d + x.t + x.m + x.label));
+          for (const x of d.sessions) if (!have.has(x.d + x.t + x.m + x.label)) state.sessions.push({ ...x, id: state.sessions.some((y) => y.id === x.id) ? uid("s") : x.id });
+          state.sessions.sort((a, b) => (a.d + a.t).localeCompare(b.d + b.t));
+          state.sample = false; save(); render();
+        },
+        replace() { state.sessions = d.sessions; state.settings = d.settings; state.sample = false; save(); render(); },
+      };
+    },
+    extra: extraSettings,
+    clearAll, loadSample: () => loadSample(false),
+    setLang(l) { state.lang = l; save(); render(); },
+  });
+
+  /* ---------- wiring ---------- */
+  fillIcons();
+  buildTicks();
+  $("settingsBtn").addEventListener("click", () => settings.open());
+  $("startBtn").addEventListener("click", () => (state.timer.running ? pause() : start()));
+  $("resetBtn").addEventListener("click", reset);
+  $("skipBtn").addEventListener("click", () => { primeAudio(); nextPhase(false); save(); render(); });
+  $("phaseSeg").addEventListener("click", (e) => { const b = e.target.closest("button[data-phase]"); if (b) setPhase(b.dataset.phase); });
+  $("taskInput").addEventListener("input", (e) => { state.timer.label = cleanLine(e.target.value, 60); save(); });
+  $("tabbar").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-view]"); if (!b) return;
+    view = b.dataset.view; weekOffset = 0; render(); window.scrollTo(0, 0);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === " " && view === "timer" && !e.target.closest("input, textarea, button, select, dialog")) { e.preventDefault(); $("startBtn").click(); }
+  });
+  window.addEventListener("storage", (e) => { if (e.key === STORE_KEY) { load(); render(); } });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
+  load();
+  if (state.timer.running && Date.now() >= state.timer.endsAt) complete(state.timer.endsAt); else render();
+  setInterval(tick, 250);
+
+})();
+</script>
+</body>
+</html>

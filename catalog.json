@@ -36,6 +36,41 @@
       "screenshot": "apps/expense-tracker/monthly-budget/screenshots/phone-light.png"
     },
     {
+      "id": "focus-timer/pomodoro",
+      "appType": "focus-timer",
+      "variant": "pomodoro",
+      "name": {
+        "en": "Focus Timer",
+        "pl": "Timer skupienia"
+      },
+      "variantName": {
+        "en": "Pomodoro",
+        "pl": "Pomodoro"
+      },
+      "description": {
+        "en": "Work in focus sessions with short and long breaks on a minute dial; see sessions per day, a weekly chart and your streak.",
+        "pl": "Pracuj w sesjach skupienia z krótkimi i długimi przerwami na tarczy minut; zobacz sesje dnia, wykres tygodnia i serię dni."
+      },
+      "version": "1.0.0",
+      "status": "review",
+      "category": "productivity",
+      "tags": [
+        "pomodoro",
+        "timer",
+        "focus",
+        "breaks",
+        "productivity",
+        "stats"
+      ],
+      "languages": [
+        "en",
+        "pl"
+      ],
+      "path": "apps/focus-timer/pomodoro",
+      "file": "apps/focus-timer/pomodoro/focus-timer-pomodoro.html",
+      "screenshot": "apps/focus-timer/pomodoro/screenshots/phone-light.png"
+    },
+    {
       "id": "gym-tracker/muscle-map",
       "appType": "gym-tracker",
       "variant": "muscle-map",
