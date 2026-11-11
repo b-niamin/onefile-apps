@@ -121,7 +121,7 @@
         "en": "Plan workouts, log sets and weights, track progress and see which muscles you trained on a body map.",
         "pl": "Planuj treningi, zapisuj serie i ciężary, śledź postępy i zobacz na mapie ciała, które mięśnie pracowały."
       },
-      "version": "1.0.0",
+      "version": "1.1.0",
       "status": "review",
       "category": "health-fitness",
       "tags": [
