@@ -16,11 +16,21 @@
   <main id="view"><p class="empty">Loading…</p></main>
 </div>
 <div class="rest" id="rest" aria-live="polite">
-  <div class="rring"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="bgc" cx="22" cy="22" r="19"/><circle class="fg" id="restRing" cx="22" cy="22" r="19" stroke-dasharray="119.4" stroke-dashoffset="0"/></svg></div>
-  <b id="restT">1:30</b>
-  <button class="r" data-act="rest-sub" data-ta="restSub">−15</button>
-  <button class="r" data-act="rest-add" data-ta="restAdd">+30</button>
-  <button class="r" data-act="rest-stop" data-t="skip">Skip</button>
+  <button class="fab" data-act="rest-open" data-ta="timerAria" aria-label="Timer" aria-expanded="false"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="bgc" cx="32" cy="32" r="29"/><circle class="fg" id="restRing" cx="32" cy="32" r="29" stroke-dasharray="182.2" stroke-dashoffset="0"/></svg><b id="restT">1:30</b></button>
+  <div class="rest-panel" role="group" data-ta="timer" aria-label="Timer">
+    <button class="r" data-act="rest-adj" data-s="-15" data-ta="restSub" aria-label="15 s shorter">−15</button>
+    <button class="r" data-act="rest-adj" data-s="5" data-ta="restAdd5" aria-label="5 s longer">+5 s</button>
+    <button class="r" data-act="rest-adj" data-s="15" data-ta="restAdd" aria-label="15 s longer">+15</button>
+    <button class="r go" data-act="rest-toggle" id="restGo">Start</button>
+  </div>
+</div>
+<div class="rbig-bg" id="rbigBg" data-act="rest-min"></div>
+<div class="rbig" id="rbig" role="dialog" data-ta="timer" aria-label="Timer">
+  <div class="grab"></div>
+  <div class="rbig-top"><span class="h2" data-t="timer">Timer</span><button class="btn btn-sm" data-act="rest-min" data-t="collapse">Hide</button></div>
+  <div class="rbig-ring"><svg viewBox="0 0 220 220" aria-hidden="true"><circle class="bgc" cx="110" cy="110" r="100"/><circle class="fg" id="rbigRing" cx="110" cy="110" r="100" stroke-dasharray="628.3" stroke-dashoffset="0"/></svg><div class="rbig-t"><b id="rbigT">1:30</b><span id="rbigSub">left</span></div></div>
+  <div class="rbig-btns"><button class="r" data-act="rest-adj" data-s="-15" data-ta="restSub" aria-label="15 s shorter">−15</button><button class="r" data-act="rest-adj" data-s="5" data-ta="restAdd5" aria-label="5 s longer">+5 s</button><button class="r" data-act="rest-adj" data-s="15" data-ta="restAdd" aria-label="15 s longer">+15</button></div>
+  <button class="go2" data-act="rest-toggle" id="rbigGo">Skip</button>
 </div>
 <div class="sheet-bg" id="sheetBg"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true">

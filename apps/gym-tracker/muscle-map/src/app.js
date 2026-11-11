@@ -25,7 +25,7 @@ const keyLabel=k=>LIBBY[k]?nm(LIBBY[k]):k.slice(2);
 
 const PAIR=new Set(["lateral","inclinedb","lunge","dbcurl"]);
 const BAR=new Set(["bench","squat","deadlift","rdl","ohp","bbrow","hipthrust","bbcurl"]);
-const REST={bench:150,squat:180,deadlift:180,rdl:150,ohp:150,bbrow:120,hipthrust:120,legpress:150,pulldown:120,cablerow:120,inclinedb:120,dips:120,pullup:120,lunge:120,latpull_close:120,plank:60,kneeraise:60,kbpass:60,halo:60,hyper:90,calfraise:60};
+const REST={bench:150,squat:180,deadlift:180,rdl:150,ohp:150,bbrow:120,hipthrust:120,legpress:150,pulldown:120,cablerow:120,inclinedb:120,dips:120,pullup:120,lunge:120,latpull_close:120,plank:60,kneeraise:60,kbpass:60,halo:60,hyper:90,calfraise:60,swim:60,catcamel:45,birddog:60,deadbug:60,sideplank:45,glutebridge:60,hipflexor:30};
 const PLATES={kg:[[25,"#D23A2E",100],[20,"#1F5FC4",100],[15,"#E9B713",90],[10,"#2F9A57",80],[5,"#F3F3EF",62],[2.5,"#1B2130",52],[1.25,"#8A919E",44],[0.5,"#C9CCD2",38]],
               lb:[[45,"#1F5FC4",100],[35,"#E9B713",90],[25,"#2F9A57",80],[10,"#F3F3EF",62],[5,"#1B2130",52],[2.5,"#8A919E",44]]};
 const BARS={kg:[20,15,10,0],lb:[45,35,25,0]};
@@ -64,6 +64,8 @@ let calSel=today();
 let confirmDel=null, sheetMode=null, sheetArg=null, sheetOpener=null;
 let mapMode="done", fxNew=null, fxPop=null, enterAnim=false;
 let setView="main", impData=null, wipeAsk=false;
+const qoHide={}; /* workout|exercise → when its last set was ticked; the quick-fill bar folds away after a short delay */
+const QO_DELAY=700, QO_ANIM=350;
 
 /* ---------- storage (this browser only) ---------- */
 const KEY="gym-notebook.v1";
@@ -85,7 +87,7 @@ function sanEx(e,plan){
 }
 function sanitize(id,d){
   if(typeof id!=="string"||!ID_RE.test(id)||!d||typeof d!=="object"||Array.isArray(d)) return null;
-  if(id==="settings") return {kind:"settings",goal:intIn(d.goal,1,7,3),lang:d.lang==="pl"||d.lang==="en"?d.lang:null,unit:d.unit==="lb"?"lb":"kg",sound:d.sound!==false,wake:d.wake!==false,seeded:!!d.seeded};
+  if(id==="settings") return {kind:"settings",goal:intIn(d.goal,1,7,3),lang:d.lang==="pl"||d.lang==="en"?d.lang:null,unit:d.unit==="lb"?"lb":"kg",sound:d.sound!==false,wake:d.wake!==false,seeded:!!d.seeded,rest:intIn(d.rest,5,3600,90)};
   const raw=Array.isArray(d.exercises)?d.exercises.slice(0,60):[];
   if(d.kind==="plan") return {kind:"plan",name:str(d.name,40).trim()||"Plan",createdAt:tsOr(d.createdAt)||Date.now(),usedAt:tsOr(d.usedAt),sample:!!d.sample,exercises:raw.map(e=>sanEx(e,true)).filter(Boolean)};
   if(d.kind) return null;
@@ -189,9 +191,13 @@ function bodySvg(scores,col){
     <text x="50" y="211" text-anchor="middle" font-size="9" fill="var(--muted)">${esc(t("front"))}</text>
     <text x="166" y="211" text-anchor="middle" font-size="9" fill="var(--muted)">${esc(t("back"))}</text></svg>`;
 }
+/* exercise photos: Free Exercise DB (Unlicense, public domain); halo, kbpass, birddog are own drawings */
+const IMG=/*@IMG@*/null;
+const DRAWN=new Set(["halo","kbpass","birddog"]);
 const thumbCache=new Map();
 function thumb(k,name,cls){
   const l=LIBBY[k];
+  if(l&&IMG[k]) return `<img class="thumb photo ${cls||""}" src="${IMG[k][0]}" alt="" decoding="async">`;
   if(!l) return `<span class="thumb ph ${cls||""}" aria-hidden="true">${esc((name||"?").trim().charAt(0).toUpperCase())}</span>`;
   if(!thumbCache.has(k)){
     const sc={}; l.s.forEach(m=>sc[m]=.38); l.p.forEach(m=>sc[m]=1);
@@ -223,11 +229,12 @@ function applyStatic(){
   document.querySelectorAll("[data-ta]").forEach(el=>{el.setAttribute("aria-label",t(el.dataset.ta))});
 }
 function render(){
+  const showRest=!!active()&&tab==="workout"; $("#rest").classList.toggle("show",showRest); if(!showRest){ setRestOpen(false); }
   document.querySelectorAll("nav.tabs button").forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle("on",on);if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
   const w=active();
   $("#liveDot").classList.toggle("hide",!w||tab==="workout");
   ({workout:renderWorkout,calendar:renderCalendar,progress:renderProgress,library:renderLibrary})[tab]();
-  const v=$("#view"); if(enterAnim){ v.classList.remove("enter"); void v.offsetWidth; v.classList.add("enter"); enterAnim=false; }
+  const v=$("#view"); v.dataset.v=tab==="workout"?(w?"workout":"home"):tab; if(enterAnim){ v.classList.remove("enter"); void v.offsetWidth; v.classList.add("enter"); enterAnim=false; }
   renderLive(); renderNotice(); syncWake(); fxNew=null; fxPop=null;
 }
 function head(a){ $("#title").textContent=a; }
@@ -272,7 +279,7 @@ function renderHome(){
   const qa=[["start",t("qaStart"),IC.play,true],["repeat",t("qaRepeat"),IC.rep,!!last],["plates-free",t("qaPlates"),IC.plate,true],["go-lib",t("qaLib"),IC.book,true]];
   const wa=weekAgo();
   const waEx=wa?(wa.exercises||[]).filter(e=>valid(e).length):[];
-  $("#view").innerHTML=`
+  $("#view").innerHTML=`<div class="col-a">
     <section class="hero" aria-label="${esc(t("thisWeek"))}">
       <div class="hero-top">
         <div><div class="hero-lab">${esc(t("thisWeek"))}</div><div class="hero-num">${wc}<small> / ${g}</small></div>
@@ -284,7 +291,7 @@ function renderHome(){
     <div class="qa">${qa.map(([a,l,i,on])=>`<button class="qa-b ${a==="start"?"pri":""}" data-act="${a}" ${on?"":"disabled"}><span class="qa-i">${i}</span><span class="qa-l">${esc(l)}</span></button>`).join("")}</div>
     ${wa?`<div class="panel wa"><div class="tx"><div class="h2" style="margin:0;font-size:20px">${esc(t("weekAgo"))}</div><div class="muted small">${esc(shortDate(wa.date))} · ${esc(wa.planName||plural(waEx.length,"exercise"))}</div></div>
         <button class="btn btn-ink btn-sm" data-act="copy" data-id="${esc(wa.id)}">${esc(t("copy"))}</button></div>`:""}
-    <div class="panel"><div class="h2row"><span class="h2">${esc(t("plans"))}</span>${last?`<button class="link" data-act="plan-from" data-id="${esc(last.id)}">${esc(t("fromLast"))}</button>`:""}</div>
+    </div><div class="col-b"><div class="panel"><div class="h2row"><span class="h2">${esc(t("plans"))}</span>${last?`<button class="link" data-act="plan-from" data-id="${esc(last.id)}">${esc(t("fromLast"))}</button>`:""}</div>
       ${ps.length?ps.map(p=>{const ex=p.exercises||[];return `<div class="plan"><button class="pi" data-act="plan-start" data-id="${esc(p.id)}">
           <span class="stack">${ex.slice(0,3).map(e=>thumb(keyOf(e),e.name,"av")).join("")}</span>
           <span class="ptx"><span class="pn">${esc(p.name)}</span><span class="pm">${esc(plural(ex.length,"exercise"))}</span></span></button>
@@ -292,8 +299,10 @@ function renderHome(){
       :`<div class="muted small">${esc(t("plansEmpty"))}</div>`}
     </div>
     ${done.length?`<div class="panel"><div class="h2row"><span class="h2">${esc(t("recovery"))}</span><span class="muted small">${esc(t("daysSince"))}</span></div>${recBlock()}</div>`
-      :`<div class="panel"><p class="muted" style="margin:0 0 12px">${esc(t("tryDemo"))}</p><button class="btn btn-line btn-block" data-act="sample-load">${esc(t("loadSample"))}</button></div>`}`;
+      :`<div class="panel"><p class="muted" style="margin:0 0 12px">${esc(t("tryDemo"))}</p><button class="btn btn-line btn-block" data-act="sample-load">${esc(t("loadSample"))}</button></div>`}</div>`;
 }
+/* re-render without the page or the chip row jumping */
+function keepChips(fn){ const c=document.querySelector("#view .chips"); const sl=c?c.scrollLeft:0, top=c?c.getBoundingClientRect().top:null; fn(); const n=document.querySelector("#view .chips"); if(n){ n.scrollLeft=sl; if(top!=null){ const d=n.getBoundingClientRect().top-top; if(Math.abs(d)>1) window.scrollBy(0,d); } } }
 function sessionGet(k){try{return sessionStorage.getItem(k)}catch(e){return null}}
 function renderWorkout(){
   const w=active();
@@ -314,6 +323,8 @@ function renderWorkout(){
     const allDone=(ex.sets||[]).length&&(ex.sets||[]).every(s=>s.done);
     const opts=prev?quickOpts(ex,prev):[];
     const openSets=(ex.sets||[]).some(s=>!s.done);
+    const qk=w.id+"|"+k; if(openSets) delete qoHide[qk];
+    const qoAge=qoHide[qk]!=null?Date.now()-qoHide[qk]:Infinity, qoOut=!openSets&&qoAge<QO_DELAY+QO_ANIM;
     const label=exLabel(ex);
     h+=`<article class="ex ${allDone?"complete":""} ${fxNew==="ex"+i?"new":""}" aria-label="${esc(label)}">
       <div class="ex-h"><button class="ex-thb" data-act="info" data-k="${esc(k)}" data-name="${esc(ex.name)}" aria-label="${esc(t("details"))}">${thumb(k,ex.name,"")}</button>
@@ -323,7 +334,7 @@ function renderWorkout(){
         <div class="ex-act"><button class="ic" data-act="info" data-k="${esc(k)}" data-name="${esc(ex.name)}" aria-label="${esc(t("details"))}">${IC.info}</button>
         <button class="ic del ${confirmDel==="ex"+i?"confirm":""}" data-act="ex-del" data-ex="${i}" aria-label="${esc(t("delEx"))}">${confirmDel==="ex"+i?esc(t("delQ")):IC.trash}</button></div>
         <div class="ex-prev">${prev?esc(t("lastTime",fmtShort(prev.date),setsTxt(prev.sets,u))):esc(t("firstTime"))}</div></div>
-      ${opts.length&&openSets?`<div class="qo" role="group" aria-label="${esc(t("qoGroup"))}">${opts.map(o=>`<button class="qo-b ${ex.qo===o.id?"on":""}" data-act="qo" data-ex="${i}" data-o="${o.id}"><b>${esc(o.lab)}</b><span>${esc(o.sub)}</span></button>`).join("")}</div>`:""}
+      ${opts.length&&(openSets||qoOut)?`<div class="qo ${qoOut?"qo-out":""}" ${qoOut?`style="animation-delay:${Math.max(0,QO_DELAY-qoAge)}ms" aria-hidden="true"`:""} role="group" aria-label="${esc(t("qoGroup"))}">${opts.map(o=>`<button class="qo-b ${ex.qo===o.id?"on":""}" data-act="qo" data-ex="${i}" data-o="${o.id}"><b>${esc(o.lab)}</b><span>${esc(o.sub)}</span></button>`).join("")}</div>`:""}
       <div class="sets ${u==="s"?"time":""}"><div class="sets-head" aria-hidden="true"><div>#</div>${u==="s"?`<div>${esc(t("secs"))}</div>`:(pair?`<div>${esc(t("total",un))}</div>`:`<div>${un}</div>`)+`<div>${esc(t("reps"))}</div>`}<div></div><div></div></div>
       ${(ex.sets||[]).map((s,j)=>{
         const ph=prev?(prev.sets[j]||prev.sets[prev.sets.length-1]):null;
@@ -400,11 +411,11 @@ function renderProgress(){
     const top=b?hh.reduce((a,x)=>x.maxR>a.maxR?x:a,hh[0]):hh.reduce((a,x)=>x.e1rm>a.e1rm?x:a,hh[0]);
     return {k,name:keyLabel(k),val:setsTxt([top.top],uu),date:top.date};});
   const isT=u==="s";
-  $("#view").innerHTML=`
+  $("#view").innerHTML=`<div class="col-a">
     <div class="panel"><div class="h2">${esc(t("recentMuscles"))}</div>
       <div class="seg">${[7,30,90].map(d=>`<button data-act="days" data-d="${d}" class="${progDays===d?"on":""}">${esc(t("nDays",d))}</button>`).join("")}</div>
       ${loadBlock(muscleLoad(recent),t("noneInRange"))}</div>
-    <div class="h2" style="margin-top:18px">${esc(t("exercises"))}</div>
+    </div><div class="col-b"><div class="h2" style="margin-top:18px">${esc(t("exercises"))}</div>
     <div class="chips">${keys.map(([k])=>`<button class="chip ${k===progEx?"on":""}" data-act="pick" data-k="${esc(k)}">${esc(keyLabel(k))}</button>`).join("")}</div>
     <div class="kpis">
       <div class="kpi"><b>${bw?(isT?fmtSec(Math.max(...h.map(x=>x.maxR))):fmtN(Math.max(...h.map(x=>x.maxR)))):fmtN(Math.max(...h.map(x=>x.maxKg)))}</b><span>${esc(bw?(isT?t("kLongest"):t("kMaxReps")):t("kMax",un))}</span></div>
@@ -421,8 +432,7 @@ function renderProgress(){
     </div>
     <div class="panel rows"><div class="h2">${esc(t("board"))}</div>
       ${board.map(b=>`<div class="r"><button data-act="pick" data-k="${esc(b.k)}" style="text-align:left">${esc(b.name)}</button><span><b>${esc(b.val)}</b><br>${esc(fmtShort(b.date))}</span></div>`).join("")}
-    </div>
-`;
+    </div></div>`;
 }
 function chart(pts){
   const W=340,H=180,pl=38,pr=14,pt=22,pb=24;
@@ -450,8 +460,8 @@ function renderLibrary(){
   const used=usedKeys();
   $("#view").innerHTML=`
     <input class="search" id="libSearch" type="search" placeholder="${esc(t("search"))}" aria-label="${esc(t("search"))}" value="${esc(libQuery)}" autocomplete="off" style="margin-bottom:10px">
-    <div class="chips"><button class="chip ${!libFilter?"on":""}" data-act="lf" data-m="">${esc(t("all"))}</button>${Object.keys(M).map(k=>`<button class="chip ${libFilter===k?"on":""}" data-act="lf" data-m="${k}">${esc(mN(k))}</button>`).join("")}</div>
-    <div class="panel" style="padding:0 14px" id="libList"></div>`;
+    <div class="chips"><button class="chip ${!libFilter?"on":""}" data-act="lf" data-m="">${esc(t("all"))}</button><button class="chip ${libFilter==="lbp"?"on":""}" data-act="lf" data-m="lbp">${esc(t("lbp"))}</button>${Object.entries(GROUPS).map(([k,g])=>`<button class="chip ${libFilter===k?"on":""}" data-act="lf" data-m="${k}">${esc(g.l[L()])}</button>`).join("")}</div>
+    <div class="panel libl" id="libList"></div>`;
   renderLibraryList(used);
 }
 function libItems(items,used){
@@ -523,6 +533,13 @@ function renderInfo(k,name){
   const l=LIBBY[k]; const u=unitOfKey(k); const w=active();
   const title=l?nm(l):(k.startsWith("c:")?k.slice(2):name);
   let html=`<div class="det"><h2>${esc(title)}</h2><div class="alt">${esc(l?l.n[1-L()]:t("custom"))}</div>`;
+  if(l&&IMG[l.id]){
+    const cr=l.id==="swim"?"creditSwim":l.id==="kbpass"?"creditKb":DRAWN.has(l.id)?"creditDraw":"creditPhoto";
+    html+=`<button class="demo" data-act="demo" aria-label="${esc(t("demoAria"))}">
+        <img src="${IMG[l.id][0]}" alt="${esc(title)}: ${esc(t("frameStart"))}"><img class="b" src="${IMG[l.id][1]}" alt="${esc(title)}: ${esc(t("frameEnd"))}">
+        <span class="lab"><i class="l1">${esc(t("frameStart"))}</i><i class="l2">${esc(t("frameEnd"))}</i></span></button>
+      <div class="credit">${esc(t(cr))}</div>`;
+  }
   if(l){
     const sc={}; l.s.forEach(m=>{sc[m]=.38}); l.p.forEach(m=>{sc[m]=1});
     html+=`<div class="map-box">${bodySvg(sc)}<div class="legend">
@@ -665,7 +682,7 @@ function applyImport(replace){
   impData=null; persist(); initLang(); applyStatic(); closeSheet(); tab="workout"; render();
   toast(t("impDone",plural(c.w,"workout")));
 }
-function setLang(v){ lang=v; saveSettings({lang:v}); applyStatic(); render(); if(sheetMode==="settings") renderSettings(); }
+function setLang(v){ lang=v; saveSettings({lang:v}); applyStatic(); render(); tickRest(); if(sheetMode==="settings") renderSettings(); }
 function initLang(){ const s=settings().lang; if(s) lang=s; else { let n=""; try{n=(navigator.languages&&navigator.languages[0])||navigator.language||""}catch(e){} lang=/^pl\b/i.test(n)?"pl":"en"; } }
 
 /* ---------- example data (fake, generated relative to today) ---------- */
@@ -709,12 +726,36 @@ function removeSample(){ [...docs.entries()].forEach(([k,d])=>{ if(d.sample) doc
 let restEnd=0,restTotal=90000,restIv=null,restBuzzed=false,actx=null,wakeLock=null,wakeBusy=false;
 function primeAudio(){ if(settings().sound===false) return; try{ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return; actx=actx||new AC(); if(actx.state==="suspended") actx.resume(); }catch(e){} }
 function beep(){ if(settings().sound===false||!actx) return; try{ [0,.22].forEach(off=>{ const o=actx.createOscillator(), g=actx.createGain(); o.type="sine"; o.frequency.value=880; const t0=actx.currentTime+off; g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(0.25,t0+.02); g.gain.exponentialRampToValueAtTime(0.0001,t0+.18); o.connect(g).connect(actx.destination); o.start(t0); o.stop(t0+.2); }); }catch(e){} }
-function startRest(sec){restTotal=sec*1000;restEnd=Date.now()+restTotal;restBuzzed=false;$("#rest").classList.add("on");$("#rest").classList.remove("end");clearInterval(restIv);restIv=setInterval(tickRest,250);tickRest();}
-function tickRest(){const ms=restEnd-Date.now();const s=Math.max(0,Math.ceil(ms/1000));$("#restT").textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
-  const C=119.4; $("#restRing").setAttribute("stroke-dashoffset",(C*(1-Math.max(0,ms)/restTotal)).toFixed(1));
-  const end=s===0; $("#rest").classList.toggle("end",end); if(end&&!restBuzzed){restBuzzed=true;buzz([120,80,120]);beep();}
-  if(ms<-20000)stopRest();}
-function stopRest(){clearInterval(restIv);$("#rest").classList.remove("on","end");}
+/* Timer: a round floating button, started by hand only. It takes its time from the last
+   seconds field you entered (e.g. 40 s plank); tap Start to open the big 3/4-screen view. */
+let restOn=false,restOpen=false,restBig=false;
+const RC=182.2, RBC=628.3;
+const restDef=()=>settings().rest||90;
+const fmtRest=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+function showBig(on){ restBig=on; $("#rbig").classList.toggle("on",on); $("#rbigBg").classList.toggle("on",on); }
+function setRestOpen(on){ restOpen=on; $("#rest").classList.toggle("open",on); $("#rest .fab").setAttribute("aria-expanded",on?"true":"false"); }
+function startRest(sec){ restTotal=sec*1000; restEnd=Date.now()+restTotal; restBuzzed=false; restOn=true; clearInterval(restIv); restIv=setInterval(tickRest,250); tickRest(); }
+function tickRest(){
+  const el=$("#rest");
+  if(!restOn){ el.classList.remove("run","end"); $("#restT").textContent=fmtRest(restDef()); $("#restRing").setAttribute("stroke-dashoffset","0"); $("#restGo").textContent=t("tStart"); $("#rbig").classList.remove("end"); return; }
+  const ms=restEnd-Date.now(); const s=Math.max(0,Math.ceil(ms/1000)); const f=Math.min(1,Math.max(0,ms)/restTotal);
+  $("#restT").textContent=fmtRest(s); $("#restRing").setAttribute("stroke-dashoffset",(RC*(1-f)).toFixed(1));
+  const end=s===0; el.classList.add("run"); el.classList.toggle("end",end); $("#restGo").textContent=t("skip");
+  $("#rbigT").textContent=fmtRest(s); $("#rbigRing").setAttribute("stroke-dashoffset",(RBC*(1-f)).toFixed(1));
+  $("#rbig").classList.toggle("end",end); $("#rbigSub").textContent=end?t("tUp"):t("tLeft"); $("#rbigGo").textContent=end?t("tDone"):t("skip");
+  if(end&&!restBuzzed){ restBuzzed=true; buzz([120,80,120]); beep(); }
+  if(ms<-20000) stopRest();
+}
+function stopRest(){ clearInterval(restIv); restOn=false; showBig(false); tickRest(); }
+function adjRest(d){ if(restOn){ restEnd+=d*1000; restTotal=Math.max(1000,restTotal+d*1000); if(restEnd>Date.now()) restBuzzed=false; } else saveSettings({rest:Math.max(5,Math.min(3600,restDef()+d))}); buzz(8); tickRest(); }
+function takeTime(el){
+  if(restOn||!el||!el.dataset||el.dataset.f!=="reps"||!el.closest(".sets.time")) return;
+  const v=Math.round(num(el.value!==""?el.value:el.placeholder)); if(!(v>=5)||v>3600||v===restDef()) return;
+  saveSettings({rest:v}); tickRest();
+  const r=$("#rest"); r.classList.remove("pick"); void r.offsetWidth; r.classList.add("pick");
+}
+document.addEventListener("focusin",ev=>takeTime(ev.target));
+document.addEventListener("input",ev=>takeTime(ev.target));
 async function syncWake(){
   const want=settings().wake!==false&&!!active()&&document.visibilityState==="visible";
   if(wakeBusy) return; wakeBusy=true;
@@ -784,17 +825,27 @@ document.addEventListener("click",ev=>{
       const ik=setEl.querySelector('[data-f="kg"]'), ir=setEl.querySelector('[data-f="reps"]');
       if(!s.done){ const pk=ik?ik.placeholder:"0", pr=ir.placeholder; if(ik&&s.kg===""&&pk!=="0"&&pk!=="—") s.kg=String(num(pk.replace(/\s/g,""))); if(s.reps===""&&pr!=="0") s.reps=pr; }
       if(!s.done&&!num(s.reps)){ toast(typeOf(ex)==="s"?t("needSec"):t("needReps")); if(ir) ir.focus(); return; }
-      s.done=!s.done; queueSave();
+      s.done=!s.done;
+      let xi=ei, moved=-1;
+      if(s.done&&ex.sets.filter(x=>x.done).length===1){ /* first ticked set: the exercise moves up, right after the ones already started */
+        const rest=wo.exercises.filter((_,j)=>j!==ei); let p=0;
+        rest.forEach((e,j)=>{ if((e.sets||[]).some(x=>x.done)) p=j+1; });
+        if(p!==ei){ rest.splice(p,0,ex); wo.exercises=rest; xi=p; moved=p; }
+      }
+      queueSave();
       if(s.done){
-        fxPop="s"+ei+"-"+si; buzz(15);
+        fxPop="s"+xi+"-"+si; buzz(15);
         const k=keyOf(ex), u=typeOf(ex); const b2=bestBefore(k,w.id), br=bestRepsBefore(k,w.id);
         const others=ex.sets.filter((x,j)=>j!==si&&x.done);
         const isPR=(u==="s"||!num(s.kg))?(br>0&&num(s.reps)>br&&others.every(x=>num(x.reps)<num(s.reps))):(b2>0&&e1rm(num(s.kg),num(s.reps))>b2+0.01&&others.every(x=>e1rm(num(x.kg),num(x.reps))<e1rm(num(s.kg),num(s.reps))));
         if(isPR){ toast(t("newPR",exLabel(ex),setsTxt([s],u)),"gold"); confetti(); }
         const all=wo.exercises.every(e=>(e.sets||[]).every(x=>x.done));
-        if(!all) startRest(restFor(ex)); else { stopRest(); if(!isPR) toast(t("allDone")); }
+        if(all&&!isPR) toast(t("allDone"));
+        if(ex.sets.every(x=>x.done)){ qoHide[w.id+"|"+keyOf(ex)]=Date.now(); setTimeout(()=>{const ae=document.activeElement; if(tab==="workout"&&!(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))) render();},QO_DELAY+QO_ANIM+50); }
       }
-      render(); break;}
+      render();
+      if(moved>=0) setTimeout(()=>{const el=document.querySelectorAll(".ex")[moved]; if(el) el.scrollIntoView({behavior:reduced()?"auto":"smooth",block:"start"});},40);
+      break;}
     case "qo":{ if(!wo) return; const ex=wo.exercises[ei]; const prev=lastPerf(keyOf(ex),w.id); if(!prev) return; const o=quickOpts(ex,prev).find(x=>x.id===b.dataset.o); if(!o) return;
       const dn=ex.sets.filter(x=>x.done); ex.sets=dn.concat(o.sets.slice(dn.length).map(x=>({kg:x.kg,reps:x.reps,done:false})));
       if(ex.sets.length===dn.length) ex.sets.push(Object.assign({},o.sets[o.sets.length-1],{done:false}));
@@ -819,19 +870,21 @@ document.addEventListener("click",ev=>{
     case "add-day": if(w){toast(t("finishFirst"));return;} newWorkout([],calSel); tab="workout"; enterAnim=true; render(); openSheet("pick"); break;
     case "h-del":{const id=b.dataset.id; if(confirmDel==="h"+id){confirmDel=null;removeDoc(id);} else {confirmDel="h"+id;render();} break;}
     case "h-edit":{ const id=b.dataset.id; if(w){toast(t("finishFirst"));return;} const d=docs.get(id); if(!d) return; d.done=false; d.reopened=true; queueSave(); tab="workout"; enterAnim=true; render(); window.scrollTo(0,0); break;}
-    case "pick": progEx=b.dataset.k; render(); if(b.closest(".rows")) window.scrollTo({top:0,behavior:reduced()?"auto":"smooth"}); break;
+    case "pick": progEx=b.dataset.k; if(b.closest(".chips")) keepChips(render); else render(); if(b.closest(".rows")) window.scrollTo({top:0,behavior:reduced()?"auto":"smooth"}); break;
     case "metric": progMetric=b.dataset.m; render(); break;
     case "days": progDays=+b.dataset.d; render(); break;
-    case "lf": libFilter=b.dataset.m||null; render(); break;
+    case "lf": libFilter=b.dataset.m||null; keepChips(()=>renderLibraryList(usedKeys())); document.querySelectorAll("#view .chips .chip").forEach(c=>c.classList.toggle("on",(c.dataset.m||null)===libFilter)); break;
     case "info": openSheet("info",{k:b.dataset.k,name:b.dataset.name}); break;
     case "plates-free": plateKg=U()==="lb"?135:60; openSheet("plates",{ex:null}); break;
     case "go-lib": tab="library"; enterAnim=true; render(); window.scrollTo(0,0); break;
     case "imetric": infoMetric=b.dataset.m; { const st=$("#shBody").scrollTop; renderInfo(sheetArg.k,sheetArg.name); $("#shBody").scrollTop=st; } break;
     case "mapmode": mapMode=b.dataset.m; render(); break;
+    case "demo": b.classList.toggle("paused"); break;
     case "sheet-close": closeSheet(); break;
-    case "rest-add": restEnd+=30000; restTotal+=30000; restBuzzed=false; tickRest(); break;
-    case "rest-sub": restEnd-=15000; tickRest(); break;
-    case "rest-stop": stopRest(); break;
+    case "rest-open": if(restOn) showBig(true); else setRestOpen(!restOpen); buzz(8); break;
+    case "rest-min": showBig(false); break;
+    case "rest-adj": adjRest(+b.dataset.s); break;
+    case "rest-toggle": if(restOn) stopRest(); else { primeAudio(); startRest(restDef()); setRestOpen(false); showBig(true); } buzz(12); break;
     case "pick-ex": addExercise(b.dataset.k); break;
     /* settings */
     case "open-settings": openSheet("settings"); break;
@@ -870,13 +923,15 @@ document.addEventListener("input",ev=>{
 });
 function renderLibraryList(used){
   const q=norm(libQuery);
-  let items=LIB.map(e=>({k:e.id,name:nm(e),alt:e.n[1-L()],find:e.n[1-L()]+" "+e.al.join(" "),p:e.p,s:e.s}));
+  let items=LIB.map(e=>({k:e.id,name:nm(e),alt:e.n[1-L()],find:e.n[1-L()]+" "+e.al.join(" "),p:e.p,s:e.s,lbp:!!e.lbp}));
   used.forEach((v,k)=>{ if(k.startsWith("c:")) items.push({k,name:v.name,alt:t("custom"),find:"",p:[],s:[]}); });
-  items=items.filter(e=>(!q||norm(e.name+" "+e.find).includes(q))&&(!libFilter||e.p.includes(libFilter)||e.s.includes(libFilter)));
+  const grp=libFilter&&GROUPS[libFilter];
+  items=items.filter(e=>(!q||norm(e.name+" "+e.find).includes(q))&&(!libFilter||(libFilter==="lbp"?e.lbp:!!grp&&e.p.some(m=>grp.m.includes(m)))));
   items.sort((a,b)=>(used.has(b.k)-used.has(a.k))||a.name.localeCompare(b.name,LOC()));
   const box=$("#libList"); if(box) box.innerHTML=libItems(items,used);
 }
 document.addEventListener("keydown",ev=>{
+  if(ev.key==="Escape"&&restBig){ showBig(false); return; }
   if(ev.key==="Escape"&&sheetMode){ closeSheet(); return; }
   if(ev.key==="Tab"&&sheetMode){ /* keep focus inside the open sheet */
     const f=[...$("#sheet").querySelectorAll("button,input,textarea,select,label[for],[tabindex]:not([tabindex='-1'])")].filter(x=>!x.disabled&&x.offsetParent!==null);
@@ -895,5 +950,5 @@ function toast(m,kind){const tt=$("#toast");tt.textContent=m;tt.classList.toggle
 /* ---------- start ---------- */
 load(); initLang();
 if(!settings().seeded&&![...docs.keys()].some(k=>k!=="settings")){ makeSample().forEach((v,k)=>docs.set(k,v)); saveSettings({seeded:true}); persist(); }
-applyStatic(); render();
+applyStatic(); render(); tickRest();
 })();
